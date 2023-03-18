@@ -1,1 +1,27 @@
-hola esto es una prueba super prueba...
+    repositorio y manejo de GitHub. Manejo de versiones.
+    comandos GitHub:
+    //para crear un repositorio Local:
+    git init //para inicializarlo como un repositorio de forma local.
+    git remote add origin https://github.com/efrainveliz2023/Curso_Egg_Backend-1.git  //se asocia un URL de git al repositorio local
+    git remote -v  //verificar si esta bien vinculado el repositorio local con el remoto.
+    git config --global user.name "Efrain veliz"   //configurar a quien pertenece el repositorio local.
+    git config --global user.email "efrainveliz4@gmail.com"   //configurar a que email pertenece el repositorio local.
+    git config -l  //para visualizar las configuraciones espablecidas.
+    clear  //limpiar pantalla de comandos.
+    
+    //para agregar una version (COMMIT)
+    git status //Nos mostrara todas las cosas nuevas en el repositorio Local
+    git add .  //para agregar todo al repositorio Remoto.
+    git commit -m "primer commit" //para empaquetar bajo el nombre "primer commit" el paquete con los nuevos cambios
+    //git commit -> Segundo Commit -> *apretamos ESC -> :wq  //otra forma de nombrar el commit.
+    git push origin master  //para enviar el paquete al repositorio Remoto.
+
+    //clonar un repositorio: en la carpeta donde guardaremos el repositorio en nuestra compu, en comando Git Bash
+    git init //incializamos
+    git remote add origin https://github.com/efrainveliz2023/Curso_Egg_Backend-1.git
+    git pull origin master //Para traer el repositorio a nuestro repositorio local.
+    git diff //nos muestra las diferencias entre el commit anterior y lo actual
+    git log //ver el historial de commit
+    
+    git fetch  //nos trae la informacion en cuanto a ramas...
+    git checkout develop //o el nombre de la rama donde nos queremos posicionar...SALTAR ENTRE RAMAS.
