@@ -25,3 +25,8 @@
     
     git fetch  //nos trae la informacion en cuanto a ramas...
     git checkout develop //o el nombre de la rama donde nos queremos posicionar...SALTAR ENTRE RAMAS.
+
+
+
+
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAa
