@@ -1,5 +1,15 @@
+import java.awt.*;
+
 public class Main {
     public static void main(String[] args) {
+
+        /*
+        //Set window size to screen max size.
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int screenWidth = gd.getDisplayMode().getWidth();
+        int screenHeight = gd.getDisplayMode().getHeight();
+        PennDraw.setCanvasSize(screenWidth, screenHeight);
+        */
 
         //DRAWING THE INSTRUCTIONS **************************************
         PennDraw.clear();
