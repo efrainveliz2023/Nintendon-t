@@ -1,3 +1,5 @@
+package Source;
+
 /**
  * Interface for generic lists.
  * @author maxtrom, brohan
@@ -65,7 +67,7 @@ public interface List<T> {
     /**
      * Returns <tt>true</tt> if this list contains the specified element.
      *
-     * @param element element whose presence in this List is to be tested.
+     * @param element element whose presence in this Source.List is to be tested.
      * @return  <code>true</code> if the specified element is present;
      *  <code>false</code> otherwise.
      */

@@ -1,9 +1,13 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac DonkeyKong.java
- *  Execution:    java DonkeyKong
+ *  Compilation:  javac Source.DonkeyKong.java
+ *  Execution:    java Source.DonkeyKong
  *  Dependencies: image files
  *
- *  Creates a DonkeyKong object for Donkey Kong Game. Donkey can
+ *  Creates a Source.DonkeyKong object for Donkey Kong Game. Donkey can
  * be drawn in various positions. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206

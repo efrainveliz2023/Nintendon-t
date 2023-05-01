@@ -1,9 +1,13 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac Ladder.java
- *  Execution:    java Ladder (runs basic testing)
+ *  Compilation:  javac Source.Ladder.java
+ *  Execution:    java Source.Ladder (runs basic testing)
  *  Dependencies: image files
  *
- *  Creates a Ladder object for Donkey Kong Game. Ladder can
+ *  Creates a Source.Ladder object for Donkey Kong Game. Source.Ladder can
  *  be drawn. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206

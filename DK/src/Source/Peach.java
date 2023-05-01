@@ -1,9 +1,13 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac Peach.java
- *  Execution:    java Peach (runs basic testing
+ *  Compilation:  javac Source.Peach.java
+ *  Execution:    java Source.Peach (runs basic testing
  *  Dependencies: image files
  *
- *  Creates a Peach object for Donkey Kong Game. Peach can
+ *  Creates a Source.Peach object for Donkey Kong Game. Source.Peach can
  * be drawn. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206

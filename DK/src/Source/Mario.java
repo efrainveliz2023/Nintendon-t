@@ -1,10 +1,14 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac Mario.java
- *  Execution:    java Mario (runs basic testing
+ *  Compilation:  javac Source.Mario.java
+ *  Execution:    java Source.Mario (runs basic testing
  *  Dependencies: image files
  *
- *  Creates a Mario object for Donkey Kong Game. Mario can
- * move, fall, and stop depending on floors inputted. Mario can be checked
+ *  Creates a Source.Mario object for Donkey Kong Game. Source.Mario can
+ * move, fall, and stop depending on floors inputted. Source.Mario can be checked
  * compared to ladders and floors and barrels objects. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206
@@ -23,7 +27,7 @@ public class Mario {
     private boolean isAlive = true;
     private double floorLevel;
 
-    /** Constructor: sets Mario's x and y location
+    /** Constructor: sets Source.Mario's x and y location
      *
      */
     public Mario(double x, double y) {
@@ -110,8 +114,7 @@ public class Mario {
     }
 
     /** Description: draws mario at one of the right facing images
-     * @param int dir - which frame mario is at
-     * @return n/a
+     * @param dir - which frame mario is at
      */
     public void drawRight(int dir) {
         if (dir % 3 == 0) {
@@ -124,8 +127,7 @@ public class Mario {
     }
 
     /** Description: draws mario standing still
-     * @param boolean facing - which direction
-     * @return n/a
+     * @param facing - which direction
      */
     public void draw(boolean facing) {
         if (facing) {
@@ -136,8 +138,7 @@ public class Mario {
     }
 
     /** Description: draws mario as pikachu facing right
-     * @param int dir - which frame pikachu is at
-     * @return n/a
+     * @param dir - which frame pikachu is at
      */
     public void pDrawRight(int dir) {
         if (dir % 3 == 0) {
@@ -150,8 +151,7 @@ public class Mario {
     }
 
     /** Description: draws mario as pikachu facing left
-     * @param int dir - which frame pikachu is at
-     * @return n/a
+     * @param dir - which frame pikachu is at
      */
     public void pDrawLeft(int dir) {
         if (dir % 3 == 0) {
@@ -164,8 +164,7 @@ public class Mario {
     }
 
     /** Description: draws mario as pikachu standing still
-     * @param boolean facing - which way pikachu is facing
-     * @return n/a
+     * @param facing - which way pikachu is facing
      */
     public void pDraw(boolean facing) {
         if (facing) {
@@ -176,8 +175,7 @@ public class Mario {
     }
 
     /** Description: draws mario climbing
-     * @param int dir - which frame pikachu is at
-     * @return n/a
+     * @param dir - which frame pikachu is at
      */
     public void drawClimbing(int dir) {
         if (dir % 2 == 0) {
@@ -192,7 +190,7 @@ public class Mario {
      * @return n/a
      */
     public void lightning(double x, double y) {
-        PennDraw.picture(x, y, "lightning.PNG", 46, 350);
+        PennDraw.picture(x, y, "Resources/Images/lightning.PNG", 46, 350);
     }
 
     /** Description: draws mario in his jumping frame
@@ -300,7 +298,7 @@ public class Mario {
     }
 
     /* Description: function to check if mario is equivalent to peach's
-     * Input: Peach peach
+     * Input: Source.Peach peach
      * Output: boolean
      */
     public boolean hasWon(Peach peach) {
@@ -314,7 +312,7 @@ public class Mario {
 
     /* Description: Checks if mario has collided with any of the barrels and if
      * he has set isAlive to false
-     * @param LinkedList<Barrel> b
+     * @param Source.LinkedList<Source.Barrel> b
      * @return n/a
      */
     public void barrelCollision(LinkedList<Barrel> b) {

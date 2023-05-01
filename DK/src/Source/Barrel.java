@@ -1,9 +1,13 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac Barrel.java
- *  Execution:    java Barrel (runs basic testing)
+ *  Compilation:  javac Source.Barrel.java
+ *  Execution:    java Source.Barrel (runs basic testing)
  *  Dependencies: image files
  *
- *  Creates a barrel object for Donkey Kong Game. Barrel can
+ *  Creates a barrel object for Donkey Kong Game. Source.Barrel can
  * roll, fall, and stop depending on floors inputted. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206
@@ -15,7 +19,7 @@ public class Barrel {
     private double y;
     private double velX = 0.005;
     private double velY;
-    private double fallVel = 0.01;
+    private double fallVel = 0.001;
     private static final double radius = 0.025;
     private int floorLevel = 0;
     private int angle = 0;
@@ -127,9 +131,7 @@ public class Barrel {
      * @param n/a
      * @return n/a
      */
-    public void fall() {
-        velY -= 0.001;
-    }
+    public void fall() { velY -= fallVel; }
 
     /* Stop the barrel from falling and put it at its floor level
      * @param n/a

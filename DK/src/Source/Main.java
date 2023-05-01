@@ -1,4 +1,7 @@
-import java.awt.*;
+package Source;
+
+import Resources.PennDraw;
+import Resources.StdAudio;
 
 public class Main {
     public static void main(String[] args) {
@@ -8,7 +11,7 @@ public class Main {
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
         int screenWidth = gd.getDisplayMode().getWidth();
         int screenHeight = gd.getDisplayMode().getHeight();
-        PennDraw.setCanvasSize(screenWidth, screenHeight);
+        Resources.PennDraw.setCanvasSize(screenWidth, screenHeight);
         */
 
         //DRAWING THE INSTRUCTIONS **************************************
@@ -18,7 +21,7 @@ public class Main {
         PennDraw.text(0.5, 0.8, "Instructions:");
         PennDraw.text(0.5, 0.7, "use 'a' to move left, 'd' for right,");
         PennDraw.text(0.5, 0.6, "'w' to jump, and 's' to move down.");
-        PennDraw.text(0.5, 0.5, "Climb the ladders to get to Princess Peach " +
+        PennDraw.text(0.5, 0.5, "Climb the ladders to get to Princess Source.Peach " +
                 "to win");
         PennDraw.text(0.5, 0.4, "Avoid the barrels - you lose if one hits you");
         PennDraw.text(0.5, 0.27, "Press 'f' to activate the special power up " +
@@ -36,7 +39,7 @@ public class Main {
         //***************************************************************
 
         //begin playing background music immediately
-        StdAudio.loop("bacmusic.wav");
+        StdAudio.loop("SFX/bacmusic.wav");
 
         boolean playAgain = true;
         while (playAgain) {
@@ -113,8 +116,7 @@ public class Main {
 
                 //draw all the floors and ladders
                 for (int i = 0; i < floors.length; i++) {
-                    if (i < floors.length)
-                        floors[i].draw();
+                    floors[i].draw();
                     if (i < ladders.length)
                         ladders[i].draw();
                 }
@@ -129,7 +131,7 @@ public class Main {
                 else if (155 <= timer && timer < 165) {
                     donkey.drawCenter();
                 }
-                else if (165 <= timer && timer < 185) {
+                else if (165 <= timer) {
                     donkey.drawRight();
                 }
                 else donkey.drawOriginal();
@@ -207,7 +209,7 @@ public class Main {
                         }
                         //otherwise if he is on the floor, jump
                         else if (mario.floorCollision(floors)) {
-                            StdAudio.play("jump.wav");
+                            StdAudio.play("SFX/jump.wav");
                             climbing = false;
                             jumping = true;
                             mario.jump();
@@ -318,13 +320,13 @@ public class Main {
 
             //functions depending on if won or lost
             if (hasWon) {
-                StdAudio.play("win1.wav");
+                StdAudio.play("SFX/win1.wav");
                 PennDraw.setPenColor(PennDraw.GREEN);
                 PennDraw.setFontSize(100);
                 PennDraw.text(0.5, 0.5, "YOU WON!");
             }
             else if (!mario.isAlive()) {
-                StdAudio.play("death.wav");
+                StdAudio.play("SFX/death.wav");
                 PennDraw.setPenColor(PennDraw.RED);
                 PennDraw.setFontSize(100);
                 PennDraw.text(0.5, 0.5, "YOU LOST!");
