@@ -190,7 +190,7 @@ public class Mario {
      * @return n/a
      */
     public void lightning(double x, double y) {
-        PennDraw.picture(x, y, "Resources/Images/lightning.PNG", 46, 350);
+        PennDraw.picture(x, y, "lightning.PNG", 46, 350);
     }
 
     /** Description: draws mario in his jumping frame
