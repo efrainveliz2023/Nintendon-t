@@ -63,7 +63,7 @@ public class Mario {
      * @param n/a
      * @return n/a
      */
-    public double getHalfHeight() {
+    public static double getHalfHeight() {
         return halfHeight;
     }
 

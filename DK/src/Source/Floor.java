@@ -79,7 +79,7 @@ public class Floor {
      * @return boolean
      */
     public boolean collision(Mario mario) {
-        return (mario.getY() - mario.getHalfHeight() <= y + halfHeight &&
+        return (mario.getY() - Mario.getHalfHeight() <= y + halfHeight &&
                 mario.getY() >= y && mario.getX() <= x + halfWidth &&
                 mario.getX() >= x - halfWidth);
     }
@@ -89,7 +89,7 @@ public class Floor {
      * @return boolean
      */
     public boolean collision(Barrel barrel) {
-        return (barrel.getY() - barrel.getRadius() <= y + halfHeight &&
+        return (barrel.getY() - Barrel.getRadius() <= y + halfHeight &&
                 barrel.getY() >= y && barrel.getX() <= x + halfWidth &&
                 barrel.getX() >= x - halfWidth);
     }

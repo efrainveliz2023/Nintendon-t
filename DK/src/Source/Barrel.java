@@ -115,7 +115,7 @@ public class Barrel {
      * @param n/a
      * @return double radius
      */
-    public double getRadius() {
+    public static double getRadius() {
         return radius;
     }
 
