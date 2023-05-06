@@ -1,9 +1,13 @@
+package Source;
+
+import Resources.PennDraw;
+
 /******************************************************************************
- *  Compilation:  javac Floor.java
- *  Execution:    java Floor (runs basic testing)
+ *  Compilation:  javac Source.Floor.java
+ *  Execution:    java Source.Floor (runs basic testing)
  *  Dependencies: image files
  *
- *  Creates a floor object for Donkey Kong Game. Floor can be drawn and
+ *  Creates a floor object for Donkey Kong Game. Source.Floor can be drawn and
  * compared to mario or barrels for collision detection. Used in World.java
  *
  * Authors: Ethan Terner, eterner, 206
@@ -20,7 +24,7 @@ public class Floor {
     private static double halfWidth = 0.4;
     private static double halfHeight = 0.01;
 
-    /* Constructor: Floor with x and y
+    /* Constructor: Source.Floor with x and y
      * @param n/a
      * @return n/a
      */
@@ -118,15 +122,15 @@ public class Floor {
             floors[i].draw();
         }
 
-        /*implementing with LinkedList*****************************************
-        LinkedList<Floor> floors = new LinkedList<Floor>();
+        /*implementing with Source.LinkedList*****************************************
+        Source.LinkedList<Source.Floor> floors = new Source.LinkedList<Source.Floor>();
         
         for (int i = 0; i < 6; i++) { //add 6 floora
            if (i % 2 == 0) {
-                floors.add(new Floor(0.4, 0.8 - i * 0.15));
+                floors.add(new Source.Floor(0.4, 0.8 - i * 0.15));
             }
             else {
-                floors.add(new Floor(0.6, 0.65 - (i - 1) * 0.15));
+                floors.add(new Source.Floor(0.6, 0.65 - (i - 1) * 0.15));
             }
         }
         

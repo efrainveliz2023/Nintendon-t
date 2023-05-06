@@ -1,3 +1,5 @@
+package Source;
+
 /*
  * PARTNER 1
  * Partner 1 Name: Ethan Terner
@@ -10,11 +12,11 @@
  * Partner 2 PennKey: maxgrove
  * Partner 2 Recitation #: 205
  *
- * Execution: java LinkedList
+ * Execution: java Source.LinkedList
  *
- * This program creates a generic LinkedList class and implements the generic
- * List.java interface. It contains a private Node class which is used to
- * connect points within the LinkedList.
+ * This program creates a generic Source.LinkedList class and implements the generic
+ * Source.List.java interface. It contains a private Node class which is used to
+ * connect points within the Source.LinkedList.
  *
  */
 public class LinkedList<T> implements List<T> {
@@ -184,7 +186,7 @@ public class LinkedList<T> implements List<T> {
     /**
      * Returns <tt>true</tt> if this list contains the specified element.
      *
-     * @param element element whose presence in this List is to be tested.
+     * @param element element whose presence in this Source.List is to be tested.
      * @return  <code>true</code> if the specified element is present;
      *  <code>false</code> otherwise.
      */

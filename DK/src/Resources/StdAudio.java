@@ -1,6 +1,6 @@
-/******************************************************************************
- *  Compilation:  javac StdAudio.java
- *  Execution:    java StdAudio
+package Resources; /******************************************************************************
+ *  Compilation:  javac Resources.StdAudio.java
+ *  Execution:    java Resources.StdAudio
  *  Dependencies: none
  *
  *  Simple library for reading, writing, and manipulating .wav files.
@@ -302,7 +302,7 @@ public final class StdAudio {
             throw new IllegalArgumentException("could not play '" + filename + "'", e);
         }
 
-        // URL url = StdAudio.class.getResource(filename);
+        // URL url = Resources.StdAudio.class.getResource(filename);
         if (url == null) {
             throw new IllegalArgumentException("could not play '" + filename + "'");
         }
@@ -379,7 +379,7 @@ public final class StdAudio {
 
 
     /***************************************************************************
-     * Unit tests {@code StdAudio}.
+     * Unit tests {@code Resources.StdAudio}.
      ***************************************************************************/
 
     // create a note (sine wave) of the given frequency (Hz), for the given

@@ -1,6 +1,6 @@
-/*************************************************************************
- *  Compilation:  javac PennDraw.java
- *  Execution:    java PennDraw
+package Resources; /*************************************************************************
+ *  Compilation:  javac Resources.PennDraw.java
+ *  Execution:    java Resources.PennDraw
  *
  *  Standard drawing library. This class provides a basic capability for
  *  creating drawings with your programs. It uses a simple graphics model that
@@ -465,7 +465,7 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
     public static Font getFont() { return font; }
 
     /**
-     * List all available fonts
+     * Source.List all available fonts
      * Code from http://alvinalexander.com/blog/post/jfc-swing/swing-faq-list-fonts-current-platform
      */
     public static void listFonts() {
@@ -1092,7 +1092,7 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
      * @throws IllegalArgumentException if the image is corrupt
      */
     public static void picture(double x, double y, String s, double w, double h, double degrees) {
-        Image image = getImage(s);
+        Image image = getImage("Images/" + s);
         int iw = image.getWidth(null);
         int ih = image.getHeight(null);
         if (iw <= 0 || ih <= 0) throw new IllegalArgumentException("image " + s + " is corrupt");
@@ -1257,7 +1257,7 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
     }
 
     /**
-     * Draw everything immediately (equivalent to calling PennDraw.show() with no arguments)
+     * Draw everything immediately (equivalent to calling Resources.PennDraw.show() with no arguments)
      */
     public static void disableAnimation() {
         animationSpeed = -1; // disable animation mode
@@ -1266,12 +1266,12 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
 
     /**
      * Set animation mode with specified frame rate
-     * Equivalent to calling PennDraw.show(0), with
-     * subsequent calls to PennDraw.advance() being
-     * equivalent to calling PennDraw.show(10000.0 / frameRate).
+     * Equivalent to calling Resources.PennDraw.show(0), with
+     * subsequent calls to Resources.PennDraw.advance() being
+     * equivalent to calling Resources.PennDraw.show(10000.0 / frameRate).
      *
-     * Use PennDraw.enableAnimation(0) to have PennDraw.advance()
-     * draw as fast as possible (just like PennDraw.show(0)).
+     * Use Resources.PennDraw.enableAnimation(0) to have Resources.PennDraw.advance()
+     * draw as fast as possible (just like Resources.PennDraw.show(0)).
      * @param frameRate animation speed in frames per second
      * @throws IllegalArgumentException if frameRate is negative
      */
@@ -1289,7 +1289,7 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
      */
     public static void advance() {
         if (animationSpeed < 0)
-            throw new RuntimeException("You must call PennDraw.enableAnimation() to activate animation mode before calling PennDraw.advance()");
+            throw new RuntimeException("You must call Resources.PennDraw.enableAnimation() to activate animation mode before calling Resources.PennDraw.advance()");
 
         show(animationSpeed);
     }
