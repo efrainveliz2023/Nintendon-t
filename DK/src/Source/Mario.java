@@ -1,6 +1,7 @@
 package Source;
 
 import Resources.PennDraw;
+import Resources.StdAudio;
 
 /******************************************************************************
  *  Compilation:  javac Source.Mario.java
@@ -19,7 +20,7 @@ public class Mario {
     private double x;
     private double y;
     private double velX = 0.02;
-    private double velY;
+    private double velY = 0;
     private double jumpVel = 0.012;
     private double accelG = 0.01;
     private static final double halfHeight = 0.025;
@@ -27,81 +28,194 @@ public class Mario {
     private boolean isAlive = true;
     private double floorLevel;
 
+    int direction = 0;
+
+    //direction tracker for animation
+    int rightDir = 0;
+    int leftDir = 0;
+    int movingDir = 0;
+
+    //jumping variable
+    boolean jumping = false;
+
+    //false if not climbing, true if climbing
+    //int climb to keep track of which climbing frame
+    boolean climbing = false;
+    int climb = 0;
+
     /** Constructor: sets Source.Mario's x and y location
-     *
      */
     public Mario(double x, double y) {
         this.x = x;
         this.y = y;
+        direction = 0;
     }
 
-    /** Description: returns x location
-     * @param n/a
+    //Revisa los Inputs y colisiones, y actualiza la posicion de mario
+    void Run(){
+        checkPosition();
+
+        boolean ladders = CollisionDetector.checkLaddersCollision(x, y);
+        boolean floors = CollisionDetector.checkFloorsCollision(x, y, halfHeight);
+
+        if (ladders && climbing) {
+            drawClimbing(climb);
+        } else {
+            boolean facing = (direction == 1);
+            if(!(floors)){
+                drawJump(true);
+            } else if(movingDir == 0){
+                draw(facing);
+            } else {
+                drawMoving(movingDir, facing);
+            }
+        }
+
+        if (PennDraw.hasNextKeyTyped()) {
+            char dir = PennDraw.nextKeyTyped();
+            if (dir == 'a') {
+                //if is not in the ladder and on the floor move
+                if (!(ladders && !floors)) {
+                    moveLeft();
+                    movingDir++;
+                    climbing = false;
+                    direction = 1;
+                }
+            } else if (dir == 'd') {
+                //if mario is not in the ladder and on the floor
+                if (!(ladders && !floors)) {
+                    moveRight();
+                    movingDir++;
+                    climbing = false;
+                    direction = 2;
+                }
+            } else {
+                movingDir = 0;
+                direction = 0;
+            }
+            if (dir == 'w') {
+                //if mario is in ladder, move up ladder
+                if (ladders) {
+                    // System.out.println("we made it here");
+                    climbing = true;
+                    climb++;
+                    moveUp();
+                }
+                //otherwise if he is on the floor, jump
+                else if (floors) {
+                    StdAudio.play("SFX/jump.wav");
+                    climbing = false;
+                    jumping = true;
+                    jump();
+                }
+            } else if (dir == 's') {
+                //if mario is in ladder and not on the floor, move down
+                if (ladders && !floors) {
+                    climbing = true;
+                    climb--;
+                    moveDown();
+                }
+            } else if (dir == 'f') {
+                //Activa el poder del personaje en cuestion
+            }
+        }
+        //update mario's y position for jumping
+        updateY();
+
+        //checks colliding with ladders
+        if(!floors && !ladders) {
+            fall();
+        }
+        else if (getVelY() < 0.0) {
+            stop();
+        }
+    }
+
+    /**
      * @return double x
      */
     public double getX() {
         return x;
     }
 
-    /** Description: returns y location
-     * @param n/a
+    /**
      * @return double y
      */
     public double getY() {
         return y;
     }
 
-    /** Description: returns y vel
-     * @param n/a
+    /**
      * @return double yVel
      */
     public double getVelY() {
         return velY;
     }
 
-    /** Description: returns halfHeight
-     * @param n/a
-     * @return n/a
+    /**
+     * @return halfHeight
      */
     public static double getHalfHeight() {
         return halfHeight;
     }
 
-    /** Description: returns isAlive
-     * @param n/a
+    /**
+     * @return halfWidth
+     */
+    public static double getHalfWidth(){
+        return halfWidth;
+    }
+
+    /**
      * @return boolean isAlive
      */
     public boolean isAlive() {
         return isAlive;
     }
 
+    public void Kill(){
+        isAlive = false;
+    }
+
     /** Description: increases x by factor of velX
-     * @param n/a
-     * @return n/a
      */
     public void moveRight() {
         x += velX;
     }
 
     /** Description: decreases mario's x by velX
-     * @param n/a
-     * @return n/a
      */
     public void moveLeft() {
         x -= velX;
     }
 
-    /** Description: set y location just in case
-     * @param n/a
-     * @return n/a
+    /** Description: setea la posicion y
+     * @param y nueva posicion y.
      */
     public void setY(double y) {
         this.y = y;
     }
 
-    /** Description: draws mario at one of the left facing images
-     * @param int dir - which frame mario is at
-     * @return n/a
+    /** Description: dibuja a mario en una de las imagenes mirando a la izquierda
+     * @param dir - en que frame de la animacion esta mario
+     * @param facing - direccion en la que está mirando. True = izquierda.
+     */
+    public void drawMoving(int dir, boolean facing){
+        int direction = -1;
+        if(facing) direction = 1;
+
+        if (dir % 3 == 0) {
+            PennDraw.picture(x, y + 0.01, "marioStand.png", 35 * direction, 35);
+        } else if (dir % 3 == 1) {
+            PennDraw.picture(x, y + 0.01, "marioRun1.png", 35 * direction, 35);
+        } else if (dir % 3 == 2) {
+            PennDraw.picture(x, y + 0.01, "marioRun2.png", 35 * direction, 35);
+        }
+    }
+
+    /** Description: dibuja a mario en una de las imagenes mirando a la izquierda
+     * @param dir - en que frame de la animacion esta mario
+     * @deprecated
      */
     public void drawLeft(int dir) {
         if (dir % 3 == 0) {
@@ -113,8 +227,9 @@ public class Mario {
         }
     }
 
-    /** Description: draws mario at one of the right facing images
-     * @param dir - which frame mario is at
+    /** Description: dibuja a mario en una de las imagenes mirando a la derecha
+     * @param dir - en que frame de la animacion esta mario
+     * @deprecated
      */
     public void drawRight(int dir) {
         if (dir % 3 == 0) {
@@ -126,8 +241,8 @@ public class Mario {
         }
     }
 
-    /** Description: draws mario standing still
-     * @param facing - which direction
+    /** Description: dibuja a mario quieto
+     * @param facing - direccion: true izquierda, false derecha
      */
     public void draw(boolean facing) {
         if (facing) {
@@ -137,45 +252,8 @@ public class Mario {
         }
     }
 
-    /** Description: draws mario as pikachu facing right
-     * @param dir - which frame pikachu is at
-     */
-    public void pDrawRight(int dir) {
-        if (dir % 3 == 0) {
-            PennDraw.picture(x, y, "pickachu1.png", 35, 35);
-        } else if (dir % 3 == 1) {
-            PennDraw.picture(x, y, "pickachu2.png", 35, 35);
-        } else if (dir % 3 == 2) {
-            PennDraw.picture(x, y, "pickachu3.png", 35, 35);
-        }
-    }
-
-    /** Description: draws mario as pikachu facing left
-     * @param dir - which frame pikachu is at
-     */
-    public void pDrawLeft(int dir) {
-        if (dir % 3 == 0) {
-            PennDraw.picture(x, y, "pickachu1.png", -35, 35);
-        } else if (dir % 3 == 1) {
-            PennDraw.picture(x, y, "pickachu2.png", -35, 35);
-        } else if (dir % 3 == 2) {
-            PennDraw.picture(x, y, "pickachu3.png", -35, 35);
-        }
-    }
-
-    /** Description: draws mario as pikachu standing still
-     * @param facing - which way pikachu is facing
-     */
-    public void pDraw(boolean facing) {
-        if (facing) {
-            PennDraw.picture(x, y, "pickachu1.png", 35, 35);
-        } else {
-            PennDraw.picture(x, y, "pickachu1.png", -35, 35);
-        }
-    }
-
-    /** Description: draws mario climbing
-     * @param dir - which frame pikachu is at
+    /** Description:dibuja a mario escalando
+     * @param dir - frame en el que esta mario
      */
     public void drawClimbing(int dir) {
         if (dir % 2 == 0) {
@@ -185,17 +263,8 @@ public class Mario {
         }
     }
 
-    /** Description: draws pikachu's lightning
-     * @param double x, double y to draw at
-     * @return n/a
-     */
-    public void lightning(double x, double y) {
-        PennDraw.picture(x, y, "lightning.PNG", 46, 350);
-    }
-
-    /** Description: draws mario in his jumping frame
-     * @param boolean facing - which way he is facing
-     * @return n/a
+    /** Description: Dibuja a mario en el aire
+     * @param  facing - direccion en la que esta mirando, true izquierda
      */
     public void drawJump(boolean facing) {
         if (facing) {
@@ -229,31 +298,18 @@ public class Mario {
         velY -= 0.001;
     }
 
-    /** Description: makes mario stop falling at the closest floor level to him
-     * @param Floor[] f
-     * @return n/a
+    /** Description: Frena la caida de mario y lo coloca encima del piso más cercano
      */
-    public void stop(Floor[] f) {
-        double min = Double.POSITIVE_INFINITY;
-        double closest = 0;
-
-        //finds minimum between y and f[i].getY()
-        //closest = closest of f[i].getY()
-        for (int i = 0; i < f.length; i++) {
-            double temp = Math.abs(y - f[i].getY());
-            if (temp < min) {
-                closest = f[i].getY();
-                min = temp;
-            }
-        }
+    public void stop() {
+        double closest = CollisionDetector.getCLosestFloorY(y);
         y = closest + halfHeight + Floor.getHeight();
         velY = 0.0;
     }
 
     /** Description: checks if marios bottom is connected to any of the floors
      * by calling the floor collision detection
-     * @param array of floors
      * @return boolean true or false
+     * @deprecated
      */
     public boolean floorCollision(Floor[] f) {
         boolean floorCollide = false;
@@ -266,9 +322,10 @@ public class Mario {
         return floorCollide;
     }
 
-    /* Descritption: checks if marios x location is within a ladder
+    /** Descritption: checks if marios x location is within a ladder
      * input: ladder
      * output: boolean true or false
+     * @deprecated
      */
     public boolean ladderCollision(Ladder[] l) {
         for (int i = 0; i < l.length; i++) {
@@ -282,24 +339,19 @@ public class Mario {
     }
 
     /* Description: Moves mario up
-     * @param n/a
-     * @return n/a
      */
     public void moveUp() {
         y += 0.015;
     }
 
     /* Description: Moves mario down
-     * @param n/a
-     * @return n/a
      */
     public void moveDown() {
         y -= 0.015;
     }
 
-    /* Description: function to check if mario is equivalent to peach's
-     * Input: Source.Peach peach
-     * Output: boolean
+    /** Description: function to check if mario is equivalent to peach's
+     * @deprecated
      */
     public boolean hasWon(Peach peach) {
         if (peach.getX() < x + 0.01 && x - 0.01 < peach.getX()) {
@@ -329,11 +381,8 @@ public class Mario {
         }
     }
 
-    /** Description: checks to ensure marios position is valid. He cannot
-     * go off the screen and isAlive is set to false if he falls off the
-     * screen
-     * @param n/a
-     * @return n/a
+    /** Description: Revisa si Mario está en una posicion válida, no le permite escaparse por los laterales
+     * Si Mario cae por debajo de la panmtalla lo mata.
      */
     public void checkPosition() {
         if (x > 0.97) {
@@ -347,7 +396,7 @@ public class Mario {
         }
     }
 
-    //TESTING
+    //TESTING REVISAR SI HAY ALGO UTIL
     public static void main(String[] args) {
         Floor[] floor = new Floor[2];
         floor[0] = new Floor(0.6, 0.25);

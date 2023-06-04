@@ -24,12 +24,39 @@ public class Barrel {
     private int floorLevel = 0;
     private int angle = 0;
 
-    /* Constructor: Creates barrel with x,y coordinates.
-     *
-     */
+    /* Constructor: Creates barrel with x,y coordinates.*/
     public Barrel(double x, double y) {
         this.x = x;
         this.y = y;
+    }
+
+    //Revisa coliciones y actualiza la posicion
+    public void Run(){
+        boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);
+        if (floors) {
+            if (getFloorLevel() % 2 == 0) {
+                rollRight();
+            } else {
+                rollLeft();
+            }
+        }
+
+        floors = CollisionDetector.checkFloorsCollision(x, y, radius);
+
+        if(!floors){
+            fall();
+        } else if (getVelY() < 0.0) {
+            int temp =  getFloorLevel();
+            setFloorLevel(temp + 1);
+            stop();
+        }
+
+        updateY();
+        draw();
+
+        if(CollisionDetector.checkMarioCollision(x, y, radius, radius)){
+            CollisionDetector.KillMario();
+        }
     }
 
     /* Description: Draws a barrel at it's x and y location with a
@@ -137,11 +164,10 @@ public class Barrel {
      * @param n/a
      * @return n/a
      */
-    public void stop(Floor[] f) {
+    public void stop() {
+        double closest = CollisionDetector.getCLosestFloorY(y);
+        y = closest + radius + Floor.getHeight();
         velY = 0.0;
-
-        //safety checking code
-        y = f[floorLevel].getHeight() + f[floorLevel].getY() + radius;
     }
 
     /* checks if barrel is connected to any of the floors

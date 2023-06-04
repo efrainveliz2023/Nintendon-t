@@ -16,8 +16,8 @@ import Resources.PennDraw;
 public class Ladder {
     private double x;
     private double y;
-    private double halfHeight = 0.075;
-    private double halfWidth = 0.015;
+    private static double halfHeight = 0.075;
+    private static double halfWidth = 0.015;
 
     /* Constructor: ladder at x, y
      * @param double x, double y
@@ -51,6 +51,9 @@ public class Ladder {
     public double getX() {
         return x;
     }
+
+    public static double getHalfWidth(){ return halfWidth; }
+    public static double getHalfHeight(){ return halfHeight; }
 
     //testing
     public static void main(String[] args) {
