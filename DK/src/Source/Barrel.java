@@ -59,10 +59,8 @@ public class Barrel {
         }
     }
 
-    /* Description: Draws a barrel at it's x and y location with a
+    /** Description: Draws a barrel at it's x and y location with a
      * constantly changing angle.
-     * @param n/a
-     * @return n/a
      */
     public void draw() {
         double neg = Math.pow(-1, floorLevel + 1);
@@ -70,119 +68,84 @@ public class Barrel {
         angle += 5;
     }
 
-    /* Description: Draws 4 barrels in the top corner
-     * @param floors[] for getting height to draw them at
-     * @return n/a
+    /** Description: Draws 4 barrels in the top corner
+     * @param floors for getting height to draw them at
      */
     public static void draw4(Floor[] floors) {
-        double yHeight = floors[0].getY() + floors[0].getHeight() + radius;
+        double yHeight = floors[0].getY() + Floor.getHeight() + radius;
         PennDraw.picture(0.05, yHeight, "barrel.png", 24, 24);
         PennDraw.picture(0.05, yHeight + 2 * radius, "barrel.png", 24, 24);
         PennDraw.picture(0.10, yHeight, "barrel.png", 24, 24);
         PennDraw.picture(0.10, yHeight + 2 * radius, "barrel.png", 24, 24);
     }
 
-    /* Description: changes the x position to the right
-     * @param n/a
-     * @return n/a
+    /** Description: changes the x position to the right
      */
     public void rollRight() {
         x += velX;
     }
 
-    /* Description: changes the x position to the left
-     * @param n/a
-     * @return n/a
+    /** Description: changes the x position to the left
      */
     public void rollLeft() {
         x -= velX;
     }
 
-    /* Description: returns x position
-     * @param n/a
-     * @return n/a
+    /** Description: returns x position
      */
     public double getX() {
         return x;
     }
 
-    /* Description: returns y position
-     * @param n/a
-     * @return n/a
+    /** Description: returns y position
      */
     public double getY() {
         return y;
     }
 
-    /* Description: gets floor level of barrel
-     * @param n/a
-     * @return int floorLevel
+    /** Description: gets floor level of barrel
      */
     public int getFloorLevel() {
         return floorLevel;
     }
 
-    /* Description: sets floor level of barrel
-     * @param int f - which floorLevel to set at
-     * @return n/a
+    /** Description: sets floor level of barrel
+     * @param floorLevel - which floorLevel to set at
      */
     public void setFloorLevel(int floorLevel) {
         this.floorLevel = floorLevel;
     }
 
-    /* Description: returns y velocity
-     * @param n/a
-     * @return n/a
+    /** Description: returns y velocity
+     * @return velY
      */
     public double getVelY() {
         return velY;
     }
 
-    /* Description: returns radius of barrels
-     * @param n/a
+    /** Description: returns radius of barrels
      * @return double radius
      */
     public static double getRadius() {
         return radius;
     }
 
-    /* Updates barrel's y position
-     * @param n/a
-     * @return n/a
+    /** Updates barrel's y position
      */
     public void updateY() {
         y += velY;
     }
 
-    /* make the barrel fall by lowering y velocity
-     * @param n/a
-     * @return n/a
+    /** make the barrel fall by lowering y velocity
      */
     public void fall() { velY -= fallVel; }
 
-    /* Stop the barrel from falling and put it at its floor level
-     * @param n/a
-     * @return n/a
+    /** Stop the barrel from falling and put it at its floor level
      */
     public void stop() {
         double closest = CollisionDetector.getCLosestFloorY(y);
         y = closest + radius + Floor.getHeight();
         velY = 0.0;
-    }
-
-    /* checks if barrel is connected to any of the floors
-     * @param array of floors
-     * @return boolean true or false
-     */
-    public boolean floorCollision(Floor[] f) {
-        boolean floorCollide = false;
-
-        for (int i = 0; i < f.length; i++) {
-            if (f[i].collision(this)) {
-                floorCollide = true;
-            }
-        }
-        return floorCollide;
     }
 
     //TESTING
