@@ -26,32 +26,29 @@ public class Mario {
     private static final double halfHeight = 0.025;
     private static final double halfWidth = 0.01;
     private boolean isAlive = true;
-    private double floorLevel;
-
     int direction = 0;
 
     //direction tracker for animation
-    int rightDir = 0;
-    int leftDir = 0;
     int movingDir = 0;
 
     //jumping variable
     boolean jumping = false;
 
     //false if not climbing, true if climbing
-    //int climb to keep track of which climbing frame
     boolean climbing = false;
+    //int climb to keep track of which climbing frame
     int climb = 0;
 
-    /** Constructor: sets Source.Mario's x and y location
-     */
+    /* Constructor: sets Source.Mario's x and y location */
     public Mario(double x, double y) {
         this.x = x;
         this.y = y;
         direction = 0;
     }
 
-    //Revisa los Inputs y colisiones, y actualiza la posicion de mario
+    /**
+     * Descripcion: Revisa los Inputs y colisiones, y actualiza la posicion de mario
+     */
     void Run(){
         checkPosition();
 
@@ -173,6 +170,9 @@ public class Mario {
         return isAlive;
     }
 
+    /**
+     * Descriptios: Setea isAlive en falso
+     */
     public void Kill(){
         isAlive = false;
     }
@@ -213,34 +213,6 @@ public class Mario {
         }
     }
 
-    /** Description: dibuja a mario en una de las imagenes mirando a la izquierda
-     * @param dir - en que frame de la animacion esta mario
-     * @deprecated
-     */
-    public void drawLeft(int dir) {
-        if (dir % 3 == 0) {
-            PennDraw.picture(x, y + 0.01, "marioStand.png", 35, 35);
-        } else if (dir % 3 == 1) {
-            PennDraw.picture(x, y + 0.01, "marioRun1.png", 35, 35);
-        } else if (dir % 3 == 2) {
-            PennDraw.picture(x, y + 0.01, "marioRun2.png", 35, 35);
-        }
-    }
-
-    /** Description: dibuja a mario en una de las imagenes mirando a la derecha
-     * @param dir - en que frame de la animacion esta mario
-     * @deprecated
-     */
-    public void drawRight(int dir) {
-        if (dir % 3 == 0) {
-            PennDraw.picture(x, y + 0.01, "marioStand.png", -35, 35);
-        } else if (dir % 3 == 1) {
-            PennDraw.picture(x, y + 0.01, "marioRun1.png", -35, 35);
-        } else if (dir % 3 == 2) {
-            PennDraw.picture(x, y + 0.01, "marioRun2.png", -35, 35);
-        }
-    }
-
     /** Description: dibuja a mario quieto
      * @param facing - direccion: true izquierda, false derecha
      */
@@ -275,7 +247,6 @@ public class Mario {
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @param n/a
      * @return n/a
      */
     public void updateY() {
@@ -283,7 +254,6 @@ public class Mario {
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @param n/a
      * @return n/a
      */
     public void jump() {
@@ -291,7 +261,6 @@ public class Mario {
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @param n/a
      * @return n/a
      */
     public void fall() {
@@ -306,79 +275,14 @@ public class Mario {
         velY = 0.0;
     }
 
-    /** Description: checks if marios bottom is connected to any of the floors
-     * by calling the floor collision detection
-     * @return boolean true or false
-     * @deprecated
-     */
-    public boolean floorCollision(Floor[] f) {
-        boolean floorCollide = false;
-
-        for (int i = 0; i < f.length; i++) {
-            if (f[i].collision(this)) {
-                floorCollide = true;
-            }
-        }
-        return floorCollide;
-    }
-
-    /** Descritption: checks if marios x location is within a ladder
-     * input: ladder
-     * output: boolean true or false
-     * @deprecated
-     */
-    public boolean ladderCollision(Ladder[] l) {
-        for (int i = 0; i < l.length; i++) {
-            if(l[i].getX() - 0.015 < x && x < l[i].getX() + 0.015) {
-                if (l[i].getY() - 0.075 < y && y < l[i].getY() + 0.1) {
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
-
-    /* Description: Moves mario up
-     */
+    /* Description: Moves mario up */
     public void moveUp() {
         y += 0.015;
     }
 
-    /* Description: Moves mario down
-     */
+    /* Description: Moves mario down */
     public void moveDown() {
         y -= 0.015;
-    }
-
-    /** Description: function to check if mario is equivalent to peach's
-     * @deprecated
-     */
-    public boolean hasWon(Peach peach) {
-        if (peach.getX() < x + 0.01 && x - 0.01 < peach.getX()) {
-            if (peach.getY() < y + 0.015 && y - 0.015 < peach.getY()) {
-                return true;
-            }
-        }
-        return false;
-    }
-
-    /* Description: Checks if mario has collided with any of the barrels and if
-     * he has set isAlive to false
-     * @param Source.LinkedList<Source.Barrel> b
-     * @return n/a
-     */
-    public void barrelCollision(LinkedList<Barrel> b) {
-        int counter = 0;
-
-        while (counter < b.size()) {
-            if (b.get(counter).getX() < x + 0.02 &&
-                    x - 0.02 < b.get(counter).getX()) {
-                if (b.get(counter).getY() < y + 0.03 &&
-                        y - 0.03 < b.get(counter).getY())
-                    isAlive = false;
-            }
-            counter++;
-        }
     }
 
     /** Description: Revisa si Mario está en una posicion válida, no le permite escaparse por los laterales
@@ -396,7 +300,7 @@ public class Mario {
         }
     }
 
-    //TESTING REVISAR SI HAY ALGO UTIL
+    //TESTING: Ya no sirve por cambios en las funciones usadas.
     public static void main(String[] args) {
         Floor[] floor = new Floor[2];
         floor[0] = new Floor(0.6, 0.25);
@@ -424,8 +328,8 @@ public class Mario {
                     mario.moveRight();
                 }
                 if (dir == 'w') {
-                    if (mario.floorCollision(floor))
-                        mario.jump();
+                    //if (mario.floorCollision(floor))
+                        //mario.jump();
                 }
             }
 
