@@ -24,74 +24,46 @@ public class Floor {
     private static double halfWidth = 0.4;
     private static double halfHeight = 0.01;
 
-    /* Constructor: Source.Floor with x and y
-     * @param n/a
-     * @return n/a
+    /** Constructor: Floor with x and y positions
      */
     public Floor(double x, double y) {
         this.x = x;
         this.y = y;
     }
 
-    /* Descritpion: get x
-     * @param n/a
+    /** Descritpion: get x position
      * @return double x
      */
     public double getX() {
         return x;
     }
 
-    /* Descritpion: get y
-     * @param n/a
+    /** Descritpion: get y position
      * @return double y
      */
     public double getY() {
         return y;
     }
 
-    /* Descritpion: get width
-     * @param n/a
+    /** Descritpion: get width
      * @return double halfWidth
      */
     public static double getWidth() {
         return halfWidth;
     }
 
-    /* Descritpion: get height
-     * @param n/a
+    /** Descritpion: get height
      * @return double halfHeight
      */
     public static double getHeight() {
         return halfHeight;
     }
 
-    /* Descritpion: draw the floor at x, y
-     * @param n/a
-     * @return n/a
+    /** Descritpion: draw the floor at x, y
      */
     public void draw() {
         PennDraw.picture(x, y, "floor.png", 2 * halfWidth * 512,
                 2 * halfHeight * 512);
-    }
-
-    /* Descritpion: checks if the floor has collided with mario
-     * @param n/a
-     * @return boolean
-     */
-    public boolean collision(Mario mario) {
-        return (mario.getY() - Mario.getHalfHeight() <= y + halfHeight &&
-                mario.getY() >= y && mario.getX() <= x + halfWidth &&
-                mario.getX() >= x - halfWidth);
-    }
-
-    /* Descritpion: checks if the floor has collided with barrel
-     * @param n/a
-     * @return boolean
-     */
-    public boolean collision(Barrel barrel) {
-        return (barrel.getY() - Barrel.getRadius() <= y + halfHeight &&
-                barrel.getY() >= y && barrel.getX() <= x + halfWidth &&
-                barrel.getX() >= x - halfWidth);
     }
 
     //TESTING CODE
