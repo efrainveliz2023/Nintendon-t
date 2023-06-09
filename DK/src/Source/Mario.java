@@ -299,7 +299,7 @@ public class Mario {
             isAlive = false;
         }
     }
-
+/*
     //TESTING: Ya no sirve por cambios en las funciones usadas.
     public static void main(String[] args) {
         Floor[] floor = new Floor[2];
@@ -351,4 +351,5 @@ public class Mario {
             PennDraw.advance();
         }
     }
+    */
 }
