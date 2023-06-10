@@ -53,10 +53,13 @@ public class Main {
             PennDraw.text(0.5, 0.4, "Press 'y' to play again or 'n' to not");
 
             char d = 0;
-            while (d != 'y' && d != 'n') {
+            while (d != 'y') {
                 if (PennDraw.hasNextKeyTyped())
                     d = PennDraw.nextKeyTyped();
-                if (d == 'n') return;
+                if (d == 'n') {
+                    playAgain = false;
+                    break;
+                }
             }
         } //close loop for play again
     }
