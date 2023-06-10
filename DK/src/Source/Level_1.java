@@ -38,9 +38,10 @@ public class Level_1 extends Levels{
         //ladders**********************************************************
 
         //set mario/peach/donkeykong to their starting points
-        //Probablemente tenga que agregarlos al colision detector
-        mario = new Mario(0.5, floors[5].getY()
-                + Floor.getHeight() + 0.025);
+        //TODO: El valor del character en Mario tiene que cambiar segun el selector de personajes.
+        mario = MarioFactory.CreateMario(MarioFactory.Characters.Mario, 0.5,
+                floors[5].getY() + Floor.getHeight() + 0.025);
+
         peach = new Peach(0.70, floors[0].getY()
                 + Floor.getHeight() + 0.035);
         donkey = new DonkeyKong(0.15, floors[0].getY()
