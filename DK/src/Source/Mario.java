@@ -17,12 +17,17 @@ import Resources.StdAudio;
  *
  ******************************************************************************/
 public class Mario {
+
+    //Variables seteadas al instanciar
     private double x;
     private double y;
-    private double velX = 0.02;
+    private double velX;
     private double velY = 0;
-    private double jumpVel = 0.012;
-    private double accelG = 0.01;
+    private final double jumpVel;
+    private final String idleSprite;
+    private final String[] movingSprites;
+
+
     private static final double halfHeight = 0.025;
     private static final double halfWidth = 0.01;
     private boolean isAlive = true;
@@ -43,6 +48,21 @@ public class Mario {
     public Mario(double x, double y) {
         this.x = x;
         this.y = y;
+        velX = 0.02;
+        jumpVel = 0.012;
+        idleSprite = "marioStand.png";
+        movingSprites = new String[]{ "marioStand.png", "marioRun1.png", "marioRun2.png" };
+        direction = 0;
+    }
+
+    public Mario(double x, double y, double velX, double jumpVel, String idleSprite, String[] movingSprites){
+        this.x = x;
+        this.y = y;
+        this.velX = velX;
+        this.jumpVel = jumpVel;
+        this.idleSprite = idleSprite;
+        this.movingSprites = movingSprites;
+        //TODO: Add other sprites and special power
         direction = 0;
     }
 
@@ -59,7 +79,7 @@ public class Mario {
             drawClimbing(climb);
         } else {
             boolean facing = (direction == 1);
-            if(!(floors)){
+            if(!floors){
                 drawJump(true);
             } else if(movingDir == 0){
                 draw(facing);
@@ -88,7 +108,6 @@ public class Mario {
                 }
             } else {
                 movingDir = 0;
-                direction = 0;
             }
             if (dir == 'w') {
                 //if mario is in ladder, move up ladder
@@ -113,8 +132,11 @@ public class Mario {
                     moveDown();
                 }
             } else if (dir == 'f') {
-                //Activa el poder del personaje en cuestion
+                //TODO: Activa el poder del personaje en cuestion
             }
+        }
+        else {
+            movingDir = 0;
         }
         //update mario's y position for jumping
         updateY();
@@ -203,14 +225,16 @@ public class Mario {
     public void drawMoving(int dir, boolean facing){
         int direction = -1;
         if(facing) direction = 1;
-
+/*
         if (dir % 3 == 0) {
-            PennDraw.picture(x, y + 0.01, "marioStand.png", 35 * direction, 35);
+            PennDraw.picture(x, y + 0.01, idleSprite, 35 * direction, 35);
         } else if (dir % 3 == 1) {
             PennDraw.picture(x, y + 0.01, "marioRun1.png", 35 * direction, 35);
         } else if (dir % 3 == 2) {
             PennDraw.picture(x, y + 0.01, "marioRun2.png", 35 * direction, 35);
-        }
+        }*/
+
+        PennDraw.picture(x, y + 0.01, movingSprites[dir % movingSprites.length], 35 * direction, 35);
     }
 
     /** Description: dibuja a mario quieto
@@ -218,9 +242,9 @@ public class Mario {
      */
     public void draw(boolean facing) {
         if (facing) {
-            PennDraw.picture(x, y, "marioStand.png", -35, 35);
+            PennDraw.picture(x, y, idleSprite, 35, 35);
         } else {
-            PennDraw.picture(x, y, "marioStand.png", 35, 35);
+            PennDraw.picture(x, y, idleSprite, -35, 35);
         }
     }
 
@@ -247,21 +271,18 @@ public class Mario {
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @return n/a
      */
     public void updateY() {
         y += velY;
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @return n/a
      */
     public void jump() {
         velY = jumpVel;
     }
 
     /** Description: updates marios y vel for jumping feature
-     * @return n/a
      */
     public void fall() {
         velY -= 0.001;
