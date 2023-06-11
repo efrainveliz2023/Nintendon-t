@@ -26,6 +26,7 @@ public class Mario {
     private final double jumpVel;
     private final String idleSprite;
     private final String[] movingSprites;
+    private final String climbingSprite;
 
 
     private static final double halfHeight = 0.025;
@@ -52,16 +53,18 @@ public class Mario {
         jumpVel = 0.012;
         idleSprite = "marioStand.png";
         movingSprites = new String[]{ "marioStand.png", "marioRun1.png", "marioRun2.png" };
+        climbingSprite = "climbingMario.png";
         direction = 0;
     }
 
-    public Mario(double x, double y, double velX, double jumpVel, String idleSprite, String[] movingSprites){
+    public Mario(double x, double y, double velX, double jumpVel, String idleSprite, String[] movingSprites, String climbingSprite){
         this.x = x;
         this.y = y;
         this.velX = velX;
         this.jumpVel = jumpVel;
         this.idleSprite = idleSprite;
         this.movingSprites = movingSprites;
+        this.climbingSprite = climbingSprite;
         //TODO: Add other sprites and special power
         direction = 0;
     }
@@ -72,7 +75,7 @@ public class Mario {
     void Run(){
         checkPosition();
 
-        boolean ladders = CollisionDetector.checkLaddersCollision(x, y);
+        boolean ladders = CollisionDetector.checkLaddersCollision(x, y, halfWidth);
         boolean floors = CollisionDetector.checkFloorsCollision(x, y, halfHeight);
 
         if (ladders && climbing) {
@@ -253,9 +256,9 @@ public class Mario {
      */
     public void drawClimbing(int dir) {
         if (dir % 2 == 0) {
-            PennDraw.picture(x, y, "climbingMario.png", 35, 35);
+            PennDraw.picture(x, y, climbingSprite, 35, 35);
         } else if (dir % 2 == 1) {
-            PennDraw.picture(x, y, "climbingMario.png", -35, 35);
+            PennDraw.picture(x, y, climbingSprite, -35, 35);
         }
     }
 
