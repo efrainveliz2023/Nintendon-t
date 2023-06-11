@@ -27,7 +27,7 @@ public class Mario {
     private final String idleSprite;
     private final String[] movingSprites;
     private final String climbingSprite;
-
+    private final String jumpingSprite;
 
     private static final double halfHeight = 0.025;
     private static final double halfWidth = 0.01;
@@ -54,10 +54,12 @@ public class Mario {
         idleSprite = "marioStand.png";
         movingSprites = new String[]{ "marioStand.png", "marioRun1.png", "marioRun2.png" };
         climbingSprite = "climbingMario.png";
+        jumpingSprite = "marioRun2.png";
         direction = 0;
     }
 
-    public Mario(double x, double y, double velX, double jumpVel, String idleSprite, String[] movingSprites, String climbingSprite){
+    public Mario(double x, double y, double velX, double jumpVel,
+                 String idleSprite, String[] movingSprites, String climbingSprite, String jumpingSprite){
         this.x = x;
         this.y = y;
         this.velX = velX;
@@ -65,6 +67,7 @@ public class Mario {
         this.idleSprite = idleSprite;
         this.movingSprites = movingSprites;
         this.climbingSprite = climbingSprite;
+        this.jumpingSprite = jumpingSprite;
         //TODO: Add other sprites and special power
         direction = 0;
     }
@@ -267,9 +270,9 @@ public class Mario {
      */
     public void drawJump(boolean facing) {
         if (facing) {
-            PennDraw.picture(x, y, "marioRun2.png", -35, 35);
+            PennDraw.picture(x, y, jumpingSprite, -35, 35);
         } else {
-            PennDraw.picture(x, y, "marioRun2.png", 35, 35);
+            PennDraw.picture(x, y, jumpingSprite, 35, 35);
         }
     }
 
