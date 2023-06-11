@@ -16,9 +16,9 @@ public class CollisionDetector {
     }
 
 
-    public static boolean checkLaddersCollision(double x, double y){
+    public static boolean checkLaddersCollision(double x, double y, double halfWidth){
         for (int i = 0; i < ladders.length; i++) {
-            if(ladders[i].getX() - Ladder.getHalfWidth() < x && x < ladders[i].getX() + Ladder.getHalfWidth()) {
+            if(ladders[i].getX() - Ladder.getHalfWidth() < x + halfWidth && x - halfWidth < ladders[i].getX() + Ladder.getHalfWidth()) {
                 if (ladders[i].getY() - Ladder.getHalfHeight() < y && y < ladders[i].getY() + Ladder.getHalfWidth()) {
                     return true;
                 }
