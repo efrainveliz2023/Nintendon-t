@@ -10,6 +10,7 @@ public class MarioFactory {
         double vel, jump;
         String idleSprite;
         String[] movingSprites;
+        String climbingSprite;
 
         switch (c){
             case Pikachu:
@@ -17,14 +18,16 @@ public class MarioFactory {
                 jump = 0.009;
                 idleSprite = "pikachuStand.png";
                 movingSprites = new String[]{"pikachu1.png", "pikachu2.png"};
+                climbingSprite = "climbingPikachu.png";
                 break;
             default:
                 vel = 0.02;
                 jump = 0.013;
                 idleSprite = "marioStand.png";
                 movingSprites = new String[]{ "marioStand.png", "marioRun1.png", "marioRun2.png" };
+                climbingSprite = "climbingMario.png";
                 break;
         }
-        return new Mario(x, y, vel, jump, idleSprite, movingSprites);
+        return new Mario(x, y, vel, jump, idleSprite, movingSprites, climbingSprite);
     }
 }
