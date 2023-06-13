@@ -39,9 +39,7 @@ public class Level_1 extends Levels{
 
         //set mario/peach/donkeykong to their starting points
         //TODO: El valor del character en Mario tiene que cambiar segun el selector de personajes.
-        mario = MarioFactory.CreateMario(MarioFactory.Characters.Mario, 0.5,
-                floors[5].getY() + Floor.getHeight() + 0.025);
-
+        mario = MarioFactory.CreateMario(0.5, floors[5].getY() + Floor.getHeight() + 0.025);
         peach = new Peach(0.70, floors[0].getY()
                 + Floor.getHeight() + 0.035);
         donkey = new DonkeyKong(0.15, floors[0].getY()
