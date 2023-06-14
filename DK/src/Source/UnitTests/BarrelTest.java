@@ -3,7 +3,7 @@ import Source.Floor;
 import Source.Barrel;
 import Source.Mario;
 import org.junit.Test;
-import static org.junit.Assert;
+import org.junit.Assert;
 
 
 public class BarrelTest {
@@ -11,7 +11,7 @@ public class BarrelTest {
 
 
     @Test
-    /*public static void runBarrelTests(){
+    public static void runBarrelTests(){
         Floor floor = new Floor(0.4, 0.6);
         Barrel barrel = new Barrel(0.2, 0.6 + Floor.getHeight() +  0.025) ;
 
@@ -23,5 +23,5 @@ public class BarrelTest {
 
 
 
-    }*/
+    }
 }
