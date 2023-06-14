@@ -13,7 +13,7 @@ public class Main {
         int screenHeight = gd.getDisplayMode().getHeight();
         Resources.PennDraw.setCanvasSize(screenWidth, screenHeight);
         */
-
+        Thread tiempo = new Thread(Tiempo.getInstance());
         //DRAWING THE INSTRUCTIONS **************************************
         PennDraw.clear();
         PennDraw.setFontSize(15);
@@ -80,7 +80,7 @@ public class Main {
 
         //begin playing background music immediately
         StdAudio.loop("SFX/bacmusic.wav");
-
+        tiempo.start();
         boolean playAgain = true;
         Levels actualLevel;
         while (playAgain) {
@@ -94,7 +94,7 @@ public class Main {
             PennDraw.setPenColor(PennDraw.WHITE);
             PennDraw.setFontSize(25);
             PennDraw.text(0.5, 0.4, "Press 'y' to play again or 'n' to not");
-
+            Tiempo.getInstance().pausar();
             char d = 0;
             while (d != 'y') {
                 if (PennDraw.hasNextKeyTyped())
@@ -102,6 +102,10 @@ public class Main {
                 if (d == 'n') {
                     playAgain = false;
                     break;
+                }
+                if(d == 'y'){
+                    Tiempo.getInstance().reset();
+                    Tiempo.getInstance().pausar();
                 }
             }
         } //close loop for play again
