@@ -2,10 +2,13 @@ package Source;
 
 import Resources.PennDraw;
 
+import java.util.ArrayList;
+
 /**
  * con patron de diseño creacional Singleton.
  */
-public class Tiempo implements Runnable{
+public class Tiempo implements Runnable,Subject{
+    private ArrayList<Observer> observers;
     private static Tiempo instance;
     private int minutos;
     private int segundos;
@@ -14,6 +17,7 @@ public class Tiempo implements Runnable{
         minutos = 0;
         segundos = 0;
         pausa = false;
+        observers = new ArrayList<>();
     }
     public static Tiempo getInstance() {
         if (instance == null) {
@@ -29,6 +33,8 @@ public class Tiempo implements Runnable{
                 setSegundos(0);
                 setMinutos(getMinutos()+1);
             }
+            notifyObservers(getSegundosTotales());
+            //System.out.println("tiempo total: "+getSegundosTotales());
             try { Thread.sleep(1000); }catch (InterruptedException e){e.printStackTrace();}
             while(pausa){ try { Thread.sleep(1); }catch (InterruptedException e){e.printStackTrace();} }
         }
@@ -57,5 +63,22 @@ public class Tiempo implements Runnable{
         PennDraw.setPenColor(PennDraw.WHITE);
         PennDraw.setFontSize(15);
         PennDraw.text(0.1, 0.95, String.format("tiempo %d:%d",minutos,segundos));
+    }
+    //implementacion de metodos de la interface Subject
+    @Override
+    public void registrerObserver(Observer o) {
+        observers.add(o);
+    }
+
+    @Override
+    public void removeObserver(Observer o) {
+        observers.remove(o);
+    }
+
+    @Override
+    public void notifyObservers(int seg) {
+        for(Observer aux : observers){
+            aux.upDate(seg);
+        }
     }
 }
