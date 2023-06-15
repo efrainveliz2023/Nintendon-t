@@ -2,9 +2,13 @@ package Source;
 import Resources.PennDraw;
 import Resources.StdAudio;
 
-public class Level_1 extends Levels{
+public class Level_1 extends Levels implements Observer{
 
-
+    public Level_1() {
+        super();
+        dificulty = 10;
+        speedIncrease = 10;
+    }
 
     @Override
     void SpawnLayout() {
