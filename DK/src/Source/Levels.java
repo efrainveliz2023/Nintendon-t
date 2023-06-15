@@ -64,9 +64,6 @@ public abstract class Levels {
             //Control y animacion de Mario
             mario.Run();
 
-            //dibujamos el tiempo.
-            Tiempo.getInstance().draw();
-            
             //if timer gets to 180 (frames), add a new barrel
             //----------Hacer una funcion aparte para cambiar velocidad
             if (timer % velocity == 0) {
