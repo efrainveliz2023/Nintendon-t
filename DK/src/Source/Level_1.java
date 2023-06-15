@@ -6,7 +6,7 @@ public class Level_1 extends Levels implements Observer{
 
     public Level_1() {
         super();
-        dificulty = 10;
+        dificulty = 30;
         speedIncrease = 10;
     }
 
