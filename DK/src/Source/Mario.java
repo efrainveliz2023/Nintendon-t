@@ -21,6 +21,7 @@ public class Mario {
     //Variables seteadas al instanciar
     private double x;
     private boolean timerOn=false;
+    private static int Score=0;
     private static boolean powerUp=false;
     private static  char lastKeyPressed = 's';
     private double y;
@@ -62,6 +63,7 @@ public class Mario {
         climbingSprite = "climbingMario.png";
         jumpingSprite = "marioRun2.png";
         direction = 0;
+        Score=0;
     }
 
 
@@ -197,6 +199,15 @@ public class Mario {
     public boolean getPowerUp(){
 
        return powerUp;
+    }
+    public void addScore(int Score){
+          this.Score+=Score;
+    }
+    public int getScore2(){
+        return Score;
+    }
+    public void resetScore(){
+        Score=0;
     }
 
     /**

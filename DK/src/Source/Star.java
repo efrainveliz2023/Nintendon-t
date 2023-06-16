@@ -9,9 +9,9 @@ public class Star {
         if(noPowerUp)
         draw(x,y);
         if (CollisionDetector.checkStarCollision(x, y,0.025, 0.025)) {
-            mario.setTimerOn(true);
             PennDraw.picture(-1, -1, "estrella.png", 40, 40);
             mario.setPowerUp(true);
+            mario.setTimerOn(true);
             noPowerUp=false;
         }
 

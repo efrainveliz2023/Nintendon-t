@@ -65,7 +65,9 @@ public class CollisionDetector {
         for (int i=0; i< fireballs.size(); i++ ){
             if(fireballs.get(i).getY()==y){
                 if(x - halfWidth < fireballs.get(i).getX()  && fireballs.get(i).getX()  < x + halfWidth){
+                    mario.addScore(100);
                     return true;
+
                 }
             }
 
@@ -78,8 +80,10 @@ public class CollisionDetector {
     public static boolean checkStarCollision(double x, double y, double halfWidth, double halfHeight){
         if (x - halfWidth < mario.getX() + Mario.getHalfWidth() && mario.getX() - Mario.getHalfWidth() < x + halfWidth) {
             if (y - halfHeight < mario.getY() + Mario.getHalfHeight() && mario.getY()
-                    - Mario.getHalfWidth() < y + halfHeight)
+                    - Mario.getHalfWidth() < y + halfHeight){
                 return true;
+            }
+
         }
         return false;
     }

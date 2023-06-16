@@ -5,7 +5,7 @@ import java.util.Random;
 
 public abstract class Levels implements Observer {
     protected Floor[] floors;
-
+    private static Score juego;
 
     private int duracionTotal = 10;
     private long tiempoInicio = System.currentTimeMillis();
@@ -41,6 +41,7 @@ public abstract class Levels implements Observer {
         //Creamos el layout del nivel actual
         star=new Star();
         SpawnLayout();
+        juego=new Score();
     }
 
     //Se crean los pisos, escaleras, mario, peach, DK, etc. en sus posiciones iniciales
@@ -95,6 +96,9 @@ public abstract class Levels implements Observer {
             //Control y animacion de Mario
             mario.Run();
 
+            juego.Run(mario.getScore2());
+            PennDraw.text(0.5, 0.9,(String.valueOf(mario.getScore2())));
+
             //dibujamos el tiempo.
             Tiempo.getInstance().draw();
             
@@ -116,7 +120,7 @@ public abstract class Levels implements Observer {
             //Revisa las colisiones de los barriles y los actualiza
             int counter1 = 0;
             while (counter1 < barrels.size()) {
-                barrels.get(counter1).Run();
+                barrels.get(counter1).Run(fireballs);
                 counter1++;
             }
 
@@ -155,12 +159,14 @@ public abstract class Levels implements Observer {
             if(!generarStar){
                 star.Run(X,Y,mario);
             }
+//---------------------------------------------------------TIEMPO--------------------------------
             if (mario.getTimerOn()){
                 tiempoInicio = System.currentTimeMillis();
                 segundosTranscurridos = 0;
                 mario.setTimerOn(false);
                 //update(seconds)
             }
+
 
             if(mario.getPowerUp()){
                 while (segundosTranscurridos < duracionTotal) {
@@ -176,6 +182,7 @@ public abstract class Levels implements Observer {
                 }
 
             }
+
             if(segundosTranscurridos >= duracionTotal){
                 mario.setPowerUp(false);
                 generarStar=true;
@@ -183,7 +190,10 @@ public abstract class Levels implements Observer {
                 segundosTranscurridos = 0;
                 star.setNoPowerUp();
             }
-
+//----------------------------------------------------------------------------------------------------
+            if(fireballs.size()>10){
+                fireballs.remove(0);
+            }
 
             PennDraw.advance();
             hasWon = CollisionDetector.checkMarioCollision(peach.getX(), peach.getY(), 0.01, 0.015);
@@ -196,12 +206,16 @@ public abstract class Levels implements Observer {
             PennDraw.setPenColor(PennDraw.GREEN);
             PennDraw.setFontSize(100);
             PennDraw.text(0.5, 0.5, "YOU WON!");
+            mario.addScore(1000);
+            juego.registerScore("Player1",mario.getScore2());
+            mario.resetScore();
         }
         else if (!mario.isAlive()) {
             StdAudio.play("SFX/death.wav");
             PennDraw.setPenColor(PennDraw.RED);
             PennDraw.setFontSize(100);
             PennDraw.text(0.5, 0.5, "YOU LOST!");
+            mario.resetScore();
         }
     }
 

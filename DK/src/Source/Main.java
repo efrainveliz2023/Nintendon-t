@@ -8,6 +8,7 @@ import java.awt.*;
 public class Main {
     public static void main(String[] args) {
 
+
         /*
         //Set window size to screen max size.
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -17,18 +18,14 @@ public class Main {
         */
         Thread tiempo = new Thread(Tiempo.getInstance());
         //DRAWING THE INSTRUCTIONS **************************************
-        PennDraw.clear();
-       // PennDraw.picture(0.5, 0.5, "background.png", 520, 300);
-         PennDraw.setFontSize(15);
-        PennDraw.setPenColor(PennDraw.BLACK);
-        PennDraw.text(0.5, 0.8, "Instructions:");
-        PennDraw.text(0.5, 0.7, "use 'a' to move left, 'd' for right,");
-        PennDraw.text(0.5, 0.6, "'w' to jump, and 's' to move down.");
-        PennDraw.text(0.5, 0.5, "Climb the ladders to get to Princess Peach to win");
-        PennDraw.text(0.5, 0.4, "Avoid the barrels - you lose if one hits you");
-        PennDraw.text(0.5, 0.27, "Press 'f' to activate the special power up");
-        PennDraw.setFontBold();
-        PennDraw.text(0.5, 0.1, "Press 'y' to start the game");
+        PennDraw.clear(Color.BLACK);
+       PennDraw.picture(0.5, 0.5, "background.png", 520, 300);
+        Score game = new Score();
+
+
+        PennDraw.setPenColor(PennDraw.WHITE);
+
+        PennDraw.text(0.5, 0.9,(String.valueOf(game.getScore("Player1"))));
 
         //waits until user presses 'y' to begin the game
         char c = 0;
@@ -52,11 +49,15 @@ public class Main {
         boolean selected = false;
         while (!selected) {
 
-            PennDraw.clear();
-            PennDraw.text(0.5, 0.8, "Choose your character:");
-            PennDraw.text(0.5, 0.7, "Mario");
-            PennDraw.text(0.5, 0.6, "Pikachu");
-            PennDraw.text(0.35, 0.7 - 0.1 * selectPos, ">>");
+            PennDraw.clear(Color.black);
+
+            PennDraw.setPenColor(PennDraw.YELLOW);
+            PennDraw.picture(0.5, 0.9, "characte.png",200,70);
+            PennDraw.picture(0.42, 0.7, "marioname.png",100,50);
+            PennDraw.picture(0.62, 0.7, "marioRun1.png",50,50);
+            PennDraw.picture(0.42, 0.5, "PikaName.png",100,50);
+            PennDraw.picture(0.62, 0.5, "pikachu2.png",50,50);
+            PennDraw.picture(0.27, 0.7 - 0.2 * selectPos, "flecha.png",45,45,-33);
             PennDraw.text(0.5, 0.1, "Press 'y' to select");
             while(true){
                 if (PennDraw.hasNextKeyTyped()) {
@@ -114,3 +115,5 @@ public class Main {
         } //close loop for play again
     }
 }
+
+

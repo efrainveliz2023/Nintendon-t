@@ -8,7 +8,9 @@ public class Score {
 
 
 
-
+   public void Run(int actualScore){
+       registerScore("Player1",actualScore);
+   }
 
     public static void main(String[] args) {
         Score game = new Score();
