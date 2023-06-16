@@ -24,6 +24,8 @@ public class Barrel {
     private int floorLevel = 0;
     private int angle = 0;
 
+    private boolean isAlive = true;
+
     /* Constructor: Creates barrel with x,y coordinates.*/
     public Barrel(double x, double y) {
         this.x = x;
@@ -57,6 +59,25 @@ public class Barrel {
         if(CollisionDetector.checkMarioCollision(x, y, radius, radius)){
             CollisionDetector.KillMario();
         }
+
+        checkPosition();
+    }
+
+    public void checkPosition() {
+        if(x < 0.03 || x > 0.97 || y < -0.05){
+            isAlive = false;
+        }
+    }
+
+    /**
+     * Descripcion: Cambia la variable isALive a false
+     */
+    public void Kill(){
+        isAlive = false;
+    }
+
+    public boolean GetAlive(){
+        return isAlive;
     }
 
     /** Description: Draws a barrel at it's x and y location with a
