@@ -17,14 +17,14 @@ import Resources.PennDraw;
 public class Barrel {
     private double x;
     private double y;
+
+    private boolean killStatus=false;
     private double velX = 0.005;
     private double velY;
     private double fallVel = 0.001;
     private static final double radius = 0.025;
     private int floorLevel = 0;
     private int angle = 0;
-
-    private boolean isAlive = true;
 
     /* Constructor: Creates barrel with x,y coordinates.*/
     public Barrel(double x, double y) {
@@ -33,53 +33,47 @@ public class Barrel {
     }
 
     //Revisa coliciones y actualiza la posicion
-    public void Run(){
-        boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);
-        if (floors) {
-            if (getFloorLevel() % 2 == 0) {
-                rollRight();
-            } else {
-                rollLeft();
+    public void Run(LinkedList<Fireball> fireballs){
+        if(!killStatus) {
+            boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);
+            if (floors) {
+                if (getFloorLevel() % 2 == 0) {
+                    rollRight();
+                } else {
+                    rollLeft();
+                }
             }
-        }
 
-        floors = CollisionDetector.checkFloorsCollision(x, y, radius);
+            floors = CollisionDetector.checkFloorsCollision(x, y, radius);
 
-        if(!floors){
+            if (!floors) {
+                fall();
+            } else if (getVelY() < 0.0) {
+                int temp = getFloorLevel();
+                setFloorLevel(temp + 1);
+                stop();
+            }
+
+            updateY();
+            draw();
+
+            if (CollisionDetector.checkMarioCollision(x, y, radius, radius)) {
+                CollisionDetector.KillMario();
+            }
+
+            if (CollisionDetector.checkFireballCollision(x, y, fireballs, 0.025, 0.025)) {
+                killBarrell(this);
+            }
+        }if(killStatus){
+            fallVel=0.01;
             fall();
-        } else if (getVelY() < 0.0) {
-            int temp =  getFloorLevel();
-            setFloorLevel(temp + 1);
-            stop();
-        }
-
-        updateY();
-        draw();
-
-        if(CollisionDetector.checkMarioCollision(x, y, radius, radius)){
-            CollisionDetector.KillMario();
-        }
-
-        checkPosition();
-    }
-
-    public void checkPosition() {
-        if(x < 0.03 || x > 0.97 || y < -0.05){
-            isAlive = false;
+            updateY();
+            draw();
         }
     }
-
-    /**
-     * Descripcion: Cambia la variable isALive a false
-     */
-    public void Kill(){
-        isAlive = false;
-    }
-
-    public boolean GetAlive(){
-        return isAlive;
-    }
-
+ public void killBarrell(Barrel barrel){
+     killStatus=true;
+ }
     /** Description: Draws a barrel at it's x and y location with a
      * constantly changing angle.
      */

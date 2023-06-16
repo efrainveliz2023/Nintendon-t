@@ -2,6 +2,8 @@ package Source;
 
 import Resources.PennDraw;
 import Resources.StdAudio;
+import Source.UnitTests.AttackStrategy;
+import Source.UnitTests.KamehamehaAttackStrategy;
 
 /******************************************************************************
  *  Compilation:  javac Source.Mario.java
@@ -20,6 +22,9 @@ public class Mario {
 
     //Variables seteadas al instanciar
     private double x;
+    private boolean timerOn=false;
+    private static boolean powerUp=false;
+    private static  char lastKeyPressed = 's';
     private double y;
     private double velX;
     private double velY = 0;
@@ -28,6 +33,9 @@ public class Mario {
     private final String[] movingSprites;
     private final String climbingSprite;
     private final String jumpingSprite;
+    private AttackStrategy attackStrategy;
+
+    public boolean fireball;
 
     private static final double halfHeight = 0.025;
     private static final double halfWidth = 0.01;
@@ -58,6 +66,16 @@ public class Mario {
         direction = 0;
     }
 
+
+    public void setAttackStrategy(AttackStrategy attackStrategy) {
+        this.attackStrategy = attackStrategy;
+    }
+
+    public void performAttack() {
+        if (attackStrategy != null) {
+            attackStrategy.performAttack(this);
+        }
+    }
     public Mario(double x, double y, double velX, double jumpVel,
                  String idleSprite, String[] movingSprites, String climbingSprite, String jumpingSprite){
         this.x = x;
@@ -69,6 +87,7 @@ public class Mario {
         this.climbingSprite = climbingSprite;
         this.jumpingSprite = jumpingSprite;
         //TODO: Add other sprites and special power
+
         direction = 0;
     }
 
@@ -103,6 +122,7 @@ public class Mario {
                     movingDir++;
                     climbing = false;
                     direction = 1;
+                    lastKeyPressed='i';
                 }
             } else if (dir == 'd') {
                 //if mario is not in the ladder and on the floor
@@ -111,6 +131,7 @@ public class Mario {
                     movingDir++;
                     climbing = false;
                     direction = 2;
+                    lastKeyPressed='d';
                 }
             } else {
                 movingDir = 0;
@@ -138,7 +159,10 @@ public class Mario {
                     moveDown();
                 }
             } else if (dir == 'f') {
-                //TODO: Activa el poder del personaje en cuestion
+                if(powerUp) {
+                    attackStrategy = new KamehamehaAttackStrategy();
+                    attackStrategy.performAttack(this);
+                }
             }
         }
         else {
@@ -161,6 +185,20 @@ public class Mario {
      */
     public double getX() {
         return x;
+    }
+  public boolean getTimerOn(){
+        return timerOn;
+  }
+    public void setTimerOn(boolean bool){
+        timerOn=bool;
+    }
+    public void setPowerUp(boolean powerUp){
+
+        Mario.powerUp =powerUp;
+    }
+    public boolean getPowerUp(){
+
+       return powerUp;
     }
 
     /**
@@ -325,6 +363,14 @@ public class Mario {
         if (y < -0.05) {
             isAlive = false;
         }
+    }
+    public void setTrueFireball(){
+
+        fireball=true;
+
+    }
+    public char getLastKeyPressed(){
+        return lastKeyPressed;
     }
 /*
     //TESTING: Ya no sirve por cambios en las funciones usadas.
