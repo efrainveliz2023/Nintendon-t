@@ -1,27 +1,45 @@
 package Source;
 import Resources.PennDraw;
 import Resources.StdAudio;
+import java.util.Random;
 
 public abstract class Levels implements Observer {
     protected Floor[] floors;
+
+
+    private int duracionTotal = 10;
+    private long tiempoInicio = System.currentTimeMillis();
+    private int segundosTranscurridos;
+    private boolean generarStar=true;
+    private static Star star;
+    private double X;
+    private double Y;
+
     protected Ladder[] ladders;
     protected Mario mario;
     protected Peach peach;
     protected DonkeyKong donkey;
     LinkedList<Barrel> barrels;
+    LinkedList<Fireball>  fireballs;
+    boolean fireballPlay=false;
+    Fireball frball;
     boolean hasWon = false;
+    boolean fireball=false;
     int velocity = 180;
+    private boolean starInMap=false;
     protected int dificulty = 1;
     protected int speedIncrease = 0;
 
     public Levels() {
         //Inicializa la lista de barriles
          barrels = new LinkedList<Barrel>();
+        fireballs=new LinkedList<Fireball>();
         //Inicializamos la música
         StdAudio.loop("SFX/bacmusic.wav");
         //Suscribimos al timer
         Tiempo.getInstance().registrerObserver(this);
         //Creamos el layout del nivel actual
+        star=new Star();
         SpawnLayout();
     }
 
@@ -102,10 +120,70 @@ public abstract class Levels implements Observer {
                 counter1++;
             }
 
+            if(mario.fireball==true){
+                fireballPlay=true;
+                frball = new Fireball(mario.getX(), mario.getY(), mario.getLastKeyPressed());
+                fireballs.add(frball);
+                mario.fireball=false;
+            }
+
+            if(fireballPlay) {
+
+                for (int i=0; i < fireballs.size();i++){
+                    fireballs.get(i).Run(mario);
+
+                }
+            }
+
             timer++;
             if (timer >= velocity) {
                 timer = 0;
             }
+
+            // Generar un número aleatorio
+
+
+            if(generarStar){
+                Random random= new Random();
+                if (random.nextDouble() <= 0.1){
+                    if(!starInMap){
+                        setXY();
+                        generarStar = false;
+                    }
+                }}
+
+            if(!generarStar){
+                star.Run(X,Y,mario);
+            }
+            if (mario.getTimerOn()){
+                tiempoInicio = System.currentTimeMillis();
+                segundosTranscurridos = 0;
+                mario.setTimerOn(false);
+                //update(seconds)
+            }
+
+            if(mario.getPowerUp()){
+                while (segundosTranscurridos < duracionTotal) {
+                    long tiempoActual = System.currentTimeMillis();
+                    long tiempoTranscurrido = tiempoActual - tiempoInicio;
+                    segundosTranscurridos = (int) (tiempoTranscurrido / 1000); // Convertir milisegundos a segundos
+
+                    System.out.println("Segundos transcurridos: " + segundosTranscurridos);
+
+                    if (tiempoTranscurrido < (segundosTranscurridos + 1) * 1000) {
+                        break;
+                    }
+                }
+
+            }
+            if(segundosTranscurridos >= duracionTotal){
+                mario.setPowerUp(false);
+                generarStar=true;
+                starInMap=false;
+                segundosTranscurridos = 0;
+                star.setNoPowerUp();
+            }
+
 
             PennDraw.advance();
             hasWon = CollisionDetector.checkMarioCollision(peach.getX(), peach.getY(), 0.01, 0.015);
@@ -125,5 +203,11 @@ public abstract class Levels implements Observer {
             PennDraw.setFontSize(100);
             PennDraw.text(0.5, 0.5, "YOU LOST!");
         }
+    }
+
+    public void setXY(){
+        Random random = new Random();
+        X=random.nextDouble()*0.6+0.2;
+        Y=random.nextDouble()*0.8+0.1;
     }
 }
