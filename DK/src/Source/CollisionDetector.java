@@ -55,42 +55,12 @@ public class CollisionDetector {
 
     public static boolean checkMarioCollision(double x, double y, double halfWidth, double halfHeight){
         if (x - halfWidth < mario.getX() + Mario.getHalfWidth() && mario.getX() - Mario.getHalfWidth() < x + halfWidth) {
-            if (y - halfHeight < mario.getY() + Mario.getHalfHeight() && mario.getY()
-                    - Mario.getHalfWidth() < y + halfHeight)
-                return true;
-        }
-        return false;
-    }
-    public static boolean checkFireballCollision(double x,double y , LinkedList<Fireball> fireballs, double halfWidth, double halfHeight){
-        for (int i=0; i< fireballs.size(); i++ ){
-            if(fireballs.get(i).getY()==y){
-                if(x - halfWidth < fireballs.get(i).getX()  && fireballs.get(i).getX()  < x + halfWidth){
-                    return true;
-                }
-            }
-
-
-        }
-        return false;
-    }
-
-
-    public static boolean checkStarCollision(double x, double y, double halfWidth, double halfHeight){
-        if (x - halfWidth < mario.getX() + Mario.getHalfWidth() && mario.getX() - Mario.getHalfWidth() < x + halfWidth) {
-            if (y - halfHeight < mario.getY() + Mario.getHalfHeight() && mario.getY()
-                    - Mario.getHalfWidth() < y + halfHeight)
-                return true;
-        }
-        return false;
-    }
-   /* public static checkBarrelFireballCollision(){
-
-        if (x - halfWidth < mario.getX() + Mario.getHalfWidth() && mario.getX() - Mario.getHalfWidth() < x + halfWidth) {
             if (y - halfHeight < mario.getY() + Mario.getHalfHeight() && mario.getY() - Mario.getHalfWidth() < y + halfHeight)
                 return true;
         }
+        return false;
+    }
 
-    }*/
     public static void KillMario(){
         mario.Kill();
     }
