@@ -85,9 +85,13 @@ public abstract class Levels implements Observer {
             if (timer % velocity == 0) {
                 barrels.add(new Barrel(0.2, floors[0].getY()
                         + Floor.getHeight() + 0.025));
-            } else if (barrels.size() > 15) {
-                //No se si esto es necesario,
-                barrels.remove(0);
+            }
+
+            for(int i = 0; i < barrels.size(); i++){
+                if(!barrels.get(i).GetAlive()){
+                    barrels.remove(i);
+                    i--;
+                }
             }
 
 
