@@ -31,8 +31,8 @@ public abstract class Levels implements Observer {
     public void upDate(int segundos){
         if((segundos % dificulty == 0) && segundos != 0){
             velocity -= speedIncrease;
-            if(velocity < 35){
-                velocity = 35;
+            if(velocity < 45){
+                velocity = 45;
             }
         }
     }
@@ -85,10 +85,11 @@ public abstract class Levels implements Observer {
             if (timer % velocity == 0) {
                 barrels.add(new Barrel(0.2, floors[0].getY()
                         + Floor.getHeight() + 0.025));
-            } else if (barrels.size() > 5) {
+            } else if (barrels.size() > 15) {
                 //No se si esto es necesario,
                 barrels.remove(0);
             }
+
 
             //Revisa las colisiones de los barriles y los actualiza
             int counter1 = 0;
