@@ -3,32 +3,17 @@ package Source;
 public class MarioFactory {
 
     public enum Characters{
-        Mario, Pikachu;
-        public static Characters fromInteger(int x){
-            switch(x){
-                case 0:
-                    return Mario;
-                case 1:
-                    return Pikachu;
-            }
-            return null;
-        }
+        Mario, Pikachu
     }
 
-    static Characters playerOne = Characters.Mario;
-
-    static void SetCharacterOne(int character){
-        playerOne = Characters.fromInteger(character);
-    }
-
-    public static Mario CreateMario(double x, double y){
+    public static Mario CreateMario(Characters c, double x, double y){
         double vel, jump;
         String idleSprite;
         String[] movingSprites;
         String climbingSprite;
         String jumpingSprite;
 
-        switch (playerOne){
+        switch (c){
             case Pikachu:
                 vel = 0.04;
                 jump = 0.009;
