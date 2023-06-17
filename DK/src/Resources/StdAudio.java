@@ -355,25 +355,25 @@ public final class StdAudio {
      * @param filename the name of the audio file
      * @throws IllegalArgumentException if {@code filename} is {@code null}
      */
+    private static boolean activate=false;
     public static synchronized void loop(String filename) {
-        if (filename == null) throw new IllegalArgumentException();
+        if(!activate) {
+            if (filename == null) throw new IllegalArgumentException();
 
-        // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
-        try {
-            Clip clip = AudioSystem.getClip();
-            InputStream is = StdAudio.class.getResourceAsStream(filename);
-            AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-            clip.open(ais);
-            clip.loop(Clip.LOOP_CONTINUOUSLY);
-        }
-        catch (UnsupportedAudioFileException e) {
-            throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
-        }
-        catch (LineUnavailableException e) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", e);
-        }
-        catch (IOException e) {
-            throw new IllegalArgumentException("could not play '" + filename + "'", e);
+            // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
+            try {
+                Clip clip = AudioSystem.getClip();
+                InputStream is = StdAudio.class.getResourceAsStream(filename);
+                AudioInputStream ais = AudioSystem.getAudioInputStream(is);
+                clip.open(ais);
+                clip.loop(Clip.LOOP_CONTINUOUSLY);
+            } catch (UnsupportedAudioFileException e) {
+                throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
+            } catch (LineUnavailableException e) {
+                throw new IllegalArgumentException("could not play '" + filename + "'", e);
+            } catch (IOException e) {
+                throw new IllegalArgumentException("could not play '" + filename + "'", e);
+            }
         }
     }
 

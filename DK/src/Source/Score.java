@@ -9,28 +9,28 @@ public class Score {
 
 
    public void Run(int actualScore){
-       registerScore("Player1",actualScore);
+       registerScore("Player1",actualScore,0);
    }
 
-    public static void main(String[] args) {
-        Score game = new Score();
-        game.registerScore("Player1", 1000);
-        int score = game.getScore("Player1");
-        System.out.println("Player1 score: " + score);
 
-        // Unit test
-        String playerName = "Player1";
-        int levelScore = 300;
-        game.registerScore(playerName, levelScore);
-    }
 
-    public void registerScore(String player, int score) {
+    public void registerScore(String player, int score,int tiempo) {
         Properties properties = loadProperties();
         int highestScore = getScore(player);
-        if (score > highestScore) {
+        int lowestTime = getTime();
+        if (score >highestScore) {
+            properties.setProperty("Time", String.valueOf(tiempo));
             properties.setProperty(player, String.valueOf(score));
             saveProperties(properties);
+
         }
+        if(score==highestScore){
+            if (tiempo < lowestTime) {
+                properties.setProperty("Time", String.valueOf(tiempo));
+                saveProperties(properties);
+            }
+        }
+
     }
 
     public int getScore(String player) {
@@ -38,6 +38,14 @@ public class Score {
         String score = properties.getProperty(player);
         if (score != null) {
             return Integer.parseInt(score);
+        }
+        return 0;
+    }
+    public int getTime() {
+        Properties properties = loadProperties();
+        String time = properties.getProperty("Time");
+        if (time != null) {
+            return Integer.parseInt(time);
         }
         return 0;
     }
