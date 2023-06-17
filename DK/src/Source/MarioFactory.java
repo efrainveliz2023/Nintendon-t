@@ -28,7 +28,6 @@ public class MarioFactory {
         String climbingSprite;
         String jumpingSprite;
         AttackStrategy powerUp;
-        powerUp = new FireballStrategy();
 
         switch (playerOne){
             case Pikachu:
@@ -38,6 +37,7 @@ public class MarioFactory {
                 movingSprites = new String[]{"pikachu1.png", "pikachu2.png"};
                 climbingSprite = "climbingPikachu.png";
                 jumpingSprite = "pikachuJump.png";
+                powerUp = new IpactruenoStrategy();
                 break;
             default:
                 vel = 0.02;
@@ -46,6 +46,7 @@ public class MarioFactory {
                 movingSprites = new String[]{ "marioStand.png", "marioRun1.png", "marioRun2.png" };
                 climbingSprite = "climbingMario.png";
                 jumpingSprite = "marioRun2.png";
+                powerUp = new FireballStrategy();
                 break;
         }
         return new Mario(x, y, vel, jump, idleSprite, movingSprites, climbingSprite, jumpingSprite, powerUp);

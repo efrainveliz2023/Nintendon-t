@@ -27,7 +27,7 @@ public class Fireball {
             rollRight();
          }
 
-         CollisionDetector.checkBarrelCollision(x, y, 0.02f, 0.02f);
+         CollisionDetector.checkBarrelCollisionAndKill(x, y, 0.02f, 0.02f);
 
          checkPosition();
 

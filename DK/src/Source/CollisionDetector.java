@@ -81,11 +81,12 @@ public class CollisionDetector {
         return false;
     }
 
-    public static void checkBarrelCollision(double x, double y, double halfWidth, double halfHeigth){
+    public static void checkBarrelCollisionAndKill(double x, double y, double halfWidth, double halfHeigth){
         for (int i = 0; i < barrels.size(); i++) {
             if(x + halfWidth > barrels.get(i).getX() - Barrel.getRadius() && x - halfWidth < barrels.get(i).getX() + Barrel.getRadius()){
                 if(y + halfHeigth > barrels.get(i).getY() - Barrel.getRadius() && y - halfHeigth < barrels.get(i).getY() + Barrel.getRadius()){
                     barrels.get(i).Kill();
+                    mario.addScore(100);
                 }
             }
         }

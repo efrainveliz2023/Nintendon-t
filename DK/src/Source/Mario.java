@@ -88,6 +88,10 @@ public class Mario {
      * Descripcion: Revisa los Inputs y colisiones, y actualiza la posicion de mario
      */
     void Run(){
+        if(attackStrategy != null){
+            attackStrategy.Run();
+        }
+
         checkPosition();
 
         boolean ladders = CollisionDetector.checkLaddersCollision(x, y, halfWidth);
@@ -160,9 +164,6 @@ public class Mario {
         else {
             movingDir = 0;
         }
-        if(attackStrategy != null){
-            attackStrategy.Run();
-        }
         //update mario's y position for jumping
         updateY();
 
@@ -189,11 +190,6 @@ public class Mario {
             attackStrategy.Clear();
             attackStrategy = null;
         }
-    }
-
-    public boolean getPowerUp(){
-
-       return powerUp;
     }
     public void addScore(int Score){
           this.Score+=Score;

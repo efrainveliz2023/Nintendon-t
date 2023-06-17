@@ -70,6 +70,7 @@ public class Tiempo implements Runnable,Subject{
         observers.add(o);
     }
 
+
     @Override
     public void removeObserver(Observer o) {
         observers.remove(o);
@@ -77,8 +78,8 @@ public class Tiempo implements Runnable,Subject{
 
     @Override
     public void notifyObservers(int seg) {
-        for(Observer aux : observers){
-            aux.upDate(seg);
+        for(int i = 0; i < observers.size(); i++){
+            observers.get(i).upDate(seg);
         }
     }
 }
