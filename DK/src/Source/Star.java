@@ -39,7 +39,7 @@ public class Star implements Observer {
     public void Run(Mario mario){
         if(noPowerUp) {
             draw();
-            if (CollisionDetector.checkMarioCollision(x, y, 0.035, 0.055)) {
+            if (CollisionDetector.checkMarioCollision(x, y, 0.035, 0.035)) {
                 mario.addScore(1000);
                 mario.setPowerUp(true);
                 noPowerUp = false;
