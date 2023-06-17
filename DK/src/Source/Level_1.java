@@ -1,20 +1,25 @@
 package Source;
 import Resources.PennDraw;
 import Resources.StdAudio;
+import javafx.scene.control.RadioMenuItem;
+
+import java.util.Random;
 
 public class Level_1 extends Levels implements Observer{
+    private int amountFloor;
 
     public Level_1() {
         super();
         dificulty = 30;
         speedIncrease = 10;
+
     }
 
     @Override
     void SpawnLayout() {
-
+        int amountFloor=getRandom();
         //Initialize floors***********************************************
-        floors = new Floor[6]; //6 floors
+        floors = new Floor[amountFloor]; //6 floors
 
         //initialize the floors alternating which edge they touch
         for (int i = 0; i < floors.length; i++) {
@@ -30,19 +35,23 @@ public class Level_1 extends Levels implements Observer{
         //floors**********************************************************
 
         //initialize ladders**********************************************
-        ladders = new Ladder[5];
-        ladders[0] = new Ladder(0.4, 0.125);
-        ladders[1] = new Ladder(0.7, 0.275);
-        ladders[2] = new Ladder(0.3, 0.425);
-        ladders[3] = new Ladder(0.6, 0.575);
-        ladders[4] = new Ladder(0.45, 0.725);
+        ladders = new Ladder[amountFloor-1];
+        double Y=0.875;
+        for(int i=amountFloor-2; i>=0;i--){
+            Y=Y-0.150;
+            Random random2=new Random();
+            double x=random2.nextDouble() * 0.2 + 0.4;
+            ladders[i] = new Ladder(x, Y);
+        }
+
 
         collisions.setLadders(ladders);
         //ladders**********************************************************
 
         //set mario/peach/donkeykong to their starting points
         //TODO: El valor del character en Mario tiene que cambiar segun el selector de personajes.
-        mario = MarioFactory.CreateMario(0.5, floors[5].getY() + Floor.getHeight() + 0.025);
+        double lastFloorY= floors[(amountFloor-1)].getY() + Floor.getHeight() + 0.025;
+        mario = MarioFactory.CreateMario(0.5, lastFloorY);
         peach = new Peach(0.70, floors[0].getY()
                 + Floor.getHeight() + 0.035);
         donkey = new DonkeyKong(0.15, floors[0].getY()
@@ -50,6 +59,11 @@ public class Level_1 extends Levels implements Observer{
 
         collisions.setMario(mario);
 
-        star = new Star();
+        star = new Star(floors[(amountFloor-1)].getY());
+    }
+    public int getRandom(){
+        Random random=new Random();
+        amountFloor= random.nextInt(4)+2;
+        return amountFloor;
     }
 }

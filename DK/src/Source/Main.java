@@ -4,6 +4,7 @@ import Resources.PennDraw;
 import Resources.StdAudio;
 
 import java.awt.*;
+import java.util.Random;
 
 public class Main {
     public static void main(String[] args) {
@@ -22,10 +23,11 @@ public class Main {
        PennDraw.picture(0.5, 0.5, "background.png", 520, 300);
         Score game = new Score();
 
-
+        Font font= new Font("Rockwell Extra Bold",Font.BOLD,16);
         PennDraw.setPenColor(PennDraw.WHITE);
-
-        PennDraw.text(0.5, 0.9,(String.valueOf(game.getScore("Player1"))));
+        PennDraw.setFont(font);
+        PennDraw.picture(0.775, 0.06725,"highscore.png",100,50);
+        PennDraw.text(0.91, 0.07,(String.valueOf(game.getScore("Player1"))));
 
         //waits until user presses 'y' to begin the game
         char c = 0;

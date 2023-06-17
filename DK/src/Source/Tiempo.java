@@ -62,7 +62,7 @@ public class Tiempo implements Runnable,Subject{
     public void draw(){
         PennDraw.setPenColor(PennDraw.WHITE);
         PennDraw.setFontSize(15);
-        PennDraw.text(0.1, 0.95, String.format("tiempo %d:%d",minutos,segundos));
+        PennDraw.text(0.1, 0.95, String.format("Time %d:%d",minutos,segundos));
     }
     //implementacion de metodos de la interface Subject
     @Override
