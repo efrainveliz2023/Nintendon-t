@@ -358,6 +358,7 @@ public final class StdAudio {
     private static boolean activate=false;
     public static synchronized void loop(String filename) {
         if(!activate) {
+            activate = true;
             if (filename == null) throw new IllegalArgumentException();
 
             // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
