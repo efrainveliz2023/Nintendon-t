@@ -33,7 +33,7 @@ public class Mario {
     private final String climbingSprite;
     private final String jumpingSprite;
     private AttackStrategy attackStrategy;
-
+    private AttackStrategy baseAttackStrategy;
     public boolean fireball;
 
     private static final double halfHeight = 0.025;
@@ -64,20 +64,13 @@ public class Mario {
         jumpingSprite = "marioRun2.png";
         direction = 0;
         Score=0;
+        baseAttackStrategy = new FireballStrategy();
     }
 
-
-    public void setAttackStrategy(AttackStrategy attackStrategy) {
-        this.attackStrategy = attackStrategy;
-    }
-
-    public void performAttack() {
-        if (attackStrategy != null) {
-            attackStrategy.performAttack(this);
-        }
-    }
     public Mario(double x, double y, double velX, double jumpVel,
-                 String idleSprite, String[] movingSprites, String climbingSprite, String jumpingSprite){
+                 String idleSprite, String[] movingSprites, String climbingSprite, String jumpingSprite,
+                 AttackStrategy poweUp)
+    {
         this.x = x;
         this.y = y;
         this.velX = velX;
@@ -86,7 +79,7 @@ public class Mario {
         this.movingSprites = movingSprites;
         this.climbingSprite = climbingSprite;
         this.jumpingSprite = jumpingSprite;
-        //TODO: Add other sprites and special power
+        this.baseAttackStrategy = poweUp;
 
         direction = 0;
     }
@@ -158,15 +151,17 @@ public class Mario {
                     climb--;
                     moveDown();
                 }
-            } else if (dir == 'f') {
-                if(powerUp) {
-                    attackStrategy = new KamehamehaAttackStrategy();
+            } else if(dir == 'f'){
+                if(attackStrategy != null) {
                     attackStrategy.performAttack(this);
                 }
             }
         }
         else {
             movingDir = 0;
+        }
+        if(attackStrategy != null){
+            attackStrategy.Run();
         }
         //update mario's y position for jumping
         updateY();
@@ -186,16 +181,16 @@ public class Mario {
     public double getX() {
         return x;
     }
-  public boolean getTimerOn(){
-        return timerOn;
-  }
-    public void setTimerOn(boolean bool){
-        timerOn=bool;
-    }
-    public void setPowerUp(boolean powerUp){
 
-        Mario.powerUp =powerUp;
+    public void setPowerUp(boolean powerUp) {
+        if(powerUp){
+            attackStrategy = baseAttackStrategy;
+        } else {
+            attackStrategy.Clear();
+            attackStrategy = null;
+        }
     }
+
     public boolean getPowerUp(){
 
        return powerUp;
@@ -278,14 +273,6 @@ public class Mario {
     public void drawMoving(int dir, boolean facing){
         int direction = -1;
         if(facing) direction = 1;
-/*
-        if (dir % 3 == 0) {
-            PennDraw.picture(x, y + 0.01, idleSprite, 35 * direction, 35);
-        } else if (dir % 3 == 1) {
-            PennDraw.picture(x, y + 0.01, "marioRun1.png", 35 * direction, 35);
-        } else if (dir % 3 == 2) {
-            PennDraw.picture(x, y + 0.01, "marioRun2.png", 35 * direction, 35);
-        }*/
 
         PennDraw.picture(x, y + 0.01, movingSprites[dir % movingSprites.length], 35 * direction, 35);
     }
@@ -373,14 +360,12 @@ public class Mario {
             isAlive = false;
         }
     }
-    public void setTrueFireball(){
 
-        fireball=true;
-
-    }
     public char getLastKeyPressed(){
         return lastKeyPressed;
     }
+
+    public int getDirection(){ return direction; }
 /*
     //TESTING: Ya no sirve por cambios en las funciones usadas.
     public static void main(String[] args) {

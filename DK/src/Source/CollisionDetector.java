@@ -5,6 +5,8 @@ public class CollisionDetector {
     private static Floor[] floors;
     private static Mario mario;
 
+    private static List<Barrel> barrels = new LinkedList<Barrel>();
+
     public void setLadders(Ladder[] ladders) {
         CollisionDetector.ladders = ladders;
     }
@@ -15,6 +17,9 @@ public class CollisionDetector {
         CollisionDetector.mario = mario;
     }
 
+    public void setBarrels(List<Barrel> barrels){
+        CollisionDetector.barrels = barrels;
+    }
 
     public static boolean checkLaddersCollision(double x, double y, double halfWidth){
         for (int i = 0; i < ladders.length; i++) {
@@ -76,6 +81,15 @@ public class CollisionDetector {
         return false;
     }
 
+    public static void checkBarrelCollision(double x, double y, double halfWidth, double halfHeigth){
+        for (int i = 0; i < barrels.size(); i++) {
+            if(x + halfWidth > barrels.get(i).getX() - Barrel.getRadius() && x - halfWidth < barrels.get(i).getX() + Barrel.getRadius()){
+                if(y + halfHeigth > barrels.get(i).getY() - Barrel.getRadius() && y - halfHeigth < barrels.get(i).getY() + Barrel.getRadius()){
+                    barrels.get(i).Kill();
+                }
+            }
+        }
+    }
 
     public static boolean checkStarCollision(double x, double y, double halfWidth, double halfHeight){
         if (x - halfWidth < mario.getX() + Mario.getHalfWidth() && mario.getX() - Mario.getHalfWidth() < x + halfWidth) {

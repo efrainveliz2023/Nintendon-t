@@ -3,5 +3,9 @@ package Source;
 import Source.Mario;
 
 public interface AttackStrategy {
-    public abstract void performAttack(Mario mario);
+    public void performAttack(Mario mario);
+
+    public void Run();
+
+    public void Clear();
 }

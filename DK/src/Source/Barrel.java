@@ -33,7 +33,7 @@ public class Barrel {
     }
 
     //Revisa coliciones y actualiza la posicion
-    public void Run(LinkedList<Fireball> fireballs){
+    public void Run(){
             boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);
             if (floors) {
                 if (getFloorLevel() % 2 == 0) {
@@ -60,9 +60,9 @@ public class Barrel {
                 CollisionDetector.KillMario();
             }
 
-            if (CollisionDetector.checkFireballCollision(x, y, fireballs, 0.025, 0.025)) {
-                Kill();
-            }
+            //if (CollisionDetector.checkFireballCollision(x, y,0.025, 0.025)) {
+            //    Kill();
+            //}
         checkPosition();
     }
 

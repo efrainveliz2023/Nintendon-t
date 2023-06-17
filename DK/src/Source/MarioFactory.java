@@ -27,6 +27,8 @@ public class MarioFactory {
         String[] movingSprites;
         String climbingSprite;
         String jumpingSprite;
+        AttackStrategy powerUp;
+        powerUp = new FireballStrategy();
 
         switch (playerOne){
             case Pikachu:
@@ -46,6 +48,6 @@ public class MarioFactory {
                 jumpingSprite = "marioRun2.png";
                 break;
         }
-        return new Mario(x, y, vel, jump, idleSprite, movingSprites, climbingSprite, jumpingSprite);
+        return new Mario(x, y, vel, jump, idleSprite, movingSprites, climbingSprite, jumpingSprite, powerUp);
     }
 }

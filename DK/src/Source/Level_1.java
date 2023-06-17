@@ -12,7 +12,6 @@ public class Level_1 extends Levels implements Observer{
 
     @Override
     void SpawnLayout() {
-        CollisionDetector collisions = new CollisionDetector();
 
         //Initialize floors***********************************************
         floors = new Floor[6]; //6 floors
@@ -50,5 +49,7 @@ public class Level_1 extends Levels implements Observer{
                 + Floor.getHeight() + 0.04);
 
         collisions.setMario(mario);
+
+        star = new Star();
     }
 }

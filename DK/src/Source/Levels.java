@@ -8,12 +8,7 @@ import java.util.Random;
 public abstract class Levels implements Observer {
     protected Floor[] floors;
     private static Score juego;
-
-    private int duracionTotal = 10;
-    private long tiempoInicio = System.currentTimeMillis();
-    private int segundosTranscurridos;
-    private boolean generarStar=true;
-    private static Star star;
+    protected static Star star;
     private double X;
     private double Y;
 
@@ -22,26 +17,22 @@ public abstract class Levels implements Observer {
     protected Peach peach;
     protected DonkeyKong donkey;
     LinkedList<Barrel> barrels;
-    LinkedList<Fireball>  fireballs;
-    boolean fireballPlay=false;
-    Fireball frball;
     boolean hasWon = false;
-    boolean fireball=false;
     int velocity = 180;
-    private boolean starInMap=false;
     protected int dificulty = 1;
     protected int speedIncrease = 0;
     private int tiempo;
+    Random random= new Random();
+
+    protected CollisionDetector collisions = new CollisionDetector();
     public Levels() {
         //Inicializa la lista de barriles
         barrels = new LinkedList<Barrel>();
-        fireballs=new LinkedList<Fireball>();
         //Inicializamos la música
         StdAudio.loop("SFX/bacmusic.wav");
         //Suscribimos al timer
         Tiempo.getInstance().registrerObserver(this);
         //Creamos el layout del nivel actual
-        star=new Star();
         SpawnLayout();
         juego=new Score();
         //tiempo:
@@ -57,12 +48,12 @@ public abstract class Levels implements Observer {
      */
     public void upDate(int segundos){
         this.tiempo = segundos;
-        /*if((segundos % dificulty == 0) && segundos != 0){
+        if((segundos % dificulty == 0) && segundos != 0){
             velocity -= speedIncrease;
             if(velocity < 45){
                 velocity = 45;
             }
-        }*/
+        }
     }
 
     void RunGameplayLoop(){
@@ -70,7 +61,7 @@ public abstract class Levels implements Observer {
 
         //Begin gameplay loop ********************************************
         while(mario.isAlive() && !hasWon) {
-            if(mario.getPowerUp()){
+            if(star.isActive()){
                 PennDraw.picture(0.5,0.5,"fondoRage.jpg",520,1040);
             }else {
                 PennDraw.clear(PennDraw.BLACK);
@@ -119,11 +110,13 @@ public abstract class Levels implements Observer {
             if (timer % velocity == 0) {
                 barrels.add(new Barrel(0.2, floors[0].getY()
                         + Floor.getHeight() + 0.025));
+                collisions.setBarrels(barrels);
             }
 
             for(int i = 0; i < barrels.size(); i++){
                 if(!barrels.get(i).GetAlive()){
                     barrels.remove(i);
+                    collisions.setBarrels(barrels);
                     i--;
                 }
             }
@@ -132,23 +125,8 @@ public abstract class Levels implements Observer {
             //Revisa las colisiones de los barriles y los actualiza
             int counter1 = 0;
             while (counter1 < barrels.size()) {
-                barrels.get(counter1).Run(fireballs);
+                barrels.get(counter1).Run();
                 counter1++;
-            }
-
-            if(mario.fireball==true){
-                fireballPlay=true;
-                frball = new Fireball(mario.getX(), mario.getY(), mario.getLastKeyPressed());
-                fireballs.add(frball);
-                mario.fireball=false;
-            }
-
-            if(fireballPlay) {
-
-                for (int i=0; i < fireballs.size();i++){
-                    fireballs.get(i).Run(mario);
-
-                }
             }
 
             timer++;
@@ -156,23 +134,9 @@ public abstract class Levels implements Observer {
                 timer = 0;
             }
 
-            // Generar un número aleatorio
-
-
-            if(generarStar){
-                Random random= new Random();
-                if (random.nextDouble() <= 0.1){
-                    if(!starInMap){
-                        setXY();
-                        generarStar = false;
-                    }
-                }}
-
-            if(!generarStar){
-                star.Run(X,Y,mario);
-            }
+            star.Run(mario);
 //---------------------------------------------------------TIEMPO-------------------------------------------------------
-            if (mario.getTimerOn()){
+            /*if (mario.getTimerOn()){
 
                 tiempoInicio = tiempo ; //tiempo...
                 segundosTranscurridos = 0;
@@ -189,11 +153,7 @@ public abstract class Levels implements Observer {
                     segundosTranscurridos = 0;
                     star.setNoPowerUp();
                 }
-            }
-//----------------------------------------------------------------------------------------------------------------------
-            if(fireballs.size()>10){
-                fireballs.remove(0);
-            }
+            }*/
 
             PennDraw.advance();
             hasWon = CollisionDetector.checkMarioCollision(peach.getX(), peach.getY(), 0.01, 0.015);

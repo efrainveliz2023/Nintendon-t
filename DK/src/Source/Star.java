@@ -2,28 +2,63 @@ package Source;
 
 import Resources.PennDraw;
 
+import java.util.Random;
 
-public class Star {
+
+public class Star implements Observer {
     private boolean noPowerUp=true;
-    public void Run(double x, double y,Mario mario){
-        if(noPowerUp)
-        draw(x,y);
-        if (CollisionDetector.checkStarCollision(x, y,0.025, 0.025)) {
-            PennDraw.picture(-1, -1, "estrella.png", 40, 40);
-            mario.setPowerUp(true);
-            mario.setTimerOn(true);
-            noPowerUp=false;
+    private double x;
+    private double y;
+    int deltaTiempo = 0;
+    final int duracion = 10;
+    Random random = new Random();
+
+    public Star(double x, double y){
+        this.x = x;
+        this.y = y;
+        Tiempo.getInstance().registrerObserver(this);
+    }
+
+    public Star(){
+        RandomPos();
+        Tiempo.getInstance().registrerObserver(this);
+    }
+
+    void RandomPos(){
+        x = random.nextDouble() * 0.6 + 0.2;
+        y = random.nextDouble() * 0.8 + 0.1;
+    }
+
+    @Override
+    public void upDate(int segundos) {
+        if(!noPowerUp){
+            deltaTiempo++;
         }
-
     }
-    public void draw(double x, double y) {
+
+    public void Run(Mario mario){
+        if(noPowerUp) {
+            draw();
+            if (CollisionDetector.checkMarioCollision(x, y, 0.025, 0.025)) {
+                mario.setPowerUp(true);
+                noPowerUp = false;
+            }
+        } else {
+            //System.out.println(deltaTiempo);
+            if(deltaTiempo >= duracion){
+                mario.setPowerUp(false);
+                RandomPos();
+                noPowerUp = true;
+                deltaTiempo = 0;
+            }
+        }
+    }
+
+    public boolean isActive(){
+        return !noPowerUp;
+    }
+
+    public void draw() {
         PennDraw.picture(x, y, "estrella.png", 40, 40);
-
     }
-    public void setNoPowerUp(){
-        noPowerUp=true;
-
-    }
-
-
 }

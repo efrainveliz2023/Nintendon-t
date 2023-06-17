@@ -10,10 +10,16 @@ public class KamehamehaAttackStrategy implements AttackStrategy {
     int velocity = 180;
     @Override
     public void performAttack(Mario mario) {
-        mario.setTrueFireball();
+        /*mario.setTrueFireball();*/
     }
 
+    @Override
+    public void Run() {
 
+    }
 
+    @Override
+    public void Clear() {
 
+    }
 }
