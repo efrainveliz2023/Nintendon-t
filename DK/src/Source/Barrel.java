@@ -17,7 +17,6 @@ import Resources.PennDraw;
 public class Barrel {
     private double x;
     private double y;
-    private boolean killStatus=false;
     private double velX = 0.005;
     private double velY;
     private double fallVel = 0.001;
@@ -35,7 +34,6 @@ public class Barrel {
 
     //Revisa coliciones y actualiza la posicion
     public void Run(LinkedList<Fireball> fireballs){
-        if(!killStatus) {
             boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);
             if (floors) {
                 if (getFloorLevel() % 2 == 0) {
@@ -63,16 +61,9 @@ public class Barrel {
             }
 
             if (CollisionDetector.checkFireballCollision(x, y, fireballs, 0.025, 0.025)) {
-                killBarrell(this);
+                Kill();
             }
-        }if(killStatus){
-            fallVel=0.01;
-            fall();
-            updateY();
-            draw();
-
-
-        }
+        checkPosition();
     }
 
 
@@ -80,9 +71,6 @@ public class Barrel {
         if(x < 0.03 || x > 0.97 || y < -0.05){
             isAlive = false;
         }
-    }
-    public void killBarrell(Barrel barrel){
-        killStatus=true;
     }
     /**
      * Descripcion: Cambia la variable isALive a false
