@@ -7,50 +7,82 @@ import org.junit.Test;
 import org.junit.Assert;
 
 public class MarioTest {
-    public static void main(String[] args){ runMarioTests();}
+    //public static void main(String[] args){ runMarioTests();}
+
+    //@Test
+    //public void runMarioTests(){
 
     @Test
-    public static void runMarioTests(){
+    public void marioAliveTest() {
         Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         //test is alive
         boolean alive = mario.isAlive();
         Assert.assertTrue("Mario is not alive", alive);
-        //
-        //
-        //
-        double posY= mario.getY();
+    }
+    //
+    //
+    //
 
-        mario.moveDown();
-        boolean aux = posY > mario.getY();
-        Assert.assertTrue("Mario did not moved down", aux);
 
-        posY= mario.getY();
+    @Test
+    public void marioMoveDownTest(){
+        Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+    double posY= mario.getY();
+
+    mario.moveDown();
+    boolean aux = posY > mario.getY();
+    Assert.assertTrue("Mario did not moved down", aux);
+}
+
+    @Test
+    public void marioMoveUpTest() {
+        Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+        double posY = mario.getY();
         mario.moveUp();
-        aux = posY > mario.getY();
+        boolean aux = posY > mario.getY();
         Assert.assertTrue("Mario did not moved up", aux);
+    }
 
-        double posX= mario.getX();
+    @Test
+    public void marioMoveLeftTest() {
+        Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+        double posX = mario.getX();
         mario.moveLeft();
-        aux= posX>mario.getX();
+        boolean aux = posX > mario.getX();
         Assert.assertTrue("Mario did not moved left", aux);
+    }
 
-        posX= mario.getX();
+
+    @Test
+    public void marioMoveRightTest() {
+        Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+        double posX = mario.getX();
         mario.moveRight();
-        aux= posX<mario.getX();
+        boolean aux = posX < mario.getX();
         Assert.assertTrue("Mario did not moved right", aux);
-        //
-        Mario mario1 = new Mario ( 0.4, 0.98);
+    }
+    //
+
+
+
+    @Test
+    public void marioOutOfRangeTest() {
+        Mario mario1 = new Mario(0.4, 0.98);
         mario1.checkPosition();
         Assert.assertTrue("Mario went too far up!", mario1.isAlive());
+    }
 
 
 
-
+    @Test
+    public void marioKillTest() {
+        Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         ///////////////////////////////////////------------------------------------------
         mario.Kill();
-        alive = !mario.isAlive();
+        boolean alive = !mario.isAlive();
         Assert.assertTrue("Mario is not alive", alive);
-
-
     }
+
+
+    //}
 }
