@@ -356,18 +356,21 @@ public final class StdAudio {
      * @throws IllegalArgumentException if {@code filename} is {@code null}
      */
     private static boolean activate=false;
+    static Clip loopClip;
     public static synchronized void loop(String filename) {
-        if(!activate) {
-            activate = true;
+            //activate = true;
             if (filename == null) throw new IllegalArgumentException();
+            if(loopClip != null){
+                loopClip.stop();
+            }
 
             // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
             try {
-                Clip clip = AudioSystem.getClip();
+                loopClip = AudioSystem.getClip();
                 InputStream is = StdAudio.class.getResourceAsStream(filename);
                 AudioInputStream ais = AudioSystem.getAudioInputStream(is);
-                clip.open(ais);
-                clip.loop(Clip.LOOP_CONTINUOUSLY);
+                loopClip.open(ais);
+                loopClip.loop(Clip.LOOP_CONTINUOUSLY);
             } catch (UnsupportedAudioFileException e) {
                 throw new IllegalArgumentException("unsupported audio format: '" + filename + "'", e);
             } catch (LineUnavailableException e) {
@@ -375,9 +378,13 @@ public final class StdAudio {
             } catch (IOException e) {
                 throw new IllegalArgumentException("could not play '" + filename + "'", e);
             }
-        }
     }
 
+    public static synchronized void endLoop(){
+        if(loopClip != null){
+            loopClip.stop();
+        }
+    }
 
     /***************************************************************************
      * Unit tests {@code Resources.StdAudio}.

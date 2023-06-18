@@ -7,9 +7,10 @@ import java.awt.*;
 import java.util.Random;
 
 public class Main {
+
+    static Thread tiempo;
+
     public static void main(String[] args) {
-
-
         /*
         //Set window size to screen max size.
         GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
@@ -17,10 +18,17 @@ public class Main {
         int screenHeight = gd.getDisplayMode().getHeight();
         Resources.PennDraw.setCanvasSize(screenWidth, screenHeight);
         */
-        Thread tiempo = new Thread(Tiempo.getInstance());
+        tiempo = new Thread(Tiempo.getInstance());
+        tiempo.start();
+
+        MainMenu();
+        //***************************************************************
+    }
+
+    static void MainMenu(){
         //DRAWING THE INSTRUCTIONS **************************************
         PennDraw.clear(Color.BLACK);
-       PennDraw.picture(0.5, 0.5, "background.png", 520, 300);
+        PennDraw.picture(0.5, 0.5, "background.png", 520, 300);
         Score game = new Score();
 
         Font font= new Font("Rockwell Extra Bold",Font.BOLD,16);
@@ -82,11 +90,14 @@ public class Main {
             }
         }
         MarioFactory.SetCharacterOne(selectPos);
-        //***************************************************************
+        Game();
+    }
 
+    static void Game(){
         //begin playing background music immediately
-        StdAudio.loop("SFX/bacmusic.wav");
-        tiempo.start();
+        //StdAudio.loop("SFX/bacmusic.wav");
+        Tiempo.getInstance().reset();
+
         boolean playAgain = true;
         Levels actualLevel;
         while (playAgain) {
@@ -107,6 +118,8 @@ public class Main {
                     d = PennDraw.nextKeyTyped();
                 if (d == 'n') {
                     playAgain = false;
+                    StdAudio.endLoop();
+                    Tiempo.getInstance().pausar();
                     break;
                 }
                 if(d == 'y'){
@@ -115,7 +128,9 @@ public class Main {
                 }
             }
         } //close loop for play again
+        MainMenu();
     }
+
 }
 
 
