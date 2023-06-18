@@ -10,6 +10,7 @@ public class CollissionTest {
     //@Test
   //  public static void runCollisionTests(){
         // Mario collisions
+
         //Mario mario = new Mario(0.4, 0.6  + Mario.getHalfHeight());
     @Test
     public void marioCollisionTests() {
