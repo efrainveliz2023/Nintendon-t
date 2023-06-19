@@ -41,7 +41,7 @@ public class Tiempo implements Runnable,Subject{
     }
     private synchronized void setSegundos(int segundos) { this.segundos = segundos; }
     private synchronized void setMinutos(int minutos) { this.minutos = minutos; }
-    private int getSegundos() { return segundos; }
+    public int getSegundos() { return segundos; }
     private int getMinutos() { return minutos; }
 
     /**

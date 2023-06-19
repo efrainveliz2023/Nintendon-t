@@ -4,8 +4,9 @@ import Resources.StdAudio;
 
 import java.awt.*;
 import java.util.Random;
+import java.util.Scanner;
 
-public abstract class Levels implements Observer {
+public abstract class Levels implements Observer  {
     protected Floor[] floors;
     private static Score juego;
     protected static Star star;
@@ -18,10 +19,12 @@ public abstract class Levels implements Observer {
     protected DonkeyKong donkey;
     LinkedList<Barrel> barrels;
     boolean hasWon = false;
+    boolean getBack = false;
     int velocity = 180;
     protected int dificulty = 1;
     protected int speedIncrease = 0;
     private int tiempo;
+    private int timer;
     Random random= new Random();
 
     protected CollisionDetector collisions = new CollisionDetector();
@@ -37,7 +40,8 @@ public abstract class Levels implements Observer {
         juego=new Score();
         //tiempo:
         Tiempo.getInstance().registrerObserver(this); //Registro este objeto como observador.
-        tiempo = 0;
+        tiempo=0;
+        timer=0;
     }
 
     //Se crean los pisos, escaleras, mario, peach, DK, etc. en sus posiciones iniciales
@@ -56,14 +60,13 @@ public abstract class Levels implements Observer {
         }
     }
 
-    void RunGameplayLoop(){
-        int timer = 0;
+    void RunGameplayLoop() {
 
         //Begin gameplay loop ********************************************
-        while(mario.isAlive() && !hasWon) {
-            if(star.isActive()){
-                PennDraw.picture(0.5,0.5,"fondoRage.jpg",520,1040);
-            }else {
+        while (mario.isAlive() && !hasWon && !mario.getPause() && !getBack ) {
+            if (star.isActive()) {
+                PennDraw.picture(0.5, 0.5, "fondoRage.jpg", 520, 1040);
+            } else {
                 PennDraw.clear(PennDraw.BLACK);
             }
             //draw 4 barrels in top corner
@@ -81,17 +84,13 @@ public abstract class Levels implements Observer {
             //Hacer una funcion aparte para poder controlar la velocidad
             if (0 <= timer && timer < (velocity - 35)) {
                 donkey.drawOriginal();
-            }
-            else if ((velocity - 35) <= timer && timer < (velocity - 25)) {
+            } else if ((velocity - 35) <= timer && timer < (velocity - 25)) {
                 donkey.drawLeft();
-            }
-            else if ((velocity - 25) <= timer && timer < (velocity - 15)) {
+            } else if ((velocity - 25) <= timer && timer < (velocity - 15)) {
                 donkey.drawCenter();
-            }
-            else if ((velocity - 15) <= timer) {
+            } else if ((velocity - 15) <= timer) {
                 donkey.drawRight();
-            }
-            else donkey.drawOriginal();
+            } else donkey.drawOriginal();
 
             //dibujamos a peach
             peach.draw();
@@ -100,21 +99,22 @@ public abstract class Levels implements Observer {
             mario.Run();
 
             juego.Run(mario.getScore2());
-            PennDraw.text(0.5, 0.95,(String.valueOf(mario.getScore2())));
+            PennDraw.text(0.5, 0.95, (String.valueOf(mario.getScore2())));
 
             //dibujamos el tiempo.
             Tiempo.getInstance().draw();
 
             //if timer gets to 180 (frames), add a new barrel
             //----------Hacer una funcion aparte para cambiar velocidad
+
             if (timer % velocity == 0) {
                 barrels.add(new Barrel(0.2, floors[0].getY()
                         + Floor.getHeight() + 0.025));
                 collisions.setBarrels(barrels);
             }
 
-            for(int i = 0; i < barrels.size(); i++){
-                if(!barrels.get(i).GetAlive()){
+            for (int i = 0; i < barrels.size(); i++) {
+                if (!barrels.get(i).GetAlive()) {
                     barrels.remove(i);
                     collisions.setBarrels(barrels);
                     i--;
@@ -161,21 +161,52 @@ public abstract class Levels implements Observer {
 
         PennDraw.disableAnimation();
 
-        if (hasWon) {
-            StdAudio.play("SFX/win1.wav");
-            PennDraw.setPenColor(PennDraw.GREEN);
-            PennDraw.setFontSize(100);
-            PennDraw.text(0.5, 0.5, "YOU WON!");
+        if (mario.getPause()) {
+            Tiempo.getInstance().pausar();
+            while (true) {
+
+                PennDraw.picture(0.5, 0.6, "pause.png", 300, 150);
+                PennDraw.setFontSize(20);
+                PennDraw.setPenColor(Color.ORANGE);
+                PennDraw.text(0.5, 0.15, "Press 'y' to go back");
+                if (PennDraw.hasNextKeyTyped()) {
+                    char dir = PennDraw.nextKeyTyped();
+                    if (dir == 'p') {
+                        Tiempo.getInstance().pausar();
+                        mario.setPause(false);
+                        PennDraw.enableAnimation(30);
+                        break;
+                    }
+                    if (dir == 'y') {
+                        Tiempo.getInstance().pausar();
+                        PennDraw.clear(Color.black);
+                        mario.resetScore();
+                        PennDraw.picture(0.5,0.5,"replay.png",200,100);
+                        mario.setPause(false);
+                        getBack=true;
+                        break;
+                    }
+                }
+            }RunGameplayLoop();
+
+        } if (hasWon) {
+            PennDraw.clear(PennDraw.BLACK);
             mario.addScore(1000);
-            juego.registerScore("Player1",mario.getScore2(),tiempo);
-            mario.resetScore();
-        }
-        else if (!mario.isAlive()) {
+            PennDraw.text(0.5, 0.95, (String.valueOf(mario.getScore2())));
+            StdAudio.play("SFX/win1.wav");
+            timer=0;
+            hasWon=false;
+            PennDraw.picture(0.5, 0.6, "youwin.png", 250, 200);
+            juego.registerScore("Player1", mario.getScore2(), tiempo);
+        }if (!mario.isAlive()) {
+            PennDraw.clear(PennDraw.BLACK);
             StdAudio.play("SFX/death.wav");
+            timer=0;
             PennDraw.setPenColor(PennDraw.RED);
-            PennDraw.setFontSize(100);
-            PennDraw.text(0.5, 0.5, "YOU LOST!");
+            PennDraw.setFontSize(80);
+            PennDraw.picture(0.5, 0.6, "gameo.png", 300, 200);
             mario.resetScore();
+            mario.setPause(false);
         }
     }
 

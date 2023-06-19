@@ -21,6 +21,7 @@ public class Mario {
     //Variables seteadas al instanciar
     private double x;
     private boolean timerOn=false;
+    private boolean pause=false;
     private static int Score=0;
     private static boolean powerUp=false;
     private static  char lastKeyPressed = 's';
@@ -159,6 +160,8 @@ public class Mario {
                 if(attackStrategy != null) {
                     attackStrategy.performAttack(this);
                 }
+            } else if(dir == 'p'){
+                setPause(true);
             }
         }
         else {
@@ -311,7 +314,13 @@ public class Mario {
     public void updateY() {
         y += velY;
     }
+    public void setPause(boolean pause){
+        this.pause=pause;
+    }
 
+     public boolean getPause(){
+        return pause;
+     }
     /** Description: updates marios y vel for jumping feature
      */
     public void jump() {
