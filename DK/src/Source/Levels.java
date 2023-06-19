@@ -194,9 +194,8 @@ public abstract class Levels implements Observer  {
             mario.addScore(1000);
             PennDraw.text(0.5, 0.95, (String.valueOf(mario.getScore2())));
             StdAudio.play("SFX/win1.wav");
-            PennDraw.setPenColor(PennDraw.GREEN);
-            PennDraw.setFontSize(80);
             timer=0;
+            hasWon=false;
             PennDraw.picture(0.5, 0.6, "youwin.png", 250, 200);
             juego.registerScore("Player1", mario.getScore2(), tiempo);
         }if (!mario.isAlive()) {
