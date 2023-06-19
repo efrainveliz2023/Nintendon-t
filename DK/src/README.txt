@@ -37,35 +37,35 @@ This PROJECT runs a modified version of Donkey Kong arcade. The user controls
     mario to pikachu. Pikachu can destroy barrels directly above him by a
     certain keypress.
 
-The OBJECTS included in this program include a barrel, a Source.DonkeyKong, floors,
+The OBJECTS included in this program include a barrel, a main.Source.DonkeyKong, floors,
     ladders, a mario figure (which can be drawn as a pikachu), a peach figure,
     and the World (which is a static main function, not an object).
-    Source.DonkeyKong is the only object that does not interact with any other object.
-    Most interactions are handled through the mario object. Source.Mario checks
+    main.Source.DonkeyKong is the only object that does not interact with any other object.
+    Most interactions are handled through the mario object. main.Source.Mario checks
     if his location is the same as the ladders, barrels, and peach. The floors
-    check if Source.Mario is colliding with them. The floors also check if they are
+    check if main.Source.Mario is colliding with them. The floors also check if they are
     colliding
     with the barrels We attempted to break down the program into obvious
     different parts. 
     The  only part we were debating was whether to have pikachu as it's' own
     object
-    or as a part of the Source.Mario object. We decided to have it as part of the mario
+    or as a part of the main.Source.Mario object. We decided to have it as part of the mario
     object because it uses the same functions and only changes the drawing.
     
     
     CLASSES/OBJECTS are broken down into necessary functions for that object.
-        Source.Mario can be drawn, be drawn as pikachu, check for collisions, fall,
+        main.Source.Mario can be drawn, be drawn as pikachu, check for collisions, fall,
         climb, and activate a lightning function if drawn as pikachu. He can check
         if he is touching a floor by calling the respective floor function.
         
-        Source.Peach, Source.Ladder, and Source.DonkeyKong only have draw functions and getter functions
+        main.Source.Peach, main.Source.Ladder, and main.Source.DonkeyKong only have draw functions and getter functions
         for their location. Their constructors set their x, y locations.
         
-        The Source.Barrel includes a falling function (which changes its floorlevel
+        The main.Source.Barrel includes a falling function (which changes its floorlevel
                                                     variable), a stopping falling
         function, and various move functions. 
         
-        The Source.Floor includes draw and get functions and collision functions.
+        The main.Source.Floor includes draw and get functions and collision functions.
         The floor checks for collisions, because it has to interact
         with the barrels and mario so it is easier for the floor to check 
         both of them.
@@ -92,7 +92,7 @@ The TECHNIQUES included are checking for collisions between various objects:
       the barrels using the get() function. This will be elaborated on later
       in the section about LinkedLists.
     
-    Source.Mario is able to be drawn as Pikachu or Source.Mario depending on his y Location.
+    main.Source.Mario is able to be drawn as Pikachu or main.Source.Mario depending on his y Location.
     In order to remove barrels with pikachu's' lightning feature, we used a 
     true/false operator for if lightning is activated and if the x position
     matches within a certain small range.
@@ -122,7 +122,7 @@ This code is relatively EFFICIENT. It uses a linkedlist to get rid of unused
     all have computational complexity of O(n), which is the fastest that it
     can be for this sort of program where many n objects have to be drawn. We
     don’t have to sort anything and combined various functions into one while
-    loop to make more efficient. In addition, because Resources.PennDraw.enableAnimation()
+    loop to make more efficient. In addition, because main.Resources.PennDraw.enableAnimation()
     is used, the user doesn’t see changes until all changes for one frame have
     been made.
 
@@ -150,14 +150,14 @@ OPEN PROBLEMS: on some computers, if mario tries to jump onto a ladder,
 
 Compile all files. Run the command: "java World" without quotes. An instructions pane will open
 when you run the program, assuming you have the latest version of Java installed.
-    The instructions included are: Press 'a' to move Source.Mario character left,
+    The instructions included are: Press 'a' to move main.Source.Mario character left,
     'd' to move right, 'w' to jump or climb ladders, and 's' to move down
-    ladders. Once Source.Mario character reaches the third floor Level, he will turn
+    ladders. Once main.Source.Mario character reaches the third floor Level, he will turn
     into Pikachu. While the pikachu character is activated, press 'f' to
     activate a lightning bolt that will destroy all barrels directly above 
     pikachu. 
     
-    The goal of the game is to climb all the ladders to get to Princess Source.Peach
+    The goal of the game is to climb all the ladders to get to Princess main.Source.Peach
     without dying. Character dies if it collides with a barrel or falls of the
     bottom of the screen.
     
@@ -171,12 +171,12 @@ when you run the program, assuming you have the latest version of Java installed
     
     You will also notice that mario cannot go off the side of the screen,
     falls down floor levels if he is not standing on a floor, and that 
-    nothing happens when he collides with Source.DonkeyKong or the barrels to the left
+    nothing happens when he collides with main.Source.DonkeyKong or the barrels to the left
     of donkey Kong.
     
     You will also notice background music plays throughout the game: there
     is a sound effect for jumping, a special tune that plays for winning, and 
-    a special tune that plays for losing. Because Resources.StdAudio.java does not have a
+    a special tune that plays for losing. Because main.Resources.StdAudio.java does not have a
     terminate function (that we could find/understand), the win/lose music may
     continue playing for a brief moment if you elect to play again. Background
     plays without stopping as soon as you have begun gameplay past the
@@ -185,7 +185,7 @@ when you run the program, assuming you have the latest version of Java installed
     All in all, just play the game and explore and have fun!
 
 /**********************************************************************
- *  How precisely did your project use the Source.LinkedList you implemented?
+ *  How precisely did your project use the main.Source.LinkedList you implemented?
  **********************************************************************/
     We used get functions, remove functions, add, etc. to 
     draw the barrels and add or remove from the head. We could not have
@@ -200,7 +200,7 @@ when you run the program, assuming you have the latest version of Java installed
 
 
 /**********************************************************************
- *  Source.List whatever help (if any) that you received
+ *  main.Source.List whatever help (if any) that you received
  **********************************************************************/
 
  All graphics were obtained from
