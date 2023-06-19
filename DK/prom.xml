@@ -47,9 +47,7 @@
                 <plugin>
                     <artifactId>maven-surefire-plugin</artifactId>
                     <configuration>
-                        <additionalClasspathElements>
-                            <additionalClasspathElement>src/resources/media/audio</additionalClasspathElement>
-                        </additionalClasspathElements>
+
                     </configuration>
                     <version>2.22.1</version>
                 </plugin>

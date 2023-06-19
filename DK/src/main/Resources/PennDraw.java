@@ -465,7 +465,7 @@ public final class PennDraw implements ActionListener, MouseListener, MouseMotio
     public static Font getFont() { return font; }
 
     /**
-     * main.Source.List all available fonts
+     * main.java.com.Nintendont.DK.Source.List all available fonts
      * Code from http://alvinalexander.com/blog/post/jfc-swing/swing-faq-list-fonts-current-platform
      */
     public static void listFonts() {
