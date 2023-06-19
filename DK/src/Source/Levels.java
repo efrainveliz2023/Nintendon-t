@@ -163,7 +163,6 @@ public abstract class Levels implements Observer {
 
         if (hasWon) {
             StdAudio.play("SFX/win1.wav");
-<<<<<<< Updated upstream
             PennDraw.setPenColor(PennDraw.GREEN);
             PennDraw.setFontSize(100);
             PennDraw.text(0.5, 0.5, "YOU WON!");
@@ -176,19 +175,6 @@ public abstract class Levels implements Observer {
             PennDraw.setPenColor(PennDraw.RED);
             PennDraw.setFontSize(100);
             PennDraw.text(0.5, 0.5, "YOU LOST!");
-=======
-            timer=0;
-            PennDraw.picture(0.5, 0.6, "youwin.png", 250, 200);
-            juego.registerScore("Player1", mario.getScore2(), tiempo);
-            hasWon=false;
-        }if (!mario.isAlive()) {
-            PennDraw.clear(PennDraw.BLACK);
-            StdAudio.play("SFX/death.wav");
-            timer=0;
-            PennDraw.setPenColor(PennDraw.RED);
-            PennDraw.setFontSize(80);
-            PennDraw.picture(0.5, 0.6, "gameo.png", 300, 200);
->>>>>>> Stashed changes
             mario.resetScore();
         }
     }

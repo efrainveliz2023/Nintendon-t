@@ -34,8 +34,8 @@ public class Main {
         Font font= new Font("Rockwell Extra Bold",Font.BOLD,16);
         PennDraw.setPenColor(PennDraw.WHITE);
         PennDraw.setFont(font);
-        PennDraw.picture(0.715, 0.06725,"highscore.png",100,50);
-        PennDraw.text(0.87, 0.07,(String.valueOf(game.getScore("Player1"))));
+        PennDraw.picture(0.775, 0.06725,"highscore.png",100,50);
+        PennDraw.text(0.91, 0.07,(String.valueOf(game.getScore("Player1"))));
 
         //waits until user presses 'y' to begin the game
         char c = 0;
