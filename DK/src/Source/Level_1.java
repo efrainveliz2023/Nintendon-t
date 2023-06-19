@@ -40,7 +40,7 @@ public class Level_1 extends Levels implements Observer{
         for(int i=amountFloor-2; i>=0;i--){
             Y=Y-0.150;
             Random random2=new Random();
-            double x=random2.nextDouble() * 0.2 + 0.4;
+            double x=random2.nextDouble() * 0.4+ 0.3;
             ladders[i] = new Ladder(x, Y);
         }
 
@@ -63,7 +63,7 @@ public class Level_1 extends Levels implements Observer{
     }
     public int getRandom(){
         Random random=new Random();
-        amountFloor= random.nextInt(4)+2;
+        amountFloor= random.nextInt(4)+3;
         return amountFloor;
     }
 }

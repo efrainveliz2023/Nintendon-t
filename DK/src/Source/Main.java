@@ -106,11 +106,11 @@ public class Main {
 
             actualLevel = new Level_1();
             actualLevel.RunGameplayLoop();
-
             //function to see if user wants to play again************
             PennDraw.setPenColor(PennDraw.WHITE);
-            PennDraw.setFontSize(25);
-            PennDraw.text(0.5, 0.4, "Press 'y' to play again or 'n' to not");
+            PennDraw.setFontSize(20);
+            PennDraw.setPenColor(Color.ORANGE);
+            PennDraw.text(0.5, 0.15, "Press 'y' to play again or 'n' exit");
             Tiempo.getInstance().pausar();
             char d = 0;
             while (d != 'y') {
