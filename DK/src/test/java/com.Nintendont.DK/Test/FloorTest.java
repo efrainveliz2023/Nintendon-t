@@ -2,14 +2,12 @@ package test.java.com.Nintendont.DK.Test;
 import main.java.com.Nintendont.DK.Source.Floor;
 import main.java.com.Nintendont.DK.Source.Barrel;
 import main.java.com.Nintendont.DK.Source.Mario;
-import org.junit.Test;
 
 public class FloorTest {
-    /*public static void main(String[] args) {
+    public static void main(String[] args) {
         runFloorTests();
-    }*/
+    }
 
-    @Test
     public static void runFloorTests(){
         Floor floor = new Floor(0.4, 0.6);
         assert (floor.getX() == 0.4) : "Unexpected floor spawn position";
