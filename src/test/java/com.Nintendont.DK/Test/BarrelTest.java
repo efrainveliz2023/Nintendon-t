@@ -1,7 +1,7 @@
-package test.java.com.Nintendont.DK.Test;
-import main.java.com.Nintendont.DK.Source.Floor;
-import main.java.com.Nintendont.DK.Source.Barrel;
-import main.java.com.Nintendont.DK.Source.Mario;
+package com.Nintendont.DK.Test;
+import com.Nintendont.DK.Source.Floor;
+import com.Nintendont.DK.Source.Barrel;
+import com.Nintendont.DK.Source.Mario;
 import org.junit.Test;
 
 

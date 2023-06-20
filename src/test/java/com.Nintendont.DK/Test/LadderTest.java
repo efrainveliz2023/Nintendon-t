@@ -1,4 +1,4 @@
-package test.java.com.Nintendont.DK.Test;
+package com.Nintendont.DK.Test;
 //import org.junit.Test;
 //import org.junit.Assert;
 
