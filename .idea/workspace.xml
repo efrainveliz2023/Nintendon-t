@@ -5,85 +5,8 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="test">
-      <change afterPath="$PROJECT_DIR$/.idea/compiler.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/LICENSE.md" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/Nuevo documento de texto.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/README.txt" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/AttackStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Barrel.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/CollisionDetector.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/DonkeyKong.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Fireball.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/FireballStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Floor.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/IpactruenoStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/KamehamehaAttackStrategy.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Ladder.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Level_1.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Levels.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/LinkedList.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/List.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Main.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Mario.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/MarioFactory.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Observer.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Peach.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/PennDraw.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Score.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Star.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/StdAudio.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Subject.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/Nintendont/DK/Source/Tiempo.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/MarioAll.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/PikaName.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/background.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/barrel.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/characte.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/climbingMario.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/climbingPikachu.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/donkey.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/donkeyCenter.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/donkeyLeft.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/donkeyRight.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/estrella.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/fireball.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/flecha.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/floor.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/fondoRage.jpg" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/gameo.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/gameover.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/highscore.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/kamehameha.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/ladder1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/lightning.PNG" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/marioRight.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/marioRun1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/marioRun2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/marioStand.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/marioname.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/pause.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/peach.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/pikachu1.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/pikachu2.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/pikachuJump.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/pikachuStand.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/replay.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/Images/youwin.png" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/SFX/bacmusic.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/SFX/death.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/SFX/jump.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/main/resources/SFX/win1.wav" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com.Nintendont.DK/Test/BarrelTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com.Nintendont.DK/Test/FloorTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com.Nintendont.DK/Test/LadderTest.java" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/src/test/java/com.Nintendont.DK/Test/MarioTest.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/DK/src/test/java/com.Nintendont.DK/test/BarrelTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DK/src/test/java/com.Nintendont.DK/test/FloorTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DK/src/test/java/com.Nintendont.DK/test/LadderTest.java" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/DK/src/test/java/com.Nintendont.DK/test/MarioTest.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/my-app.iml" beforeDir="false" afterPath="$PROJECT_DIR$/Nintendon't.iml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -129,6 +52,21 @@
       <recent name="C:\Users\espar\Desktop\Nintendon't" />
     </key>
   </component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="Nintendon't" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="Nintendon't" />
+      <option name="filePath" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+  </component>
   <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
   <component name="TaskManager">
     <task active="true" id="Default" summary="Default task">
@@ -145,7 +83,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687277352065</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="test">
+      <created>1687277968659</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1687277968659</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
