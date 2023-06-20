@@ -39,7 +39,7 @@ public class MarioTest {
         Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         double posY = mario.getY();
         mario.moveUp();
-        boolean aux = posY > mario.getY();
+        boolean aux = posY < mario.getY();
         Assert.assertTrue("Mario did not moved up", aux);
     }
 
