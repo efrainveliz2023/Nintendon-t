@@ -17,7 +17,7 @@ public class CollisionTest {
         Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         CollisionDetector collision = new CollisionDetector();
         collision.setFloors(floors);
-
+        collision.setMario(mario);
         boolean floorTest = CollisionDetector.checkFloorsCollision(mario.getX(), mario.getY(), 0.025);
         Assert.assertTrue("Mario no esta en el piso", floorTest);
 
@@ -30,6 +30,7 @@ public class CollisionTest {
         CollisionDetector collision = new CollisionDetector();
         collision.setLadders(ladders);
         Mario mario1 = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+        collision.setMario(mario1);
         boolean ladderTest = CollisionDetector.checkLaddersCollision(mario1.getX(), mario1.getY(), 0.025);
         Assert.assertTrue("Mario no esta en escalera", ladderTest);
     }
