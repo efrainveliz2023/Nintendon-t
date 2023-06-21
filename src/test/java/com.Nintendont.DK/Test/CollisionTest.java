@@ -27,6 +27,8 @@ public class CollisionTest {
     public void runLadderTest(){
         Ladder lader=new Ladder(0.4,0.6);
         ladders[0]=lader;
+        CollisionDetector collision = new CollisionDetector();
+        collision.setLadders(ladders);
         Mario mario1 = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         boolean ladderTest = CollisionDetector.checkLaddersCollision(mario1.getX(), mario1.getY(), 0.025);
         Assert.assertTrue("Mario no esta en escalera", ladderTest);
