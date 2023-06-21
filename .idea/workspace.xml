@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="test" />
+    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="test develop">
+      <change afterPath="$PROJECT_DIR$/.github/workflows/push.yml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -105,12 +108,20 @@
       <option name="project" value="LOCAL" />
       <updated>1687279288897</updated>
     </task>
-    <option name="localTasksCounter" value="6" />
+    <task id="LOCAL-00006" summary="test develop">
+      <created>1687370165627</created>
+      <option name="number" value="00006" />
+      <option name="presentableId" value="LOCAL-00006" />
+      <option name="project" value="LOCAL" />
+      <updated>1687370165627</updated>
+    </task>
+    <option name="localTasksCounter" value="7" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
     <MESSAGE value="test" />
-    <option name="LAST_COMMIT_MESSAGE" value="test" />
+    <MESSAGE value="test develop" />
+    <option name="LAST_COMMIT_MESSAGE" value="test develop" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
