@@ -7,10 +7,12 @@ jobs :
     steps:
       - name: Checkout code
         uses: actions/checkout@v2
+
       - name: Publish to Docker Hub
-        uses: docker/build-push-action@v1
+        uses: docker/build-push-action@v2
         with:
           username: "ellyesp"
           password: "DonkeyKong123"
+          dockerfile: Dockerfile
           repository: "nintendon-t"
           tags: latest, ${{ github.run_number }}
