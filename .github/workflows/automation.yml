@@ -1,0 +1,16 @@
+name : Dockerize project
+on : push
+jobs :
+  bould-container:
+    name: Buil Docker container image
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Publish to Docker Hub
+        uses: docker/build-push-action@v1
+        with:
+          username: "ellyesp"
+          password: "DonkeyKong123"
+          repository: "nintendon-t"
+          tags: latest, ${{ github.run_number }}
