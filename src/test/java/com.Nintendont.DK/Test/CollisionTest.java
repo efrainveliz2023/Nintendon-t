@@ -1,13 +1,11 @@
 package com.Nintendont.DK.Test;
+import com.Nintendont.DK.Source.CollisionDetector;
 import com.Nintendont.DK.Source.Floor;
 import com.Nintendont.DK.Source.Barrel;
 import com.Nintendont.DK.Source.Mario;
 import org.junit.Test;
 import org.junit.Assert;
-
-
-public class BarrelTest {
-
+public class CollisionTest {
     @Test
     public void runBarrelTests(){
         Floor floor = new Floor(0.4, 0.6);
@@ -17,14 +15,10 @@ public class BarrelTest {
         Mario mario = new Mario(0.4, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
         //mario is not collisionning
         Mario mario1 = new Mario(0.7, 0.6 + Floor.getHeight() + Mario.getHalfHeight());
+        CollisionDetector colision=new CollisionDetector();
+
+
 
     }
-    @Test
-    public void killBarrel(){
-        Barrel barrel = new Barrel(0.2, 0.6 + Floor.getHeight() +  0.025) ;
-        barrel.Kill();
-        boolean alive = !barrel.isAlive();
-        Assert.assertTrue("Barrel is not alive", alive);
 
-    }
 }

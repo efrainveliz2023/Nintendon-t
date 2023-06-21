@@ -158,6 +158,9 @@ public class Barrel {
     public void updateY() {
         y += velY;
     }
+    public boolean isAlive(){
+        return isAlive;
+    }
 
     /** make the barrel fall by lowering y velocity
      */
