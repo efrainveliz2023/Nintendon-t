@@ -9,11 +9,8 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment=".jar build">
-      <change afterPath="$PROJECT_DIR$/.github/workflows/push.yml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="docker test">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/push.yml" beforeDir="false" afterPath="$PROJECT_DIR$/.github/workflows/push.yml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -199,7 +196,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687380410964</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="docker test">
+      <created>1687384158443</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1687384158443</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
@@ -207,7 +211,8 @@
     <MESSAGE value="test develop" />
     <MESSAGE value="test dockerHub" />
     <MESSAGE value=".jar build" />
-    <option name="LAST_COMMIT_MESSAGE" value=".jar build" />
+    <MESSAGE value="docker test" />
+    <option name="LAST_COMMIT_MESSAGE" value="docker test" />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
