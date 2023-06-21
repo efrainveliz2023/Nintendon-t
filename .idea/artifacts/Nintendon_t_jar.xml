@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="Nintendon-t:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/Nintendon_t_jar</output-path>
+    <root id="archive" name="Nintendon-t.jar">
+      <element id="module-output" name="Nintendon-t" />
+    </root>
+  </artifact>
+</component>
