@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="test dockerHub" />
+    <list default="true" id="c8f01adc-fe5d-4a06-ab94-9a1269b7e060" name="Changes" comment="test dockerHub">
+      <change beforePath="$PROJECT_DIR$/.github/workflows/automation.yml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/Dockerfile" beforeDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -168,7 +171,14 @@
       <option name="project" value="LOCAL" />
       <updated>1687375626801</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="test dockerHub">
+      <created>1687375796927</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1687375796927</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="VcsManagerConfiguration">
