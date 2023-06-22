@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StdAudio.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">StdAudio.java</span></div><h1>StdAudio.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source; /******************************************************************************
+ *  Compilation:  javac Resources.StdAudio.java
+ *  Execution:    java Resources.StdAudio
+ *  Dependencies: none
+ *
+ *  Simple library for reading, writing, and manipulating .wav files.
+ *
+ *
+ *  Limitations
+ *  -----------
+ *    - Does not seem to work properly when reading .wav files from a .jar file.
+ *    - Assumes the audio is monaural, with sampling rate of 44,100.
+ *
+ ******************************************************************************/
+
+import javax.sound.sampled.Clip;
+
+// for playing midi sound files on some older systems
+import java.applet.Applet;
+import java.applet.AudioClip;
+import java.net.MalformedURLException;
+
+import java.io.File;
+import java.io.ByteArrayInputStream;
+import java.io.InputStream;
+import java.io.IOException;
+
+import java.net.URL;
+
+import javax.sound.sampled.AudioFileFormat;
+import javax.sound.sampled.AudioFormat;
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
+import javax.sound.sampled.DataLine;
+import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.SourceDataLine;
+import javax.sound.sampled.UnsupportedAudioFileException;
+
+/**
+ *  &lt;i&gt;Standard audio&lt;/i&gt;. This class provides a basic capability for
+ *  creating, reading, and saving audio.
+ *  &lt;p&gt;
+ *  The audio format uses a sampling rate of 44,100 (CD quality audio), 16-bit, monaural.
+ *
+ *  &lt;p&gt;
+ *  For additional documentation, see &lt;a href=&quot;http://introcs.cs.princeton.edu/15inout&quot;&gt;Section 1.5&lt;/a&gt; of
+ *  &lt;i&gt;Computer Science: An Interdisciplinary Approach&lt;/i&gt; by Robert Sedgewick and Kevin Wayne.
+ *
+ *  @author Robert Sedgewick
+ *  @author Kevin Wayne
+ */
+public final class StdAudio {
+
+    /**
+     *  The sample rate - 44,100 Hz for CD quality audio.
+     */
+    public static final int SAMPLE_RATE = 44100;
+
+    private static final int BYTES_PER_SAMPLE = 2;                // 16-bit audio
+    private static final int BITS_PER_SAMPLE = 16;                // 16-bit audio
+    private static final double MAX_16_BIT = Short.MAX_VALUE;     // 32,767
+    private static final int SAMPLE_BUFFER_SIZE = 4096;
+
+
+    private static SourceDataLine line;   // to play the sound
+    private static byte[] buffer;         // our internal buffer
+<span class="nc" id="L67">    private static int bufferSize = 0;    // number of samples currently in internal buffer</span>
+
+    private StdAudio() {
+        // can not instantiate
+    }
+
+    // static initializer
+    static {
+<span class="nc" id="L75">        init();</span>
+    }
+
+    // open up an audio stream
+    private static void init() {
+        try {
+            // 44,100 samples per second, 16-bit audio, mono, signed PCM, little Endian
+<span class="nc" id="L82">            AudioFormat format = new AudioFormat((float) SAMPLE_RATE, BITS_PER_SAMPLE, 1, true, false);</span>
+<span class="nc" id="L83">            DataLine.Info info = new DataLine.Info(SourceDataLine.class, format);</span>
+
+<span class="nc" id="L85">            line = (SourceDataLine) AudioSystem.getLine(info);</span>
+<span class="nc" id="L86">            line.open(format, SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE);</span>
+
+            // the internal buffer is a fraction of the actual buffer size, this choice is arbitrary
+            // it gets divided because we can't expect the buffered data to line up exactly with when
+            // the sound card decides to push out its samples.
+<span class="nc" id="L91">            buffer = new byte[SAMPLE_BUFFER_SIZE * BYTES_PER_SAMPLE/3];</span>
+        }
+<span class="nc" id="L93">        catch (LineUnavailableException e) {</span>
+<span class="nc" id="L94">            System.out.println(e.getMessage());</span>
+<span class="nc" id="L95">        }</span>
+
+        // no sound gets made before this call
+<span class="nc" id="L98">        line.start();</span>
+<span class="nc" id="L99">    }</span>
+
+
+    /**
+     * Closes standard audio.
+     */
+    public static void close() {
+<span class="nc" id="L106">        line.drain();</span>
+<span class="nc" id="L107">        line.stop();</span>
+<span class="nc" id="L108">    }</span>
+
+    /**
+     * Writes one sample (between -1.0 and +1.0) to standard audio.
+     * If the sample is outside the range, it will be clipped.
+     *
+     * @param  sample the sample to play
+     * @throws IllegalArgumentException if the sample is {@code Double.NaN}
+     */
+    public static void play(double sample) {
+
+        // clip if outside [-1, +1]
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        if (Double.isNaN(sample)) throw new IllegalArgumentException(&quot;sample is NaN&quot;);</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (sample &lt; -1.0) sample = -1.0;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">        if (sample &gt; +1.0) sample = +1.0;</span>
+
+        // convert to bytes
+<span class="nc" id="L125">        short s = (short) (MAX_16_BIT * sample);</span>
+<span class="nc" id="L126">        buffer[bufferSize++] = (byte) s;</span>
+<span class="nc" id="L127">        buffer[bufferSize++] = (byte) (s &gt;&gt; 8);   // little Endian</span>
+
+        // send to sound card if buffer is full
+<span class="nc bnc" id="L130" title="All 2 branches missed.">        if (bufferSize &gt;= buffer.length) {</span>
+<span class="nc" id="L131">            line.write(buffer, 0, buffer.length);</span>
+<span class="nc" id="L132">            bufferSize = 0;</span>
+        }
+<span class="nc" id="L134">    }</span>
+
+    /**
+     * Writes the array of samples (between -1.0 and +1.0) to standard audio.
+     * If a sample is outside the range, it will be clipped.
+     *
+     * @param  samples the array of samples to play
+     * @throws IllegalArgumentException if any sample is {@code Double.NaN}
+     * @throws IllegalArgumentException if {@code samples} is {@code null}
+     */
+    public static void play(double[] samples) {
+<span class="nc bnc" id="L145" title="All 2 branches missed.">        if (samples == null) throw new IllegalArgumentException(&quot;argument to play() is null&quot;);</span>
+<span class="nc bnc" id="L146" title="All 2 branches missed.">        for (int i = 0; i &lt; samples.length; i++) {</span>
+<span class="nc" id="L147">            play(samples[i]);</span>
+        }
+<span class="nc" id="L149">    }</span>
+
+    /**
+     * Reads audio samples from a file (in .wav or .au format) and returns
+     * them as a double array with values between -1.0 and +1.0.
+     *
+     * @param  filename the name of the audio file
+     * @return the array of samples
+     */
+    public static double[] read(String filename) {
+<span class="nc" id="L159">        byte[] data = readByte(filename);</span>
+<span class="nc" id="L160">        int n = data.length;</span>
+<span class="nc" id="L161">        double[] d = new double[n/2];</span>
+<span class="nc bnc" id="L162" title="All 2 branches missed.">        for (int i = 0; i &lt; n/2; i++) {</span>
+<span class="nc" id="L163">            d[i] = ((short) (((data[2*i+1] &amp; 0xFF) &lt;&lt; 8) + (data[2*i] &amp; 0xFF))) / ((double) MAX_16_BIT);</span>
+        }
+<span class="nc" id="L165">        return d;</span>
+    }
+
+    // return data as a byte array
+    private static byte[] readByte(String filename) {
+<span class="nc" id="L170">        byte[] data = null;</span>
+<span class="nc" id="L171">        AudioInputStream ais = null;</span>
+        try {
+
+            // try to read from file
+<span class="nc" id="L175">            File file = new File(filename);</span>
+<span class="nc bnc" id="L176" title="All 2 branches missed.">            if (file.exists()) {</span>
+<span class="nc" id="L177">                ais = AudioSystem.getAudioInputStream(file);</span>
+<span class="nc" id="L178">                int bytesToRead = ais.available();</span>
+<span class="nc" id="L179">                data = new byte[bytesToRead];</span>
+<span class="nc" id="L180">                int bytesRead = ais.read(data);</span>
+<span class="nc bnc" id="L181" title="All 2 branches missed.">                if (bytesToRead != bytesRead)</span>
+<span class="nc" id="L182">                    throw new IllegalStateException(&quot;read only &quot; + bytesRead + &quot; of &quot; + bytesToRead + &quot; bytes&quot;);</span>
+<span class="nc" id="L183">            }</span>
+
+            // try to read from URL
+            else {
+<span class="nc" id="L187">                URL url = StdAudio.class.getResource(filename);</span>
+<span class="nc" id="L188">                ais = AudioSystem.getAudioInputStream(url);</span>
+<span class="nc" id="L189">                int bytesToRead = ais.available();</span>
+<span class="nc" id="L190">                data = new byte[bytesToRead];</span>
+<span class="nc" id="L191">                int bytesRead = ais.read(data);</span>
+<span class="nc bnc" id="L192" title="All 2 branches missed.">                if (bytesToRead != bytesRead)</span>
+<span class="nc" id="L193">                    throw new IllegalStateException(&quot;read only &quot; + bytesRead + &quot; of &quot; + bytesToRead + &quot; bytes&quot;);</span>
+            }
+        }
+<span class="nc" id="L196">        catch (IOException e) {</span>
+<span class="nc" id="L197">            throw new IllegalArgumentException(&quot;could not read '&quot; + filename + &quot;'&quot;, e);</span>
+        }
+
+<span class="nc" id="L200">        catch (UnsupportedAudioFileException e) {</span>
+<span class="nc" id="L201">            throw new IllegalArgumentException(&quot;unsupported audio format: '&quot; + filename + &quot;'&quot;, e);</span>
+<span class="nc" id="L202">        }</span>
+
+<span class="nc" id="L204">        return data;</span>
+    }
+
+    /**
+     * Saves the double array as an audio file (using .wav or .au format).
+     *
+     * @param  filename the name of the audio file
+     * @param  samples the array of samples
+     * @throws IllegalArgumentException if unable to save {@code filename}
+     * @throws IllegalArgumentException if {@code samples} is {@code null}
+     */
+    public static void save(String filename, double[] samples) {
+<span class="nc bnc" id="L216" title="All 2 branches missed.">        if (samples == null) {</span>
+<span class="nc" id="L217">            throw new IllegalArgumentException(&quot;samples[] is null&quot;);</span>
+        }
+
+        // assumes 44,100 samples per second
+        // use 16-bit audio, mono, signed PCM, little Endian
+<span class="nc" id="L222">        AudioFormat format = new AudioFormat(SAMPLE_RATE, 16, 1, true, false);</span>
+<span class="nc" id="L223">        byte[] data = new byte[2 * samples.length];</span>
+<span class="nc bnc" id="L224" title="All 2 branches missed.">        for (int i = 0; i &lt; samples.length; i++) {</span>
+<span class="nc" id="L225">            int temp = (short) (samples[i] * MAX_16_BIT);</span>
+<span class="nc" id="L226">            data[2*i + 0] = (byte) temp;</span>
+<span class="nc" id="L227">            data[2*i + 1] = (byte) (temp &gt;&gt; 8);</span>
+        }
+
+        // now save the file
+        try {
+<span class="nc" id="L232">            ByteArrayInputStream bais = new ByteArrayInputStream(data);</span>
+<span class="nc" id="L233">            AudioInputStream ais = new AudioInputStream(bais, format, samples.length);</span>
+<span class="nc bnc" id="L234" title="All 4 branches missed.">            if (filename.endsWith(&quot;.wav&quot;) || filename.endsWith(&quot;.WAV&quot;)) {</span>
+<span class="nc" id="L235">                AudioSystem.write(ais, AudioFileFormat.Type.WAVE, new File(filename));</span>
+            }
+<span class="nc bnc" id="L237" title="All 4 branches missed.">            else if (filename.endsWith(&quot;.au&quot;) || filename.endsWith(&quot;.AU&quot;)) {</span>
+<span class="nc" id="L238">                AudioSystem.write(ais, AudioFileFormat.Type.AU, new File(filename));</span>
+            }
+            else {
+<span class="nc" id="L241">                throw new IllegalArgumentException(&quot;unsupported audio format: '&quot; + filename + &quot;'&quot;);</span>
+            }
+        }
+<span class="nc" id="L244">        catch (IOException ioe) {</span>
+<span class="nc" id="L245">            throw new IllegalArgumentException(&quot;unable to save file '&quot; + filename + &quot;'&quot;, ioe);</span>
+<span class="nc" id="L246">        }</span>
+<span class="nc" id="L247">    }</span>
+
+
+
+    /**
+     * Plays an audio file (in .wav, .mid, or .au format) in a background thread.
+     *
+     * @param filename the name of the audio file
+     * @throws IllegalArgumentException if unable to play {@code filename}
+     * @throws IllegalArgumentException if {@code filename} is {@code null}
+     */
+    public static synchronized void play(final String filename) {
+
+        try {
+<span class="nc" id="L261">            Clip clip = AudioSystem.getClip();</span>
+<span class="nc" id="L262">            URL is = StdAudio.class.getClassLoader().getResource(filename);</span>
+<span class="nc" id="L263">            AudioInputStream ais = AudioSystem.getAudioInputStream(is);</span>
+<span class="nc" id="L264">            DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat());</span>
+<span class="nc" id="L265">            clip = (Clip) AudioSystem.getLine(info);</span>
+<span class="nc" id="L266">            clip.open(ais);</span>
+<span class="nc" id="L267">            clip.start();</span>
+            //clip.loop(Clip.LOOP_CONTINUOUSLY);
+<span class="nc" id="L269">        } catch (LineUnavailableException e) {</span>
+<span class="nc" id="L270">            throw new IllegalArgumentException(&quot;could not play '&quot; + filename + &quot;'&quot;, e);</span>
+<span class="nc" id="L271">        } catch (UnsupportedAudioFileException | IOException e) {</span>
+<span class="nc" id="L272">            e.printStackTrace();</span>
+<span class="nc" id="L273">        }</span>
+
+        /*if (filename == null) throw new IllegalArgumentException();
+
+
+        InputStream is = StdAudio.class.getResourceAsStream(filename);
+        if (is == null) {
+            throw new IllegalArgumentException(&quot;could not read '&quot; + filename + &quot;'&quot;);
+        }
+
+        // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
+        try {
+            // check if file format is supported
+            // (if not, will throw an UnsupportedAudioFileException)
+            AudioInputStream ais = AudioSystem.getAudioInputStream(is);
+
+            new Thread(new Runnable() {
+                @Override
+                public void run() {
+                    stream(filename);
+                }
+            }).start();
+        }
+
+        // let's try Applet.newAudioClip() instead
+        catch (UnsupportedAudioFileException e) {
+            playApplet(filename);
+            return;
+        }
+
+        // something else went wrong
+        catch (IOException ioe) {
+            throw new IllegalArgumentException(&quot;could not play '&quot; + filename + &quot;'&quot;, ioe);
+        }*/
+
+<span class="nc" id="L308">    }</span>
+
+
+    // play sound file using Applet.newAudioClip();
+    private static void playApplet(String filename) {
+<span class="nc" id="L313">        URL url = null;</span>
+        try {
+<span class="nc" id="L315">            File file = new File(filename);</span>
+<span class="nc bnc" id="L316" title="All 2 branches missed.">            if(file.canRead()) url = file.toURI().toURL();</span>
+        }
+<span class="nc" id="L318">        catch (MalformedURLException e) {</span>
+<span class="nc" id="L319">            throw new IllegalArgumentException(&quot;could not play '&quot; + filename + &quot;'&quot;, e);</span>
+<span class="nc" id="L320">        }</span>
+
+        // URL url = Resources.StdAudio.class.getResource(filename);
+<span class="nc bnc" id="L323" title="All 2 branches missed.">        if (url == null) {</span>
+<span class="nc" id="L324">            throw new IllegalArgumentException(&quot;could not play '&quot; + filename + &quot;'&quot;);</span>
+        }
+
+<span class="nc" id="L327">        AudioClip clip = Applet.newAudioClip(url);</span>
+<span class="nc" id="L328">        clip.play();</span>
+<span class="nc" id="L329">    }</span>
+
+    // https://www3.ntu.edu.sg/home/ehchua/programming/java/J8c_PlayingSound.html
+    // play a wav or aif file
+    // javax.sound.sampled.Clip fails for long clips (on some systems)
+    private static void stream(String filename) {
+<span class="nc" id="L335">        SourceDataLine line = null;</span>
+<span class="nc" id="L336">        int BUFFER_SIZE = 4096; // 4K buffer</span>
+
+        try {
+<span class="nc" id="L339">            InputStream is = StdAudio.class.getResourceAsStream(filename);</span>
+<span class="nc" id="L340">            AudioInputStream ais = AudioSystem.getAudioInputStream(is);</span>
+<span class="nc" id="L341">            AudioFormat audioFormat = ais.getFormat();</span>
+<span class="nc" id="L342">            DataLine.Info info = new DataLine.Info(SourceDataLine.class, audioFormat);</span>
+<span class="nc" id="L343">            line = (SourceDataLine) AudioSystem.getLine(info);</span>
+<span class="nc" id="L344">            line.open(audioFormat);</span>
+<span class="nc" id="L345">            line.start();</span>
+<span class="nc" id="L346">            byte[] samples = new byte[BUFFER_SIZE];</span>
+<span class="nc" id="L347">            int count = 0;</span>
+<span class="nc bnc" id="L348" title="All 2 branches missed.">            while ((count = ais.read(samples, 0, BUFFER_SIZE)) != -1) {</span>
+<span class="nc" id="L349">                line.write(samples, 0, count);</span>
+            }
+        }
+<span class="nc" id="L352">        catch (IOException e) {</span>
+<span class="nc" id="L353">            e.printStackTrace();</span>
+        }
+<span class="nc" id="L355">        catch (UnsupportedAudioFileException e) {</span>
+<span class="nc" id="L356">            e.printStackTrace();</span>
+        }
+<span class="nc" id="L358">        catch (LineUnavailableException e) {</span>
+<span class="nc" id="L359">            e.printStackTrace();</span>
+        }
+        finally {
+<span class="nc bnc" id="L362" title="All 2 branches missed.">            if (line != null) {</span>
+<span class="nc" id="L363">                line.drain();</span>
+<span class="nc" id="L364">                line.close();</span>
+            }
+        }
+<span class="nc" id="L367">    }</span>
+
+    /**
+     * Loops an audio file (in .wav, .mid, or .au format) in a background thread.
+     *
+     * @param filename the name of the audio file
+     * @throws IllegalArgumentException if {@code filename} is {@code null}
+     */
+<span class="nc" id="L375">    private static boolean activate=false;</span>
+    static Clip loopClip;
+    public static synchronized void loop(String filename) {
+            //activate = true;
+<span class="nc bnc" id="L379" title="All 2 branches missed.">            if (filename == null) throw new IllegalArgumentException();</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">            if(loopClip != null){</span>
+<span class="nc" id="L381">                loopClip.stop();</span>
+            }
+
+            // code adapted from: http://stackoverflow.com/questions/26305/how-can-i-play-sound-in-java
+            try {
+<span class="nc" id="L386">                loopClip = AudioSystem.getClip();</span>
+<span class="nc" id="L387">                URL is = StdAudio.class.getClassLoader().getResource(filename);</span>
+<span class="nc" id="L388">                AudioInputStream ais = AudioSystem.getAudioInputStream(is);</span>
+<span class="nc" id="L389">                DataLine.Info info = new DataLine.Info(Clip.class, ais.getFormat());</span>
+<span class="nc" id="L390">                loopClip = (Clip) AudioSystem.getLine(info);</span>
+<span class="nc" id="L391">                loopClip.open(ais);</span>
+<span class="nc" id="L392">                loopClip.loop(Clip.LOOP_CONTINUOUSLY);</span>
+<span class="nc" id="L393">            } catch (LineUnavailableException e) {</span>
+<span class="nc" id="L394">                throw new IllegalArgumentException(&quot;could not play '&quot; + filename + &quot;'&quot;, e);</span>
+<span class="nc" id="L395">            } catch (UnsupportedAudioFileException | IOException e) {</span>
+<span class="nc" id="L396">                e.printStackTrace();</span>
+<span class="nc" id="L397">            }</span>
+<span class="nc" id="L398">    }</span>
+
+    public static synchronized void endLoop(){
+<span class="nc bnc" id="L401" title="All 2 branches missed.">        if(loopClip != null){</span>
+<span class="nc" id="L402">            loopClip.stop();</span>
+        }
+<span class="nc" id="L404">    }</span>
+
+    /***************************************************************************
+     * Unit tests {@code Resources.StdAudio}.
+     ***************************************************************************/
+
+    // create a note (sine wave) of the given frequency (Hz), for the given
+    // duration (seconds) scaled to the given volume (amplitude)
+    private static double[] note(double hz, double duration, double amplitude) {
+<span class="nc" id="L413">        int n = (int) (StdAudio.SAMPLE_RATE * duration);</span>
+<span class="nc" id="L414">        double[] a = new double[n+1];</span>
+<span class="nc bnc" id="L415" title="All 2 branches missed.">        for (int i = 0; i &lt;= n; i++)</span>
+<span class="nc" id="L416">            a[i] = amplitude * Math.sin(2 * Math.PI * i * hz / StdAudio.SAMPLE_RATE);</span>
+<span class="nc" id="L417">        return a;</span>
+    }
+
+    /**
+     * Test client - play an A major scale to standard audio.
+     *
+     * @param args the command-line arguments
+     */
+    /**
+     * Test client - play an A major scale to standard audio.
+     *
+     * @param args the command-line arguments
+     */
+    public static void main(String[] args) {
+
+        // 440 Hz for 1 sec
+<span class="nc" id="L433">        double freq = 440.0;</span>
+<span class="nc bnc" id="L434" title="All 2 branches missed.">        for (int i = 0; i &lt;= StdAudio.SAMPLE_RATE; i++) {</span>
+<span class="nc" id="L435">            StdAudio.play(0.5 * Math.sin(2*Math.PI * freq * i / StdAudio.SAMPLE_RATE));</span>
+        }
+
+        // scale increments
+<span class="nc" id="L439">        int[] steps = { 0, 2, 4, 5, 7, 9, 11, 12 };</span>
+<span class="nc bnc" id="L440" title="All 2 branches missed.">        for (int i = 0; i &lt; steps.length; i++) {</span>
+<span class="nc" id="L441">            double hz = 440.0 * Math.pow(2, steps[i] / 12.0);</span>
+<span class="nc" id="L442">            StdAudio.play(note(hz, 1.0, 0.5));</span>
+        }
+
+
+        // need to call this in non-interactive stuff so the program doesn't terminate
+        // until all the sound leaves the speaker.
+<span class="nc" id="L448">        StdAudio.close();</span>
+<span class="nc" id="L449">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

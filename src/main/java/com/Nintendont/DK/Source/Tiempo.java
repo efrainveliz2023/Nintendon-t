@@ -23,6 +23,7 @@ public class Tiempo implements Runnable,Subject{
         }
         return instance;
     }
+
     @Override
     public void run() {
         while(true){
@@ -62,6 +63,7 @@ public class Tiempo implements Runnable,Subject{
         PennDraw.setFontSize(15);
         PennDraw.text(0.1, 0.95, String.format("Time %d:%d",minutos,segundos));
     }
+
     //implementacion de metodos de la interface Subject
     @Override
     public void registrerObserver(Observer o) {

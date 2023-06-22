@@ -1,0 +1,1546 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>PennDraw.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">PennDraw.java</span></div><h1>PennDraw.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source; /*************************************************************************
+ *  Compilation:  javac main.Resources.PennDraw.java
+ *  Execution:    java main.Resources.PennDraw
+ *
+ *  Standard drawing library. This class provides a basic capability for
+ *  creating drawings with your programs. It uses a simple graphics model that
+ *  allows you to create drawings consisting of points, lines, and curves
+ *  in a window on your computer and to save the drawings to a file.
+ *
+ *  Todo
+ *  ----
+ *    -  Add support for gradient fill, stipple, etc.
+ *    -  On some systems, drawing a line (or other shape) that extends way
+ *       beyond canvas (e.g., to infinity) dimensions does not get drawn.
+ *
+ *  Remarks
+ *  -------
+ *    -  don't use AffineTransform for rescaling since it
+ *       messes up images, strings, and penRadius
+ *    -  careful using setFont in inner loop within an animation -
+ *       it can cause flicker
+ *
+ *************************************************************************/
+
+import java.awt.*;
+import java.awt.event.*;
+import java.awt.geom.*;
+import java.awt.image.*;
+import java.io.*;
+import java.net.*;
+import java.util.LinkedList;
+import java.util.TreeSet;
+import javax.imageio.ImageIO;
+import javax.swing.*;
+
+/**
+ *  &lt;i&gt;Standard draw&lt;/i&gt;. This class provides a basic capability for
+ *  creating drawings with your programs. It uses a simple graphics model that
+ *  allows you to create drawings consisting of points, lines, and curves
+ *  in a window on your computer and to save the drawings to a file.
+ *  &lt;p&gt;
+ *  For additional documentation, see &lt;a href=&quot;http://introcs.cs.princeton.edu/15inout&quot;&gt;Section 1.5&lt;/a&gt; of
+ *  &lt;i&gt;Introduction to Programming in Java: An Interdisciplinary Approach&lt;/i&gt; by Robert Sedgewick and Kevin Wayne.
+ *
+ *  @author Robert Sedgewick
+ *  @author Kevin Wayne
+ *  @author Benedict Brown
+ */
+public final class PennDraw implements ActionListener, MouseListener, MouseMotionListener, KeyListener {
+
+    // version number
+    public static final long VERSION = 2016011311; // YEAR MONTH DAY HOUR (to allow &gt;= comparison)
+
+    // pre-defined colors
+<span class="nc" id="L55">    public static final Color BLACK      = Color.BLACK;</span>
+<span class="nc" id="L56">    public static final Color BLUE       = Color.BLUE;</span>
+<span class="nc" id="L57">    public static final Color CYAN       = Color.CYAN;</span>
+<span class="nc" id="L58">    public static final Color DARK_GRAY  = Color.DARK_GRAY;</span>
+<span class="nc" id="L59">    public static final Color GRAY       = Color.GRAY;</span>
+<span class="nc" id="L60">    public static final Color GREEN      = Color.GREEN;</span>
+<span class="nc" id="L61">    public static final Color LIGHT_GRAY = Color.LIGHT_GRAY;</span>
+<span class="nc" id="L62">    public static final Color MAGENTA    = Color.MAGENTA;</span>
+<span class="nc" id="L63">    public static final Color ORANGE     = Color.ORANGE;</span>
+<span class="nc" id="L64">    public static final Color PINK       = Color.PINK;</span>
+<span class="nc" id="L65">    public static final Color RED        = Color.RED;</span>
+<span class="nc" id="L66">    public static final Color WHITE      = Color.WHITE;</span>
+<span class="nc" id="L67">    public static final Color YELLOW     = Color.YELLOW;</span>
+
+    /**
+     * Shade of blue used in Introduction to Programming in Java.
+     * It is Pantone 300U. The RGB values are approximately (9, 90, 166).
+     */
+<span class="nc" id="L73">    public static final Color BOOK_BLUE       = new Color(  9,  90, 166);</span>
+<span class="nc" id="L74">    public static final Color BOOK_LIGHT_BLUE = new Color(103, 198, 243);</span>
+
+    /**
+     * Shade of red used in Algorithms 4th edition.
+     * It is Pantone 1805U. The RGB values are approximately (150, 35, 31).
+     */
+<span class="nc" id="L80">    public static final Color BOOK_RED = new Color(150, 35, 31);</span>
+
+    // default colors
+<span class="nc" id="L83">    private static final Color DEFAULT_PEN_COLOR   = BLACK;</span>
+<span class="nc" id="L84">    private static final Color DEFAULT_CLEAR_COLOR = WHITE;</span>
+
+    // current pen color
+    private static Color penColor;
+
+    // default canvas size is DEFAULT_SIZE-by-DEFAULT_SIZE
+    private static final int DEFAULT_SIZE = 512;
+<span class="nc" id="L91">    private static int width  = DEFAULT_SIZE;</span>
+<span class="nc" id="L92">    private static int height = DEFAULT_SIZE;</span>
+
+    // default pen radius
+    private static final double DEFAULT_PEN_RADIUS = 0.002;
+
+    // current pen radius
+    private static double penRadius;
+
+    // show we draw immediately or wait until next show?
+<span class="nc" id="L101">    private static boolean defer = false;</span>
+
+    // time in milliseconds (from currentTimeMillis()) when we can draw again
+    // used to control the frame rate
+<span class="nc" id="L105">    private static long nextDraw = -1;</span>
+
+    // frame rate for animation mode in ms (60000 / fps)
+    // 0 to draw as soon as advance() is called
+    // -1 to disable animation mode
+<span class="nc" id="L110">    private static int animationSpeed = -1;</span>
+
+
+    // boundary of drawing canvas, 0% border, scale factor to convert back to window coordinates
+    // (used to be a 5% border, and we might as well leave the constant in the code so
+    //  it's easy to add a border back in if necessary)
+    private static final double BORDER = 0;
+    private static final double DEFAULT_XMIN = 0.0;
+    private static final double DEFAULT_XMAX = 1.0;
+    private static final double DEFAULT_YMIN = 0.0;
+    private static final double DEFAULT_YMAX = 1.0;
+    private static double xmin, ymin, xmax, ymax;
+    private static double xscale, yscale;
+
+    // for synchronization
+<span class="nc" id="L125">    private static Object mouseLock = new Object();</span>
+<span class="nc" id="L126">    private static Object keyLock = new Object();</span>
+
+    // default font
+<span class="nc" id="L129">    private static final Font DEFAULT_FONT = new Font(&quot;SansSerif&quot;, Font.PLAIN, 16);</span>
+
+    // current font
+    private static Font font;
+
+    // double buffered graphics
+    private static BufferedImage offscreenImage, onscreenImage;
+    private static Graphics2D offscreen, onscreen;
+
+    // singleton for callbacks: avoids generation of extra .class files
+<span class="nc" id="L139">    private static PennDraw std = new PennDraw();</span>
+
+    // the frame for drawing to the screen
+    private static JFrame frame;
+
+    // mouse state
+<span class="nc" id="L145">    private static boolean mousePressed = false;</span>
+<span class="nc" id="L146">    private static double mouseX = 0;</span>
+<span class="nc" id="L147">    private static double mouseY = 0;</span>
+
+    // queue of typed key characters
+<span class="nc" id="L150">    private static LinkedList&lt;Character&gt; keysTyped = new LinkedList&lt;Character&gt;();</span>
+
+    // set of key codes currently pressed down
+<span class="nc" id="L153">    private static TreeSet&lt;Integer&gt; keysDown = new TreeSet&lt;Integer&gt;();</span>
+
+
+    // singleton pattern: client can't instantiate
+    private PennDraw() { }
+
+
+    // static initializer
+<span class="nc" id="L161">    static { init(); }</span>
+
+    /**
+     * Set the window size to the default size 512-by-512 pixels.
+     * This method must be called before any other commands.
+     */
+    public static void setCanvasSize() {
+<span class="nc" id="L168">        setCanvasSize(DEFAULT_SIZE, DEFAULT_SIZE);</span>
+<span class="nc" id="L169">    }</span>
+
+    /**
+     * Set the window size to w-by-h pixels.
+     * This method resets the x- and y-scales, fonts, colors, pen radius, etc., and clears the screen
+     *
+     * @param w the width as a number of pixels
+     * @param h the height as a number of pixels
+     * @throws a IllegalArgumentException if the width or height is 0 or negative
+     */
+    public static void setCanvasSize(int w, int h) {
+<span class="nc bnc" id="L180" title="All 4 branches missed.">        if (w &lt; 1 || h &lt; 1) throw new IllegalArgumentException(&quot;width and height must be positive&quot;);</span>
+<span class="nc" id="L181">        width = w;</span>
+<span class="nc" id="L182">        height = h;</span>
+
+<span class="nc" id="L184">        init();</span>
+<span class="nc" id="L185">    }</span>
+
+    // init
+    private static void init() {
+        // init() should only be called once at class initialization, and when the canvas is resized
+
+<span class="nc bnc" id="L191" title="All 2 branches missed.">        if (frame != null) frame.setVisible(false);</span>
+<span class="nc" id="L192">        frame = new JFrame();</span>
+<span class="nc" id="L193">        offscreenImage = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);</span>
+<span class="nc" id="L194">        onscreenImage  = new BufferedImage(width, height, BufferedImage.TYPE_INT_ARGB);</span>
+<span class="nc" id="L195">        offscreen = offscreenImage.createGraphics();</span>
+<span class="nc" id="L196">        onscreen  = onscreenImage.createGraphics();</span>
+<span class="nc" id="L197">        setXscale();</span>
+<span class="nc" id="L198">        setYscale();</span>
+<span class="nc" id="L199">        offscreen.setColor(DEFAULT_CLEAR_COLOR);</span>
+<span class="nc" id="L200">        offscreen.fillRect(0, 0, width, height);</span>
+<span class="nc" id="L201">        setPenColor();</span>
+<span class="nc" id="L202">        setPenRadius();</span>
+<span class="nc" id="L203">        setFont();</span>
+<span class="nc" id="L204">        clear();</span>
+
+        // add antialiasing
+<span class="nc" id="L207">        RenderingHints hints = new RenderingHints(RenderingHints.KEY_ANTIALIASING,</span>
+                RenderingHints.VALUE_ANTIALIAS_ON);
+<span class="nc" id="L209">        hints.put(RenderingHints.KEY_RENDERING, RenderingHints.VALUE_RENDER_QUALITY);</span>
+<span class="nc" id="L210">        offscreen.addRenderingHints(hints);</span>
+
+        // frame stuff
+<span class="nc" id="L213">        ImageIcon icon = new ImageIcon(onscreenImage);</span>
+<span class="nc" id="L214">        JLabel draw = new JLabel(icon);</span>
+
+<span class="nc" id="L216">        draw.addMouseListener(std);</span>
+<span class="nc" id="L217">        draw.addMouseMotionListener(std);</span>
+
+<span class="nc" id="L219">        frame.setContentPane(draw);</span>
+<span class="nc" id="L220">        frame.addKeyListener(std);    // JLabel cannot get keyboard focus</span>
+<span class="nc" id="L221">        frame.setResizable(false);</span>
+<span class="nc" id="L222">        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);            // closes all windows</span>
+        // frame.setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);      // closes only current window
+<span class="nc" id="L224">        frame.setTitle(&quot;Standard Draw&quot;);</span>
+<span class="nc" id="L225">        frame.setJMenuBar(createMenuBar());</span>
+<span class="nc" id="L226">        frame.pack();</span>
+<span class="nc" id="L227">        frame.requestFocusInWindow();</span>
+<span class="nc" id="L228">        frame.setVisible(true);</span>
+<span class="nc" id="L229">    }</span>
+
+    // create the menu bar (changed to private)
+    private static JMenuBar createMenuBar() {
+<span class="nc" id="L233">        JMenuBar menuBar = new JMenuBar();</span>
+<span class="nc" id="L234">        JMenu menu = new JMenu(&quot;File&quot;);</span>
+<span class="nc" id="L235">        menuBar.add(menu);</span>
+<span class="nc" id="L236">        JMenuItem menuItem1 = new JMenuItem(&quot; Save...   &quot;);</span>
+<span class="nc" id="L237">        menuItem1.addActionListener(std);</span>
+<span class="nc" id="L238">        menuItem1.setAccelerator(KeyStroke.getKeyStroke(KeyEvent.VK_S,</span>
+<span class="nc" id="L239">                Toolkit.getDefaultToolkit().getMenuShortcutKeyMask()));</span>
+<span class="nc" id="L240">        menu.add(menuItem1);</span>
+<span class="nc" id="L241">        return menuBar;</span>
+    }
+
+
+    /*************************************************************************
+     *  User and screen coordinate systems
+     *************************************************************************/
+
+    /**
+     * Set the x-scale to be the default (between 0.0 and 1.0).
+     */
+<span class="nc" id="L252">    public static void setXscale() { setXscale(DEFAULT_XMIN, DEFAULT_XMAX); }</span>
+
+    /**
+     * Set the y-scale to be the default (between 0.0 and 1.0).
+     */
+<span class="nc" id="L257">    public static void setYscale() { setYscale(DEFAULT_YMIN, DEFAULT_YMAX); }</span>
+
+    /**
+     * Set the x-scale (a 10% border is added to the values)
+     * @param min the minimum value of the x-scale
+     * @param max the maximum value of the x-scale
+     */
+    public static void setXscale(double min, double max) {
+<span class="nc" id="L265">        double size = max - min;</span>
+<span class="nc" id="L266">        synchronized (mouseLock) {</span>
+<span class="nc" id="L267">            xmin = min - BORDER * size;</span>
+<span class="nc" id="L268">            xmax = max + BORDER * size;</span>
+<span class="nc" id="L269">            setTransform();</span>
+<span class="nc" id="L270">        }</span>
+<span class="nc" id="L271">    }</span>
+
+    /**
+     * Set the y-scale (a 10% border is added to the values).
+     * @param min the minimum value of the y-scale
+     * @param max the maximum value of the y-scale
+     */
+    public static void setYscale(double min, double max) {
+<span class="nc" id="L279">        double size = max - min;</span>
+<span class="nc" id="L280">        synchronized (mouseLock) {</span>
+<span class="nc" id="L281">            ymin = min - BORDER * size;</span>
+<span class="nc" id="L282">            ymax = max + BORDER * size;</span>
+<span class="nc" id="L283">            setTransform();</span>
+<span class="nc" id="L284">        }</span>
+<span class="nc" id="L285">    }</span>
+
+    /**
+     * Set the x-scale and y-scale (a 10% border is added to the values)
+     * @param min the minimum value of the x- and y-scales
+     * @param max the maximum value of the x- and y-scales
+     */
+    public static void setScale(double min, double max) {
+<span class="nc" id="L293">        double size = max - min;</span>
+<span class="nc" id="L294">        synchronized (mouseLock) {</span>
+<span class="nc" id="L295">            xmin = min - BORDER * size;</span>
+<span class="nc" id="L296">            xmax = max + BORDER * size;</span>
+<span class="nc" id="L297">            ymin = min - BORDER * size;</span>
+<span class="nc" id="L298">            ymax = max + BORDER * size;</span>
+<span class="nc" id="L299">            setTransform();</span>
+<span class="nc" id="L300">        }</span>
+<span class="nc" id="L301">    }</span>
+
+    // helper function that sets the canvas transform based on xmin, xmax, etc.
+    private static void setTransform() {
+<span class="nc" id="L305">        xscale = width  / (xmax - xmin);</span>
+<span class="nc" id="L306">        yscale = height / (ymax - ymin);</span>
+<span class="nc" id="L307">    }</span>
+
+    // helper functions that scale from user coordinates to screen coordinates and back
+<span class="nc" id="L310">    private static double  scaleX(double x) { return xscale * (x - xmin); }</span>
+<span class="nc" id="L311">    private static double  scaleY(double y) { return yscale * (ymax - y); }</span>
+<span class="nc" id="L312">    private static double factorX(double w) { return w * width  / Math.abs(xmax - xmin);  }</span>
+<span class="nc" id="L313">    private static double factorY(double h) { return h * height / Math.abs(ymax - ymin);  }</span>
+<span class="nc" id="L314">    private static double   userX(double x) { return xmin + x / xscale; }</span>
+<span class="nc" id="L315">    private static double   userY(double y) { return ymax - y / yscale; }</span>
+
+    /**
+     * Clear the screen to the default color (white).
+     */
+<span class="nc" id="L320">    public static void clear() { clear(DEFAULT_CLEAR_COLOR); }</span>
+
+    /**
+     * Clear the screen to the given color.
+     * @param color the Color to make the background
+     */
+    public static void clear(Color color) {
+<span class="nc" id="L327">        offscreen.setColor(color);</span>
+<span class="nc" id="L328">        filledRectangle(0.5 * (xmax + xmin), 0.5 * (ymax + ymin),</span>
+                0.5 * (xmax - xmin), 0.5 * (ymax - ymin));
+<span class="nc" id="L330">        offscreen.setColor(penColor);</span>
+<span class="nc" id="L331">        draw();</span>
+<span class="nc" id="L332">    }</span>
+
+    /**
+     * Clear the screen to the given color.
+     * @param red the amount of red (between 0 and 255)
+     * @param green the amount of green (between 0 and 255)
+     * @param blue the amount of blue (between 0 and 255)
+     * @throws IllegalArgumentException if the amount of red, green, or blue are outside prescribed range
+     */
+    public static void clear(int red, int green, int blue) {
+<span class="nc bnc" id="L342" title="All 4 branches missed.">        if (red   &lt; 0 || red   &gt;= 256) throw new IllegalArgumentException(&quot;amount of red must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L343" title="All 4 branches missed.">        if (green &lt; 0 || green &gt;= 256) throw new IllegalArgumentException(&quot;amount of green must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L344" title="All 4 branches missed.">        if (blue  &lt; 0 || blue  &gt;= 256) throw new IllegalArgumentException(&quot;amount of blue must be between 0 and 255&quot;);</span>
+<span class="nc" id="L345">        clear(new Color(red, green, blue));</span>
+<span class="nc" id="L346">    }</span>
+
+    /**
+     * Clear the screen to the given color.
+     * @param red the amount of red (between 0 and 255)
+     * @param green the amount of green (between 0 and 255)
+     * @param blue the amount of blue (between 0 and 255)
+     * @param alpha the amount of alpha (between 0 and 255)
+     * @throws IllegalArgumentException if the amount of red, green, or blue are outside prescribed range
+     */
+    public static void clear(int red, int green, int blue, int alpha) {
+<span class="nc bnc" id="L357" title="All 4 branches missed.">        if (red   &lt; 0 || red   &gt;= 256) throw new IllegalArgumentException(&quot;amount of red must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L358" title="All 4 branches missed.">        if (green &lt; 0 || green &gt;= 256) throw new IllegalArgumentException(&quot;amount of green must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L359" title="All 4 branches missed.">        if (blue  &lt; 0 || blue  &gt;= 256) throw new IllegalArgumentException(&quot;amount of blue must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L360" title="All 4 branches missed.">        if (alpha &lt; 0 || alpha &gt;= 256) throw new IllegalArgumentException(&quot;amount of alpha must be between 0 and 255&quot;);</span>
+<span class="nc" id="L361">        clear(new Color(red, green, blue, alpha));</span>
+<span class="nc" id="L362">    }</span>
+
+    /**
+     * Get the current pen radius.
+     */
+<span class="nc" id="L367">    public static double getPenRadius() { return penRadius; }</span>
+
+    /**
+     * Set the pen size to the default (.002).
+     */
+<span class="nc" id="L372">    public static void setPenRadius() { setPenRadius(DEFAULT_PEN_RADIUS); }</span>
+
+    /**
+     * Set the radius of the pen to the given size.
+     * @param r the radius of the pen
+     * @throws IllegalArgumentException if r is negative
+     */
+    public static void setPenRadius(double r) {
+<span class="nc bnc" id="L380" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;pen radius must be nonnegative&quot;);</span>
+<span class="nc" id="L381">        penRadius = r;</span>
+<span class="nc" id="L382">        float scaledPenRadius = (float) (r * DEFAULT_SIZE);</span>
+<span class="nc" id="L383">        BasicStroke stroke = new BasicStroke(scaledPenRadius, BasicStroke.CAP_ROUND, BasicStroke.JOIN_ROUND);</span>
+        // BasicStroke stroke = new BasicStroke(scaledPenRadius);
+<span class="nc" id="L385">        offscreen.setStroke(stroke);</span>
+<span class="nc" id="L386">    }</span>
+
+    /**
+     * Set the width of the pen to the given size based on the window width
+     * @param w the width of the pen in pixels
+     * @throws IllegalArgumentException if width is negative
+     */
+    public static void setPenWidthInPixels(double w) {
+<span class="nc bnc" id="L394" title="All 2 branches missed.">        if (w &lt; 0) throw new IllegalArgumentException(&quot;pen radius must be nonnegative&quot;);</span>
+
+<span class="nc" id="L396">        setPenRadius(w / (2 * width));</span>
+<span class="nc" id="L397">    }</span>
+
+    /**
+     * Set the width of the pen to the given size based on the window width and screen resolution
+     * @param w the width of the pen in points (72 points/pinch)
+     * @throws IllegalArgumentException if width is negative
+     */
+    public static void setPenWidthInPoints(double w) {
+<span class="nc bnc" id="L405" title="All 2 branches missed.">        if (w &lt; 0) throw new IllegalArgumentException(&quot;pen radius must be nonnegative&quot;);</span>
+
+<span class="nc" id="L407">        int dpi = frame.getToolkit().getScreenResolution();</span>
+<span class="nc" id="L408">        setPenRadius(dpi * w / (144 * width));</span>
+<span class="nc" id="L409">    }</span>
+
+    /**
+     * Get the current pen color.
+     */
+<span class="nc" id="L414">    public static Color getPenColor() { return penColor; }</span>
+
+    /**
+     * Set the pen color to the default color (black).
+     */
+<span class="nc" id="L419">    public static void setPenColor() { setPenColor(DEFAULT_PEN_COLOR); }</span>
+
+    /**
+     * Set the pen color to the given color. The available pen colors are
+     * BLACK, BLUE, CYAN, DARK_GRAY, GRAY, GREEN, LIGHT_GRAY, MAGENTA,
+     * ORANGE, PINK, RED, WHITE, and YELLOW.
+     * @param color the Color to make the pen
+     */
+    public static void setPenColor(Color color) {
+<span class="nc" id="L428">        penColor = color;</span>
+<span class="nc" id="L429">        offscreen.setColor(penColor);</span>
+<span class="nc" id="L430">    }</span>
+
+    /**
+     * Set the pen color to the given RGB color.
+     * @param red the amount of red (between 0 and 255)
+     * @param green the amount of green (between 0 and 255)
+     * @param blue the amount of blue (between 0 and 255)
+     * @throws IllegalArgumentException if the amount of red, green, or blue are outside prescribed range
+     */
+    public static void setPenColor(int red, int green, int blue) {
+<span class="nc bnc" id="L440" title="All 4 branches missed.">        if (red   &lt; 0 || red   &gt;= 256) throw new IllegalArgumentException(&quot;amount of red must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L441" title="All 4 branches missed.">        if (green &lt; 0 || green &gt;= 256) throw new IllegalArgumentException(&quot;amount of green must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L442" title="All 4 branches missed.">        if (blue  &lt; 0 || blue  &gt;= 256) throw new IllegalArgumentException(&quot;amount of blue must be between 0 and 255&quot;);</span>
+<span class="nc" id="L443">        setPenColor(new Color(red, green, blue));</span>
+<span class="nc" id="L444">    }</span>
+
+    /**
+     * Set the pen color to the given RGBA color.
+     * @param red the amount of red (between 0 and 255)
+     * @param green the amount of green (between 0 and 255)
+     * @param blue the amount of blue (between 0 and 255)
+     * @param alpha the amount of alpha (between 0 and 255)
+     * @throws IllegalArgumentException if the amount of red, green, blue, or alpha are outside prescribed range
+     */
+    public static void setPenColor(int red, int green, int blue, int alpha) {
+<span class="nc bnc" id="L455" title="All 4 branches missed.">        if (red   &lt; 0 || red   &gt;= 256) throw new IllegalArgumentException(&quot;amount of red must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L456" title="All 4 branches missed.">        if (green &lt; 0 || green &gt;= 256) throw new IllegalArgumentException(&quot;amount of green must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L457" title="All 4 branches missed.">        if (blue  &lt; 0 || blue  &gt;= 256) throw new IllegalArgumentException(&quot;amount of blue must be between 0 and 255&quot;);</span>
+<span class="nc bnc" id="L458" title="All 4 branches missed.">        if (alpha &lt; 0 || alpha &gt;= 256) throw new IllegalArgumentException(&quot;amount of alpha must be between 0 and 255&quot;);</span>
+<span class="nc" id="L459">        setPenColor(new Color(red, green, blue, alpha));</span>
+<span class="nc" id="L460">    }</span>
+
+    /**
+     * Get the current font.
+     */
+<span class="nc" id="L465">    public static Font getFont() { return font; }</span>
+
+    /**
+     * main.java.com.Nintendont.DK.Source.List all available fonts
+     * Code from http://alvinalexander.com/blog/post/jfc-swing/swing-faq-list-fonts-current-platform
+     */
+    public static void listFonts() {
+        String fonts[] =
+<span class="nc" id="L473">                GraphicsEnvironment.getLocalGraphicsEnvironment().getAvailableFontFamilyNames();</span>
+
+<span class="nc bnc" id="L475" title="All 2 branches missed.">        for (String s : fonts)</span>
+<span class="nc" id="L476">            System.out.println(s);</span>
+<span class="nc" id="L477">    }</span>
+
+    /**
+     * Set the font to the default font (sans serif, 16 point).
+     */
+<span class="nc" id="L482">    public static void setFont() { setFont(DEFAULT_FONT); }</span>
+
+    /**
+     * Set the font to the given value.
+     * @param f the font to make text
+     */
+    public static void setFont(Font f) {
+<span class="nc" id="L489">        font = f;</span>
+<span class="nc" id="L490">        offscreen.setFont(f);</span>
+<span class="nc" id="L491">    }</span>
+
+    /**
+     * Set the font to the given font, with the same style and point size as the current font.
+     * @param fontName the font to make text
+     */
+    public static void setFont(String fontName) {
+<span class="nc" id="L498">        setFont(new Font(fontName, font.getStyle(), font.getSize()));</span>
+<span class="nc" id="L499">    }</span>
+
+    /**
+     * Set the font to the given font and size, with the same style as the current font.
+     * @param fontName the font to make text
+     * @param pointSize the font to make text
+     */
+    public static void setFont(String fontName, double pointSize) {
+<span class="nc" id="L507">        setFont(fontName);</span>
+<span class="nc" id="L508">        setFont(font.deriveFont((float) pointSize));</span>
+<span class="nc" id="L509">    }</span>
+
+    /**
+     * Set the font to the specified point size
+     * @param pointSize the desired font size
+     */
+    public static void setFontSize(double pointSize) {
+<span class="nc" id="L516">        setFont(font.deriveFont((float) pointSize));</span>
+<span class="nc" id="L517">    }</span>
+
+    /**
+     * Set the font to the specified height in pixels.  The conversion
+     * is approximate due to limitations in Java.
+     * @param pixelHeight the desired font size in pixels
+     */
+    public static void setFontSizeInPixels(double pixelHeight) {
+<span class="nc" id="L525">        int dpi = frame.getToolkit().getScreenResolution();</span>
+<span class="nc" id="L526">        double pointSize = pixelHeight * dpi / 72;</span>
+<span class="nc" id="L527">        System.out.println(dpi);</span>
+<span class="nc" id="L528">        System.out.println(pointSize);</span>
+<span class="nc" id="L529">        setFont(font.deriveFont((float) pointSize));</span>
+<span class="nc" id="L530">    }</span>
+
+    /**
+     * Set the font to a plain style (no bold or italic)
+     */
+    public static void setFontPlain() {
+<span class="nc" id="L536">        setFont(font.deriveFont(Font.PLAIN));</span>
+<span class="nc" id="L537">    }</span>
+
+    /**
+     * Set the font to a bold style (no italic)
+     */
+    public static void setFontBold() {
+<span class="nc" id="L543">        setFont(font.deriveFont(Font.BOLD));</span>
+<span class="nc" id="L544">    }</span>
+
+    /**
+     * Set the font to an italics style (no bold)
+     */
+    public static void setFontItalic() {
+<span class="nc" id="L550">        setFont(font.deriveFont(Font.ITALIC));</span>
+<span class="nc" id="L551">    }</span>
+
+    /**
+     * Set the font to a bold italic style
+     */
+    public static void setFontBoldItalic() {
+<span class="nc" id="L557">        setFont(font.deriveFont(Font.BOLD | Font.ITALIC));</span>
+<span class="nc" id="L558">    }</span>
+
+
+    /*************************************************************************
+     *  Drawing geometric shapes.
+     *************************************************************************/
+
+    /**
+     * Draw a line from (x0, y0) to (x1, y1).
+     * @param x0 the x-coordinate of the starting point
+     * @param y0 the y-coordinate of the starting point
+     * @param x1 the x-coordinate of the destination point
+     * @param y1 the y-coordinate of the destination point
+     */
+    public static void line(double x0, double y0, double x1, double y1) {
+<span class="nc" id="L573">        offscreen.draw(new Line2D.Double(scaleX(x0), scaleY(y0), scaleX(x1), scaleY(y1)));</span>
+<span class="nc" id="L574">        draw();</span>
+<span class="nc" id="L575">    }</span>
+
+    /**
+     * Draw one pixel at (x, y).
+     * @param x the x-coordinate of the pixel
+     * @param y the y-coordinate of the pixel
+     */
+    private static void pixel(double x, double y) {
+<span class="nc" id="L583">        offscreen.fillRect((int) Math.round(scaleX(x)), (int) Math.round(scaleY(y)), 1, 1);</span>
+<span class="nc" id="L584">    }</span>
+
+    /**
+     * Draw a point at (x, y).
+     * @param x the x-coordinate of the point
+     * @param y the y-coordinate of the point
+     */
+    public static void point(double x, double y) {
+<span class="nc" id="L592">        double r = penRadius;</span>
+<span class="nc" id="L593">        float scaledPenRadius = (float) (r * DEFAULT_SIZE);</span>
+
+        // double ws = factorX(2*r);
+        // double hs = factorY(2*r);
+        // if (ws &lt;= 1 &amp;&amp; hs &lt;= 1) pixel(x, y);
+<span class="nc bnc" id="L598" title="All 2 branches missed.">        if (scaledPenRadius &lt;= 1) pixel(x, y);</span>
+<span class="nc" id="L599">        else offscreen.fill(new Ellipse2D.Double(scaleX(x) - scaledPenRadius/2,</span>
+<span class="nc" id="L600">                scaleY(y) - scaledPenRadius/2,</span>
+                scaledPenRadius, scaledPenRadius));
+<span class="nc" id="L602">        draw();</span>
+<span class="nc" id="L603">    }</span>
+
+    /**
+     * Draw a circle of radius r, centered on (x, y).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void circle(double x, double y, double r) {
+<span class="nc bnc" id="L613" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;circle radius must be nonnegative&quot;);</span>
+<span class="nc" id="L614">        ellipse(x, y, r, r);</span>
+<span class="nc" id="L615">    }</span>
+
+    /**
+     * Draw a filled circle of radius r, centered on (x, y).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void filledCircle(double x, double y, double r) {
+<span class="nc bnc" id="L625" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;circle radius must be nonnegative&quot;);</span>
+<span class="nc" id="L626">        filledEllipse(x, y, r, r);</span>
+<span class="nc" id="L627">    }</span>
+
+    /**
+     * Draw an ellipse with given semimajor and semiminor axes, centered on (x, y).
+     * @param x the x-coordinate of the center of the ellipse
+     * @param y the y-coordinate of the center of the ellipse
+     * @param semiMajorAxis is the semimajor axis of the ellipse
+     * @param semiMinorAxis is the semiminor axis of the ellipse
+     * @throws IllegalArgumentException if either of the axes are negative
+     */
+    public static void ellipse(double x, double y, double semiMajorAxis, double semiMinorAxis) {
+<span class="nc" id="L638">        ellipse(x, y, semiMajorAxis, semiMinorAxis, false);</span>
+<span class="nc" id="L639">    }</span>
+
+    /**
+     * Draw an ellipse with given semimajor and semiminor axes, centered on (x, y).
+     * @param x the x-coordinate of the center of the ellipse
+     * @param y the y-coordinate of the center of the ellipse
+     * @param semiMajorAxis is the semimajor axis of the ellipse
+     * @param semiMinorAxis is the semiminor axis of the ellipse
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if either of the axes are negative
+     */
+    public static void ellipse(double x, double y, double semiMajorAxis, double semiMinorAxis, double degrees) {
+<span class="nc" id="L651">        AffineTransform t = (AffineTransform) offscreen.getTransform();</span>
+<span class="nc" id="L652">        offscreen.rotate(Math.toRadians(-degrees), scaleX(x), scaleY(y));</span>
+<span class="nc" id="L653">        ellipse(x, y, semiMajorAxis, semiMinorAxis);</span>
+<span class="nc" id="L654">        offscreen.setTransform(t);</span>
+<span class="nc" id="L655">    }</span>
+
+    /**
+     * Draw a filled ellipse with given semimajor and semiminor axes, centered on (x, y).
+     * @param x the x-coordinate of the center of the ellipse
+     * @param y the y-coordinate of the center of the ellipse
+     * @param semiMajorAxis is the semimajor axis of the ellipse
+     * @param semiMinorAxis is the semiminor axis of the ellipse
+     * @throws IllegalArgumentException if either of the axes are negative
+     */
+    public static void filledEllipse(double x, double y, double semiMajorAxis, double semiMinorAxis) {
+<span class="nc" id="L666">        ellipse(x, y, semiMajorAxis, semiMinorAxis, true);</span>
+<span class="nc" id="L667">    }</span>
+
+
+    /**
+     * Draw a filled ellipse with given semimajor and semiminor axes, centered on (x, y),
+     * @param x the x-coordinate of the center of the ellipse
+     * @param y the y-coordinate of the center of the ellipse
+     * @param semiMajorAxis is the semimajor axis of the ellipse
+     * @param semiMinorAxis is the semiminor axis of the ellipse
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if either of the axes are negative
+     */
+    public static void filledEllipse(double x, double y, double semiMajorAxis, double semiMinorAxis, double degrees) {
+<span class="nc" id="L680">        AffineTransform t = (AffineTransform) offscreen.getTransform().clone();</span>
+<span class="nc" id="L681">        offscreen.rotate(Math.toRadians(-degrees), scaleX(x), scaleY(y));</span>
+<span class="nc" id="L682">        filledEllipse(x, y, semiMajorAxis, semiMinorAxis);</span>
+<span class="nc" id="L683">        offscreen.setTransform(t);</span>
+<span class="nc" id="L684">    }</span>
+
+    // helper function for drawing ellipses and filled ellipses
+    private static void ellipse(double x, double y, double semiMajorAxis, double semiMinorAxis, boolean filled) {
+<span class="nc bnc" id="L688" title="All 2 branches missed.">        if (semiMajorAxis &lt; 0) throw new IllegalArgumentException(&quot;ellipse semimajor axis must be nonnegative&quot;);</span>
+<span class="nc bnc" id="L689" title="All 2 branches missed.">        if (semiMinorAxis &lt; 0) throw new IllegalArgumentException(&quot;ellipse semiminor axis must be nonnegative&quot;);</span>
+<span class="nc" id="L690">        double xs = scaleX(x);</span>
+<span class="nc" id="L691">        double ys = scaleY(y);</span>
+<span class="nc" id="L692">        double ws = factorX(2 * semiMajorAxis);</span>
+<span class="nc" id="L693">        double hs = factorY(2 * semiMinorAxis);</span>
+<span class="nc bnc" id="L694" title="All 4 branches missed.">        if (ws &lt;= 1 &amp;&amp; hs &lt;= 1) pixel(x, y);</span>
+<span class="nc bnc" id="L695" title="All 2 branches missed.">        else if (filled)        offscreen.fill(new Ellipse2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));</span>
+<span class="nc" id="L696">        else                    offscreen.draw(new Ellipse2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));</span>
+<span class="nc" id="L697">        draw();</span>
+<span class="nc" id="L698">    }</span>
+
+    /**
+     * Draw an arc of radius r, centered on (x, y), from angle1 to angle2 (in degrees).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @param angle1 the starting angle. 0 would mean an arc beginning at 3 o'clock.
+     * @param angle2 the angle at the end of the arc. For example, if
+     *        you want a 90 degree arc, then angle2 should be angle1 + 90.
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void arc(double x, double y, double r, double angle1, double angle2) {
+<span class="nc" id="L711">        arc(x, y, r, angle1, angle2, Arc2D.OPEN, false);</span>
+<span class="nc" id="L712">    }</span>
+
+    /**
+     * Draw a closed arc of radius r, centered on (x, y), from angle1 to angle2 (in degrees).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @param angle1 the starting angle. 0 would mean an arc beginning at 3 o'clock.
+     * @param angle2 the angle at the end of the arc. For example, if
+     *        you want a 90 degree arc, then angle2 should be angle1 + 90.
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void closedArc(double x, double y, double r, double angle1, double angle2) {
+<span class="nc" id="L725">        arc(x, y, r, angle1, angle2, Arc2D.CHORD, false);</span>
+<span class="nc" id="L726">    }</span>
+
+    /**
+     * Draw a pie wedge of radius r, centered on (x, y), from angle1 to angle2 (in degrees).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @param angle1 the starting angle. 0 would mean an arc beginning at 3 o'clock.
+     * @param angle2 the angle at the end of the arc. For example, if
+     *        you want a 90 degree arc, then angle2 should be angle1 + 90.
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void pie(double x, double y, double r, double angle1, double angle2) {
+<span class="nc" id="L739">        arc(x, y, r, angle1, angle2, Arc2D.PIE, false);</span>
+<span class="nc" id="L740">    }</span>
+
+    /**
+     * Draw a filled pie wedge of radius r, centered on (x, y), from angle1 to angle2 (in degrees).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @param angle1 the starting angle. 0 would mean an arc beginning at 3 o'clock.
+     * @param angle2 the angle at the end of the arc. For example, if
+     *        you want a 90 degree arc, then angle2 should be angle1 + 90.
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void filledPie(double x, double y, double r, double angle1, double angle2) {
+<span class="nc" id="L753">        arc(x, y, r, angle1, angle2, Arc2D.PIE, true);</span>
+<span class="nc" id="L754">    }</span>
+
+    /**
+     * Draw a filled arc of radius r, centered on (x, y), from angle1 to angle2 (in degrees).
+     * @param x the x-coordinate of the center of the circle
+     * @param y the y-coordinate of the center of the circle
+     * @param r the radius of the circle
+     * @param angle1 the starting angle. 0 would mean an arc beginning at 3 o'clock.
+     * @param angle2 the angle at the end of the arc. For example, if
+     *        you want a 90 degree arc, then angle2 should be angle1 + 90.
+     * @throws IllegalArgumentException if the radius of the circle is negative
+     */
+    public static void filledArc(double x, double y, double r, double angle1, double angle2) {
+<span class="nc" id="L767">        arc(x, y, r, angle1, angle2, Arc2D.CHORD, true);</span>
+<span class="nc" id="L768">    }</span>
+
+    // common code for all arc functions
+    private static void arc(double x, double y, double r, double angle1, double angle2, int pathType, boolean fill) {
+<span class="nc bnc" id="L772" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;arc radius must be nonnegative&quot;);</span>
+<span class="nc bnc" id="L773" title="All 2 branches missed.">        while (angle2 &lt; angle1) angle2 += 360;</span>
+<span class="nc" id="L774">        double xs = scaleX(x);</span>
+<span class="nc" id="L775">        double ys = scaleY(y);</span>
+<span class="nc" id="L776">        double ws = factorX(2*r);</span>
+<span class="nc" id="L777">        double hs = factorY(2*r);</span>
+<span class="nc bnc" id="L778" title="All 4 branches missed.">        if (ws &lt;= 1 &amp;&amp; hs &lt;= 1) {</span>
+<span class="nc" id="L779">            pixel(x, y);</span>
+        } else {
+<span class="nc bnc" id="L781" title="All 2 branches missed.">            if (fill) offscreen.fill(new Arc2D.Double(xs - ws/2, ys - hs/2, ws, hs, angle1, angle2 - angle1, pathType));</span>
+<span class="nc" id="L782">            else      offscreen.draw(new Arc2D.Double(xs - ws/2, ys - hs/2, ws, hs, angle1, angle2 - angle1, pathType));</span>
+        }
+
+<span class="nc" id="L785">        draw();</span>
+<span class="nc" id="L786">    }</span>
+
+
+    /**
+     * Draw a square of side length 2r, centered on (x, y).
+     * @param x the x-coordinate of the center of the square
+     * @param y the y-coordinate of the center of the square
+     * @param r radius is half the length of any side of the square
+     * @throws IllegalArgumentException if r is negative
+     */
+    public static void square(double x, double y, double r) {
+<span class="nc bnc" id="L797" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;square side length must be nonnegative&quot;);</span>
+<span class="nc" id="L798">        rectangle(x, y, r, r);</span>
+<span class="nc" id="L799">    }</span>
+
+    /**
+     * Draw a square of side length 2r, centered on (x, y) and rotated counter-clockwise.
+     * @param x the x-coordinate of the center of the square
+     * @param y the y-coordinate of the center of the square
+     * @param r radius is half the length of any side of the square
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if r is negative
+     */
+    public static void square(double x, double y, double r, double degrees) {
+<span class="nc bnc" id="L810" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;square side length must be nonnegative&quot;);</span>
+<span class="nc" id="L811">        rectangle(x, y, r, r, degrees);</span>
+<span class="nc" id="L812">    }</span>
+
+    /**
+     * Draw a filled square of side length 2r, centered on (x, y).
+     * @param x the x-coordinate of the center of the square
+     * @param y the y-coordinate of the center of the square
+     * @param r radius is half the length of any side of the square
+     * @throws IllegalArgumentException if r is negative
+     */
+    public static void filledSquare(double x, double y, double r) {
+<span class="nc bnc" id="L822" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;square side length must be nonnegative&quot;);</span>
+<span class="nc" id="L823">        filledRectangle(x, y, r, r);</span>
+<span class="nc" id="L824">    }</span>
+
+    /**
+     * Draw a filled square of side length 2r, centered on (x, y) and rotated counter-clockwise.
+     * @param x the x-coordinate of the center of the square
+     * @param y the y-coordinate of the center of the square
+     * @param r radius is half the length of any side of the square
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if r is negative
+     */
+    public static void filledSquare(double x, double y, double r, double degrees) {
+<span class="nc bnc" id="L835" title="All 2 branches missed.">        if (r &lt; 0) throw new IllegalArgumentException(&quot;square side length must be nonnegative&quot;);</span>
+<span class="nc" id="L836">        filledRectangle(x, y, r, r, degrees);</span>
+<span class="nc" id="L837">    }</span>
+
+    /**
+     * Draw a rectangle of given half width and half height, centered on (x, y).
+     * @param x the x-coordinate of the center of the rectangle
+     * @param y the y-coordinate of the center of the rectangle
+     * @param halfWidth is half the width of the rectangle
+     * @param halfHeight is half the height of the rectangle
+     * @throws IllegalArgumentException if halfWidth or halfHeight is negative
+     */
+    public static void rectangle(double x, double y, double halfWidth, double halfHeight) {
+<span class="nc" id="L848">        rectangle(x, y, halfWidth, halfHeight, false);</span>
+<span class="nc" id="L849">    }</span>
+
+    /**
+     * Draw a rectangle of given half width and half height, centered on (x, y) and rotated counter-clockwise.
+     * @param x the x-coordinate of the center of the rectangle
+     * @param y the y-coordinate of the center of the rectangle
+     * @param halfWidth is half the width of the rectangle
+     * @param halfHeight is half the height of the rectangle
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if halfWidth or halfHeight is negative
+     */
+    public static void rectangle(double x, double y, double halfWidth, double halfHeight, double degrees) {
+<span class="nc" id="L861">        AffineTransform t = (AffineTransform) offscreen.getTransform().clone();</span>
+
+<span class="nc" id="L863">        offscreen.rotate(Math.toRadians(-degrees), scaleX(x), scaleY(y));</span>
+<span class="nc" id="L864">        rectangle(x, y, halfWidth, halfHeight);</span>
+<span class="nc" id="L865">        offscreen.setTransform(t);</span>
+<span class="nc" id="L866">    }</span>
+
+    /**
+     * Draw a filled rectangle of given half width and half height, centered on (x, y).
+     * @param x the x-coordinate of the center of the rectangle
+     * @param y the y-coordinate of the center of the rectangle
+     * @param halfWidth is half the width of the rectangle
+     * @param halfHeight is half the height of the rectangle
+     * @throws IllegalArgumentException if halfWidth or halfHeight is negative
+     */
+    public static void filledRectangle(double x, double y, double halfWidth, double halfHeight) {
+<span class="nc" id="L877">        rectangle(x, y, halfWidth, halfHeight, true);</span>
+<span class="nc" id="L878">    }</span>
+
+
+    /**
+     * Draw a rectangle of given half width and half height, centered on (x, y) and rotated counter-clockwise.
+     * @param x the x-coordinate of the center of the rectangle
+     * @param y the y-coordinate of the center of the rectangle
+     * @param halfWidth is half the width of the rectangle
+     * @param halfHeight is half the height of the rectangle
+     * @param degrees counter-clockwise rotation by angle degrees around the center
+     * @throws IllegalArgumentException if halfWidth or halfHeight is negative
+     */
+    public static void filledRectangle(double x, double y, double halfWidth, double halfHeight, double degrees) {
+<span class="nc" id="L891">        AffineTransform t = (AffineTransform) offscreen.getTransform();</span>
+
+<span class="nc" id="L893">        offscreen.rotate(Math.toRadians(-degrees), scaleX(x), scaleY(y));</span>
+<span class="nc" id="L894">        filledRectangle(x, y, halfWidth, halfHeight);</span>
+<span class="nc" id="L895">        offscreen.setTransform(t);</span>
+<span class="nc" id="L896">    }</span>
+
+    private static void rectangle(double x, double y, double halfWidth, double halfHeight, boolean filled) {
+<span class="nc bnc" id="L899" title="All 2 branches missed.">        if (halfWidth  &lt; 0) throw new IllegalArgumentException(&quot;half width must be nonnegative&quot;);</span>
+<span class="nc bnc" id="L900" title="All 2 branches missed.">        if (halfHeight &lt; 0) throw new IllegalArgumentException(&quot;half height must be nonnegative&quot;);</span>
+
+<span class="nc" id="L902">        double xs = scaleX(x);</span>
+<span class="nc" id="L903">        double ys = scaleY(y);</span>
+<span class="nc" id="L904">        double ws = factorX(2 * halfWidth);</span>
+<span class="nc" id="L905">        double hs = factorY(2 * halfHeight);</span>
+
+<span class="nc bnc" id="L907" title="All 4 branches missed.">        if (ws &lt;= 1 &amp;&amp; hs &lt;= 1) pixel(x, y);</span>
+<span class="nc bnc" id="L908" title="All 2 branches missed.">        else if (filled)        offscreen.fill(new Rectangle2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));</span>
+<span class="nc" id="L909">        else                    offscreen.draw(new Rectangle2D.Double(xs - ws / 2, ys - hs / 2, ws, hs));</span>
+<span class="nc" id="L910">        draw();</span>
+<span class="nc" id="L911">    }</span>
+
+    /**
+     * Draw a polyline with the given (x[i], y[i]) coordinates.
+     * @param x an array of all the x-coordindates of the polygon
+     * @param y an array of all the y-coordindates of the polygon
+     */
+    public static void polyline(double[] x, double[] y) {
+<span class="nc" id="L919">        polygon(x, y, false, false);</span>
+<span class="nc" id="L920">    }</span>
+
+    /**
+     * Draw a polygon with the given (x[i], y[i]) coordinates.
+     * @param x an array of all the x-coordindates of the polygon
+     * @param y an array of all the y-coordindates of the polygon
+     */
+    public static void polygon(double[] x, double[] y) {
+<span class="nc" id="L928">        polygon(x, y, true, false);</span>
+<span class="nc" id="L929">    }</span>
+
+    /**
+     * Draw a filled polygon with the given (x[i], y[i]) coordinates.
+     * @param x an array of all the x-coordindates of the polygon
+     * @param y an array of all the y-coordindates of the polygon
+     */
+    public static void filledPolygon(double[] x, double[] y) {
+<span class="nc" id="L937">        polygon(x, y, true, true);</span>
+<span class="nc" id="L938">    }</span>
+
+    private static void polygon(double[] x, double[] y, boolean close, boolean fill) {
+<span class="nc" id="L941">        int N = x.length;</span>
+
+<span class="nc bnc" id="L943" title="All 2 branches missed.">        if (y.length != N)</span>
+<span class="nc" id="L944">            throw new IllegalArgumentException(&quot;x[] and y[] must have the same number of elements.  &quot; +</span>
+                    &quot;x[] has &quot; + x.length + &quot; elements, but y[] has &quot; +
+                    y.length + &quot; elements.&quot;);
+
+<span class="nc bnc" id="L948" title="All 6 branches missed.">        if ((close || fill) &amp;&amp; N &lt; 3)</span>
+<span class="nc" id="L949">            throw new IllegalArgumentException(&quot;You must specify at least three for a polygon.  &quot; +</span>
+                    &quot;You have only provided &quot; + N + &quot; points.&quot;);
+
+<span class="nc" id="L952">        Path2D.Double path = new Path2D.Double();</span>
+<span class="nc" id="L953">        path.moveTo(scaleX(x[0]), scaleY(y[0]));</span>
+<span class="nc bnc" id="L954" title="All 2 branches missed.">        for (int i = 0; i &lt; N; i++)</span>
+<span class="nc" id="L955">            path.lineTo(scaleX(x[i]), scaleY(y[i]));</span>
+<span class="nc bnc" id="L956" title="All 4 branches missed.">        if (close || fill) path.closePath();</span>
+<span class="nc bnc" id="L957" title="All 2 branches missed.">        if (fill) offscreen.fill(path);</span>
+<span class="nc" id="L958">        else      offscreen.draw(path);</span>
+<span class="nc" id="L959">        draw();</span>
+<span class="nc" id="L960">    }</span>
+
+    /**
+     * Draw a polyline with the given coordinates.
+     * @param coords an array of all the coordindates of the polygon (x1, y1, x2, y2, ...)
+     * @throws IllegalArgumentException if the number of arguments is not even
+     */
+    public static void polyline(double ... coords) {
+<span class="nc" id="L968">        polygon(false, false, coords);</span>
+<span class="nc" id="L969">    }</span>
+
+    /**
+     * Draw a polygon with the given coordinates.
+     * @param coords an array of all the coordindates of the polygon (x1, y1, x2, y2, ...)
+     * @throws IllegalArgumentException if the number of arguments is not even and at least 6
+     */
+    public static void polygon(double ... coords) {
+<span class="nc" id="L977">        polygon(true, false, coords);</span>
+<span class="nc" id="L978">    }</span>
+
+    /**
+     * Draw a filled polygon with the given coordinates.
+     * @param coords an array of all the coordindates of the polygon (x1, y1, x2, y2, ...)
+     * @throws IllegalArgumentException if the number of arguments is not even and at least 6
+     */
+    public static void filledPolygon(double ... coords) {
+<span class="nc" id="L986">        polygon(true, true, coords);</span>
+<span class="nc" id="L987">    }</span>
+
+    private static void polygon(boolean close, boolean fill, double ... coords) {
+<span class="nc" id="L990">        int N = coords.length;</span>
+
+<span class="nc bnc" id="L992" title="All 2 branches missed.">        if ((N % 2) != 0)</span>
+<span class="nc" id="L993">            throw new IllegalArgumentException(&quot;You must specify an even number of coordinates.  &quot; +</span>
+                    &quot;You actually specified &quot; + N + &quot; coordinates.&quot;);
+
+        // only need at least three vertices for closed/filled polygons
+<span class="nc bnc" id="L997" title="All 4 branches missed.">        if (close || fill)</span>
+<span class="nc bnc" id="L998" title="All 2 branches missed.">            if (N &lt; 6)</span>
+<span class="nc" id="L999">                throw new IllegalArgumentException(&quot;You must specify at least six coordinates (three points).  &quot; +</span>
+                        &quot;You only specified &quot; + N + &quot; coordinates.&quot;);
+
+<span class="nc" id="L1002">        Path2D.Double path = new Path2D.Double();</span>
+<span class="nc" id="L1003">        path.moveTo(scaleX(coords[0]), scaleY(coords[1]));</span>
+<span class="nc bnc" id="L1004" title="All 2 branches missed.">        for (int i = 0; i &lt; N; i += 2)</span>
+<span class="nc" id="L1005">            path.lineTo(scaleX(coords[i]), scaleY(coords[i + 1]));</span>
+
+<span class="nc bnc" id="L1007" title="All 4 branches missed.">        if (close || fill) path.closePath();</span>
+
+<span class="nc bnc" id="L1009" title="All 2 branches missed.">        if (fill) offscreen.fill(path);</span>
+<span class="nc" id="L1010">        else      offscreen.draw(path);</span>
+
+<span class="nc" id="L1012">        draw();</span>
+<span class="nc" id="L1013">    }</span>
+
+    /*************************************************************************
+     *  Drawing images.
+     *************************************************************************/
+
+    // get an image from the given filename
+    private static Image getImage(String filename) {
+
+        // to read from file
+<span class="nc" id="L1023">        ImageIcon icon = new ImageIcon(filename);</span>
+
+        // try to read from URL
+<span class="nc bnc" id="L1026" title="All 4 branches missed.">        if ((icon == null) || (icon.getImageLoadStatus() != MediaTracker.COMPLETE)) {</span>
+            try {
+<span class="nc" id="L1028">                URL url = new URL(filename);</span>
+<span class="nc" id="L1029">                icon = new ImageIcon(url);</span>
+<span class="nc" id="L1030">            } catch (Exception e) { /* not a url */ }</span>
+        }
+
+        // in case file is inside a .jar
+<span class="nc bnc" id="L1034" title="All 4 branches missed.">        if ((icon == null) || (icon.getImageLoadStatus() != MediaTracker.COMPLETE)) {</span>
+<span class="nc" id="L1035">            URL url = PennDraw.class.getClassLoader().getResource(filename);</span>
+<span class="nc bnc" id="L1036" title="All 2 branches missed.">            if (url == null) throw new IllegalArgumentException(&quot;image &quot; + filename + &quot; not found&quot;);</span>
+<span class="nc" id="L1037">            icon = new ImageIcon(url);</span>
+        }
+
+<span class="nc" id="L1040">        return icon.getImage();</span>
+    }
+
+    /**
+     * Draw picture (gif, jpg, or png) centered on (x, y).
+     * @param x the center x-coordinate of the image
+     * @param y the center y-coordinate of the image
+     * @param s the name of the image/picture, e.g., &quot;ball.gif&quot;
+     * @throws IllegalArgumentException if the image is corrupt
+     */
+    public static void picture(double x, double y, String s) {
+<span class="nc" id="L1051">        picture(x, y, s, 0, 0, 0);</span>
+<span class="nc" id="L1052">    }</span>
+
+    /**
+     * Draw picture (gif, jpg, or png) centered on (x, y), rotated given number of degrees
+     * @param x the center x-coordinate of the image
+     * @param y the center y-coordinate of the image
+     * @param s the name of the image/picture, e.g., &quot;ball.gif&quot;
+     * @param degrees is the number of degrees to rotate counterclockwise
+     * @throws IllegalArgumentException if the image is corrupt
+     */
+    public static void picture(double x, double y, String s, double degrees) {
+<span class="nc" id="L1063">        picture(x, y, s, 0, 0, degrees);</span>
+<span class="nc" id="L1064">    }</span>
+
+    /**
+     * Draw picture (gif, jpg, or png) centered on (x, y), rescaled to w-by-h.
+     * @param x the center x coordinate of the image
+     * @param y the center y coordinate of the image
+     * @param s the name of the image/picture, e.g., &quot;ball.gif&quot;
+     * @param w the width of the image
+     * @param h the height of the image
+     * @throws IllegalArgumentException if the width height are negative
+     * @throws IllegalArgumentException if the image is corrupt
+     */
+    public static void picture(double x, double y, String s, double w, double h) {
+<span class="nc" id="L1077">        picture(x, y, s, w, h, 0);</span>
+<span class="nc" id="L1078">    }</span>
+
+
+    /**
+     * Draw picture (gif, jpg, or png) centered on (x, y), rotated
+     * given number of degrees, rescaled to w-by-h.  If w and h are
+     * both 0, use the original image dimensions.  If one is 0,
+     * scale the image to match the other dimension.
+     * @param x the center x-coordinate of the image
+     * @param y the center y-coordinate of the image
+     * @param s the name of the image/picture, e.g., &quot;ball.gif&quot;
+     * @param w the width of the image (or zero to use the image width)
+     * @param h the height of the image (or zero to use the image height)
+     * @param degrees is the number of degrees to rotate counterclockwise
+     * @throws IllegalArgumentException if the image is corrupt
+     */
+    public static void picture(double x, double y, String s, double w, double h, double degrees) {
+<span class="nc" id="L1095">        Image image = getImage(&quot;Images/&quot; + s);</span>
+<span class="nc" id="L1096">        int iw = image.getWidth(null);</span>
+<span class="nc" id="L1097">        int ih = image.getHeight(null);</span>
+<span class="nc bnc" id="L1098" title="All 4 branches missed.">        if (iw &lt;= 0 || ih &lt;= 0) throw new IllegalArgumentException(&quot;image &quot; + s + &quot; is corrupt&quot;);</span>
+
+<span class="nc" id="L1100">        AffineTransform t = (AffineTransform) offscreen.getTransform();</span>
+
+<span class="nc" id="L1102">        double xs = xscale * (x - xmin);</span>
+<span class="nc" id="L1103">        double ys = height - yscale * (y - ymin);</span>
+
+<span class="nc bnc" id="L1105" title="All 2 branches missed.">        if (degrees != 0) offscreen.rotate(-Math.toRadians(degrees), xs, ys);</span>
+
+<span class="nc bnc" id="L1107" title="All 4 branches missed.">        if (w == 0 &amp;&amp; h == 0) // unscaled</span>
+<span class="nc" id="L1108">            offscreen.drawImage(image, (int) Math.round(xs - 0.5 * iw), (int) Math.round(ys - 0.5 * ih), null);</span>
+        else {
+<span class="nc bnc" id="L1110" title="All 2 branches missed.">            if (w == 0) w = (iw * h) / ih; // scale based on single dimension if only one is provided</span>
+<span class="nc bnc" id="L1111" title="All 2 branches missed.">            if (h == 0) h = (ih * w) / iw;</span>
+
+<span class="nc" id="L1113">            offscreen.drawImage(image, (int) Math.round(xs - 0.5 * w), (int) Math.round(ys - 0.5 * h),</span>
+<span class="nc" id="L1114">                    (int) Math.round(w), (int) Math.round(h), null);</span>
+        }
+
+<span class="nc bnc" id="L1117" title="All 2 branches missed.">        if (degrees != 0) offscreen.setTransform(t);</span>
+<span class="nc" id="L1118">        draw();</span>
+<span class="nc" id="L1119">    }</span>
+
+
+    /*************************************************************************
+     *  Drawing text.
+     *************************************************************************/
+
+    /**
+     * Write the given text string in the current font, centered on (x, y).
+     * @param x the center x-coordinate of the text
+     * @param y the center y-coordinate of the text
+     * @param s the text
+     */
+    public static void text(double x, double y, String s) {
+<span class="nc" id="L1133">        text(x, y, s, 0);</span>
+<span class="nc" id="L1134">    }</span>
+
+    /**
+     * Write the given text string in the current font, centered on (x, y) and
+     * rotated by the specified number of degrees
+     * @param x the center x-coordinate of the text
+     * @param y the center y-coordinate of the text
+     * @param s the text
+     * @param degrees is the number of degrees to rotate counterclockwise
+     */
+    public static void text(double x, double y, String s, double degrees) {
+<span class="nc" id="L1145">        text(x, y, s, degrees, -0.5);</span>
+<span class="nc" id="L1146">    }</span>
+
+    /**
+     * Write the given text string in the current font, left-aligned at (x, y).
+     * @param x the x-coordinate of the text
+     * @param y the y-coordinate of the text
+     * @param s the text
+     */
+    public static void textLeft(double x, double y, String s) {
+<span class="nc" id="L1155">        textLeft(x, y, s, 0);</span>
+<span class="nc" id="L1156">    }</span>
+
+    /**
+     * Write the given text string in the current font, left-aligned at (x, y) and
+     * rotated by the specified number of degrees.
+     * @param x the x-coordinate of the text
+     * @param y the y-coordinate of the text
+     * @param s the text
+     * @param degrees is the number of degrees to rotate counterclockwise
+     */
+    public static void textLeft(double x, double y, String s, double degrees) {
+<span class="nc" id="L1167">        text(x, y, s, degrees, 0);</span>
+<span class="nc" id="L1168">    }</span>
+
+    /**
+     * Write the given text string in the current font, right-aligned at (x, y).
+     * @param x the x-coordinate of the text
+     * @param y the y-coordinate of the text
+     * @param s the text
+     */
+    public static void textRight(double x, double y, String s) {
+<span class="nc" id="L1177">        textRight(x, y, s, 0);</span>
+<span class="nc" id="L1178">    }</span>
+
+    /**
+     * Write the given text string in the current font, right-aligned at (x, y) and
+     * rotated by the specified number of degrees.
+     * @param x the x-coordinate of the text
+     * @param y the y-coordinate of the text
+     * @param s the text
+     * @param degrees is the number of degrees to rotate counterclockwise
+     */
+    public static void textRight(double x, double y, String s, double degrees) {
+<span class="nc" id="L1189">        text(x, y, s, degrees, -1);</span>
+<span class="nc" id="L1190">    }</span>
+
+
+    // dw controls the shift so this function can draw left, center, or right aligned text
+    private static void text(double x, double y, String s, double degrees, double dw) {
+<span class="nc" id="L1195">        AffineTransform t = (AffineTransform) offscreen.getTransform();</span>
+
+<span class="nc" id="L1197">        FontMetrics metrics = offscreen.getFontMetrics();</span>
+<span class="nc" id="L1198">        int w = metrics.stringWidth(s);</span>
+<span class="nc" id="L1199">        int h = metrics.getDescent();</span>
+
+<span class="nc" id="L1201">        double xs = scaleX(x);</span>
+<span class="nc" id="L1202">        double ys = scaleY(y);</span>
+
+<span class="nc bnc" id="L1204" title="All 2 branches missed.">        if (degrees != 0) offscreen.rotate(-Math.toRadians(degrees), xs, ys);</span>
+
+<span class="nc" id="L1206">        offscreen.drawString(s, (float) (xs + dw * w), (float) (ys + h));</span>
+
+<span class="nc bnc" id="L1208" title="All 2 branches missed.">        if (degrees != 0) offscreen.setTransform(t);</span>
+
+<span class="nc" id="L1210">        draw();</span>
+<span class="nc" id="L1211">    }</span>
+
+    /**
+     * Display on screen, pause for t milliseconds, and turn on
+     * &lt;em&gt;animation mode&lt;/em&gt;: subsequent calls to
+     * drawing methods such as &lt;tt&gt;line()&lt;/tt&gt;, &lt;tt&gt;circle()&lt;/tt&gt;, and &lt;tt&gt;square()&lt;/tt&gt;
+     * will not be displayed on screen until the next call to &lt;tt&gt;show()&lt;/tt&gt;.
+     * This is useful for producing animations (clear the screen, draw a bunch of shapes,
+     * display on screen for a fixed amount of time, and repeat). It also speeds up
+     * drawing a huge number of shapes (call &lt;tt&gt;show(0)&lt;/tt&gt; to defer drawing
+     * on screen, draw the shapes, and call &lt;tt&gt;show(0)&lt;/tt&gt; to display them all
+     * on screen at once).
+     * @param t number of milliseconds
+     */
+    public static void show(int t) {
+        // sleep until the next time we're allowed to draw
+<span class="nc" id="L1227">        long millis = System.currentTimeMillis();</span>
+<span class="nc bnc" id="L1228" title="All 2 branches missed.">        if (millis &lt; nextDraw) {</span>
+<span class="nc" id="L1229">            try { Thread.sleep(nextDraw - millis); }</span>
+<span class="nc" id="L1230">            catch (InterruptedException e) { System.out.println(&quot;Error sleeping&quot;); }</span>
+<span class="nc" id="L1231">            millis = nextDraw;</span>
+        }
+
+<span class="nc" id="L1234">        defer = false;</span>
+<span class="nc" id="L1235">        draw();</span>
+<span class="nc" id="L1236">        defer = true;</span>
+
+<span class="nc" id="L1238">        nextDraw = millis + t;</span>
+<span class="nc" id="L1239">    }</span>
+
+    /**
+     * Display on-screen and turn off animation mode:
+     * subsequent calls to
+     * drawing methods such as &lt;tt&gt;line()&lt;/tt&gt;, &lt;tt&gt;circle()&lt;/tt&gt;, and &lt;tt&gt;square()&lt;/tt&gt;
+     * will be displayed on screen when called. This is the default.
+     */
+    public static void show() {
+<span class="nc" id="L1248">        defer = false;</span>
+<span class="nc" id="L1249">        draw();</span>
+<span class="nc" id="L1250">    }</span>
+
+    // draw onscreen if defer is false
+    private static void draw() {
+<span class="nc bnc" id="L1254" title="All 2 branches missed.">        if (defer) return;</span>
+<span class="nc" id="L1255">        onscreen.drawImage(offscreenImage, 0, 0, null);</span>
+<span class="nc" id="L1256">        frame.repaint();</span>
+<span class="nc" id="L1257">    }</span>
+
+    /**
+     * Draw everything immediately (equivalent to calling main.Resources.PennDraw.show() with no arguments)
+     */
+    public static void disableAnimation() {
+<span class="nc" id="L1263">        animationSpeed = -1; // disable animation mode</span>
+<span class="nc" id="L1264">        show();</span>
+<span class="nc" id="L1265">    }</span>
+
+    /**
+     * Set animation mode with specified frame rate
+     * Equivalent to calling main.Resources.PennDraw.show(0), with
+     * subsequent calls to main.Resources.PennDraw.advance() being
+     * equivalent to calling main.Resources.PennDraw.show(10000.0 / frameRate).
+     *
+     * Use main.Resources.PennDraw.enableAnimation(0) to have main.Resources.PennDraw.advance()
+     * draw as fast as possible (just like main.Resources.PennDraw.show(0)).
+     * @param frameRate animation speed in frames per second
+     * @throws IllegalArgumentException if frameRate is negative
+     */
+    public static void enableAnimation(double frameRate) {
+<span class="nc bnc" id="L1279" title="All 2 branches missed.">        if (frameRate &lt; 0) throw new IllegalArgumentException(&quot;frameRate must be &gt;= 0&quot;);</span>
+<span class="nc bnc" id="L1280" title="All 2 branches missed.">        animationSpeed = frameRate == 0 ? 0 : (int) Math.round(1000.0 / frameRate); // save frame rate in ms</span>
+<span class="nc" id="L1281">        show(0);                                                               // and switch to animation mode</span>
+<span class="nc" id="L1282">    }</span>
+
+    /**
+     * Indicate that all drawing commands for the next frame are complete
+     * so it can be drawn
+     *
+     * @throws RuntimeException is animation mode has not been enabled
+     */
+    public static void advance() {
+<span class="nc bnc" id="L1291" title="All 2 branches missed.">        if (animationSpeed &lt; 0)</span>
+<span class="nc" id="L1292">            throw new RuntimeException(&quot;You must call main.Resources.PennDraw.enableAnimation() to activate animation mode before calling main.Resources.PennDraw.advance()&quot;);</span>
+
+<span class="nc" id="L1294">        show(animationSpeed);</span>
+<span class="nc" id="L1295">    }</span>
+
+    /*************************************************************************
+     *  Save drawing to a file.
+     *************************************************************************/
+
+    /**
+     * Save onscreen image to file - suffix must be png, jpg, or gif.
+     * @param filename the name of the file with one of the required suffixes
+     */
+    public static void save(String filename) {
+<span class="nc" id="L1306">        File file = new File(filename);</span>
+<span class="nc" id="L1307">        String suffix = filename.substring(filename.lastIndexOf('.') + 1);</span>
+
+        // png files
+<span class="nc bnc" id="L1310" title="All 2 branches missed.">        if (suffix.toLowerCase().equals(&quot;png&quot;)) {</span>
+<span class="nc" id="L1311">            try { ImageIO.write(onscreenImage, suffix, file); }</span>
+<span class="nc" id="L1312">            catch (IOException e) { e.printStackTrace(); }</span>
+        }
+
+        // need to change from ARGB to RGB for jpeg
+        // reference: http://archives.java.sun.com/cgi-bin/wa?A2=ind0404&amp;L=java2d-interest&amp;D=0&amp;P=2727
+<span class="nc bnc" id="L1317" title="All 2 branches missed.">        else if (suffix.toLowerCase().equals(&quot;jpg&quot;)) {</span>
+<span class="nc" id="L1318">            WritableRaster raster = onscreenImage.getRaster();</span>
+            WritableRaster newRaster;
+<span class="nc" id="L1320">            newRaster = raster.createWritableChild(0, 0, width, height, 0, 0, new int[] {0, 1, 2});</span>
+<span class="nc" id="L1321">            DirectColorModel cm = (DirectColorModel) onscreenImage.getColorModel();</span>
+<span class="nc" id="L1322">            DirectColorModel newCM = new DirectColorModel(cm.getPixelSize(),</span>
+<span class="nc" id="L1323">                    cm.getRedMask(),</span>
+<span class="nc" id="L1324">                    cm.getGreenMask(),</span>
+<span class="nc" id="L1325">                    cm.getBlueMask());</span>
+<span class="nc" id="L1326">            BufferedImage rgbBuffer = new BufferedImage(newCM, newRaster, false,  null);</span>
+<span class="nc" id="L1327">            try { ImageIO.write(rgbBuffer, suffix, file); }</span>
+<span class="nc" id="L1328">            catch (IOException e) { e.printStackTrace(); }</span>
+<span class="nc" id="L1329">        }</span>
+
+        else {
+<span class="nc" id="L1332">            System.out.println(&quot;Invalid image file type: &quot; + suffix);</span>
+        }
+<span class="nc" id="L1334">    }</span>
+
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void actionPerformed(ActionEvent e) {
+<span class="nc" id="L1341">        FileDialog chooser = new FileDialog(PennDraw.frame, &quot;Use a .png or .jpg extension&quot;, FileDialog.SAVE);</span>
+<span class="nc" id="L1342">        chooser.setVisible(true);</span>
+<span class="nc" id="L1343">        String filename = chooser.getFile();</span>
+<span class="nc bnc" id="L1344" title="All 2 branches missed.">        if (filename != null) {</span>
+<span class="nc" id="L1345">            PennDraw.save(chooser.getDirectory() + File.separator + chooser.getFile());</span>
+        }
+<span class="nc" id="L1347">    }</span>
+
+
+    /*************************************************************************
+     *  Mouse interactions.
+     *************************************************************************/
+
+    /**
+     * Is the mouse being pressed?
+     * @return true or false
+     */
+    public static boolean mousePressed() {
+<span class="nc" id="L1359">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1360">            return mousePressed;</span>
+        }
+    }
+
+    /**
+     * What is the x-coordinate of the mouse?
+     * @return the value of the x-coordinate of the mouse
+     */
+    public static double mouseX() {
+<span class="nc" id="L1369">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1370">            return mouseX;</span>
+        }
+    }
+
+    /**
+     * What is the y-coordinate of the mouse?
+     * @return the value of the y-coordinate of the mouse
+     */
+    public static double mouseY() {
+<span class="nc" id="L1379">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1380">            return mouseY;</span>
+        }
+    }
+
+
+    /**
+     * This method cannot be called directly.
+     */
+<span class="nc" id="L1388">    public void mouseClicked(MouseEvent e) { }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+<span class="nc" id="L1393">    public void mouseEntered(MouseEvent e) { }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+<span class="nc" id="L1398">    public void mouseExited(MouseEvent e) { }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mousePressed(MouseEvent e) {
+<span class="nc" id="L1404">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1405">            mouseX = userX(e.getX());</span>
+<span class="nc" id="L1406">            mouseY = userY(e.getY());</span>
+<span class="nc" id="L1407">            mousePressed = true;</span>
+<span class="nc" id="L1408">        }</span>
+<span class="nc" id="L1409">    }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseReleased(MouseEvent e) {
+<span class="nc" id="L1415">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1416">            mousePressed = false;</span>
+<span class="nc" id="L1417">        }</span>
+<span class="nc" id="L1418">    }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseDragged(MouseEvent e)  {
+<span class="nc" id="L1424">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1425">            mouseX = userX(e.getX());</span>
+<span class="nc" id="L1426">            mouseY = userY(e.getY());</span>
+<span class="nc" id="L1427">        }</span>
+<span class="nc" id="L1428">    }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void mouseMoved(MouseEvent e) {
+<span class="nc" id="L1434">        synchronized (mouseLock) {</span>
+<span class="nc" id="L1435">            mouseX = userX(e.getX());</span>
+<span class="nc" id="L1436">            mouseY = userY(e.getY());</span>
+<span class="nc" id="L1437">        }</span>
+<span class="nc" id="L1438">    }</span>
+
+
+    /*************************************************************************
+     *  Keyboard interactions.
+     *************************************************************************/
+
+    /**
+     * Has the user typed a key?
+     * @return true if the user has typed a key, false otherwise
+     */
+    public static boolean hasNextKeyTyped() {
+<span class="nc" id="L1450">        synchronized (keyLock) {</span>
+<span class="nc bnc" id="L1451" title="All 2 branches missed.">            return !keysTyped.isEmpty();</span>
+        }
+    }
+
+    /**
+     * What is the next key that was typed by the user? This method returns
+     * a Unicode character corresponding to the key typed (such as 'a' or 'A').
+     * It cannot identify action keys (such as F1
+     * and arrow keys) or modifier keys (such as control).
+     * @return the next Unicode key typed
+     */
+    public static char nextKeyTyped() {
+<span class="nc" id="L1463">        synchronized (keyLock) {</span>
+<span class="nc" id="L1464">            return keysTyped.removeLast();</span>
+        }
+    }
+
+    /**
+     * Is the keycode currently being pressed? This method takes as an argument
+     * the keycode (corresponding to a physical key). It can handle action keys
+     * (such as F1 and arrow keys) and modifier keys (such as shift and control).
+     * See &lt;a href = &quot;http://download.oracle.com/javase/6/docs/api/java/awt/event/KeyEvent.html&quot;&gt;KeyEvent.java&lt;/a&gt;
+     * for a description of key codes.
+     * @return true if keycode is currently being pressed, false otherwise
+     */
+    public static boolean isKeyPressed(int keycode) {
+<span class="nc" id="L1477">        synchronized (keyLock) {</span>
+<span class="nc" id="L1478">            return keysDown.contains(keycode);</span>
+        }
+    }
+
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyTyped(KeyEvent e) {
+<span class="nc" id="L1487">        synchronized (keyLock) {</span>
+<span class="nc" id="L1488">            keysTyped.addFirst(e.getKeyChar());</span>
+<span class="nc" id="L1489">        }</span>
+<span class="nc" id="L1490">    }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyPressed(KeyEvent e) {
+<span class="nc" id="L1496">        synchronized (keyLock) {</span>
+<span class="nc" id="L1497">            keysDown.add(e.getKeyCode());</span>
+<span class="nc" id="L1498">        }</span>
+<span class="nc" id="L1499">    }</span>
+
+    /**
+     * This method cannot be called directly.
+     */
+    public void keyReleased(KeyEvent e) {
+<span class="nc" id="L1505">        synchronized (keyLock) {</span>
+<span class="nc" id="L1506">            keysDown.remove(e.getKeyCode());</span>
+<span class="nc" id="L1507">        }</span>
+<span class="nc" id="L1508">    }</span>
+
+    /**
+     * Test client.
+     */
+    public static void main(String[] args) {
+<span class="nc" id="L1514">        PennDraw.square(.2, .8, .1);</span>
+<span class="nc" id="L1515">        PennDraw.setPenWidthInPoints(12);</span>
+<span class="nc" id="L1516">        PennDraw.rectangle(.2, .8, .1, .2, 10);</span>
+<span class="nc" id="L1517">        PennDraw.setPenRadius();</span>
+<span class="nc" id="L1518">        PennDraw.filledRectangle(.8, .8, .2, .1, 10);</span>
+<span class="nc" id="L1519">        PennDraw.circle(.8, .2, .2);</span>
+<span class="nc" id="L1520">        PennDraw.filledEllipse(.8, .2, .2, .1, 10);</span>
+
+<span class="nc" id="L1522">        PennDraw.setPenColor(PennDraw.BOOK_RED);</span>
+<span class="nc" id="L1523">        PennDraw.setPenRadius(.02);</span>
+<span class="nc" id="L1524">        PennDraw.arc(.8, .2, .1, 200, 45);</span>
+
+        // draw a blue diamond
+<span class="nc" id="L1527">        PennDraw.setPenRadius();</span>
+<span class="nc" id="L1528">        PennDraw.setPenColor(PennDraw.BOOK_BLUE);</span>
+<span class="nc" id="L1529">        double[] x = { .1, .2, .3, .2 };</span>
+<span class="nc" id="L1530">        double[] y = { .2, .3, .2, .1 };</span>
+<span class="nc" id="L1531">        PennDraw.polyline(x, y);</span>
+<span class="nc" id="L1532">        PennDraw.filledPolygon(.1, .2, .2, .3, .3, .2);</span>
+
+        // text
+<span class="nc" id="L1535">        PennDraw.setFontSize(12);</span>
+<span class="nc" id="L1536">        PennDraw.setPenColor(PennDraw.BLACK);</span>
+<span class="nc" id="L1537">        PennDraw.text(0.2, 0.5, &quot;black text&quot;);</span>
+<span class="nc" id="L1538">        PennDraw.text(0.2, 0.5, &quot;black text&quot;, 30);</span>
+<span class="nc" id="L1539">        PennDraw.setFont(&quot;Serif&quot;);</span>
+<span class="nc" id="L1540">        PennDraw.setPenColor(PennDraw.WHITE);</span>
+<span class="nc" id="L1541">        PennDraw.text(0.8, 0.8, &quot;white serif text&quot;);</span>
+<span class="nc" id="L1542">    }</span>
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

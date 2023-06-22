@@ -43,3 +43,5 @@ public class IpactruenoStrategy implements AttackStrategy, Observer{
         performed = false;
     }
 }
+
+

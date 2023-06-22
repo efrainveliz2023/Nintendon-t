@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Floor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Floor.java</span></div><h1>Floor.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.Floor.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.Floor (runs basic testing)
+ *  Dependencies: image files
+ *
+ *  Creates a floor object for Donkey Kong Game. main.java.com.Nintendont.DK.Source.Floor can be drawn and
+ * compared to mario or barrels for collision detection. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ *
+ ******************************************************************************/
+public class Floor {
+
+    //private fields for x/ycenter
+    private double x;
+    private double y;
+
+    //static fields because every floor will be the same height
+<span class="nc" id="L23">    private static double halfWidth = 0.4;</span>
+<span class="nc" id="L24">    private static double halfHeight = 0.01;</span>
+
+    /** Constructor: Floor with x and y positions
+     */
+<span class="nc" id="L28">    public Floor(double x, double y) {</span>
+<span class="nc" id="L29">        this.x = x;</span>
+<span class="nc" id="L30">        this.y = y;</span>
+<span class="nc" id="L31">    }</span>
+
+    /** Descritpion: get x position
+     * @return double x
+     */
+    public double getX() {
+<span class="nc" id="L37">        return x;</span>
+    }
+
+    /** Descritpion: get y position
+     * @return double y
+     */
+    public double getY() {
+<span class="nc" id="L44">        return y;</span>
+    }
+
+    /** Descritpion: get width
+     * @return double halfWidth
+     */
+    public static double getWidth() {
+<span class="nc" id="L51">        return halfWidth;</span>
+    }
+
+    /** Descritpion: get height
+     * @return double halfHeight
+     */
+    public static double getHeight() {
+<span class="nc" id="L58">        return halfHeight;</span>
+    }
+
+    /** Descritpion: draw the floor at x, y
+     */
+    public void draw() {
+<span class="nc" id="L64">        PennDraw.picture(x, y, &quot;floor.png&quot;, 2 * halfWidth * 512,</span>
+                2 * halfHeight * 512);
+<span class="nc" id="L66">    }</span>
+
+    //TESTING CODE
+    public static void main(String[] args) {
+
+        // implementing with array
+<span class="nc" id="L72">        Floor[] floors = new Floor[4]; //6 floors</span>
+
+        //initialize the floors alternating which edge they touch and moving
+        //down 0.15 for every floor
+<span class="nc bnc" id="L76" title="All 2 branches missed.">        for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc bnc" id="L77" title="All 2 branches missed.">            if (i % 2 == 0) {</span>
+<span class="nc" id="L78">                floors[i] = new Floor(0.4, 0.8 - i * 0.15);</span>
+            }
+            else {
+<span class="nc" id="L81">                floors[i] = new Floor(0.6, 0.65 - (i - 1) * 0.15);</span>
+            }
+        }
+
+        //print out the x/y floor center
+        /*for (int i = 0; i &lt; floors.length; i++) {
+            System.out.println(&quot;i:&quot; + i + &quot; x:&quot; + floors[i].getX() +
+            &quot; y:&quot; + floors[i].getY());
+        }*/
+
+        //draw the floors
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc" id="L93">            floors[i].draw();</span>
+        }
+
+        /*implementing with main.java.com.Nintendont.DK.Source.LinkedList*****************************************
+        main.java.com.Nintendont.DK.Source.LinkedList&lt;main.java.com.Nintendont.DK.Source.Floor&gt; floors = new main.java.com.Nintendont.DK.Source.LinkedList&lt;main.java.com.Nintendont.DK.Source.Floor&gt;();
+        
+        for (int i = 0; i &lt; 6; i++) { //add 6 floora
+           if (i % 2 == 0) {
+                floors.add(new main.java.com.Nintendont.DK.Source.Floor(0.4, 0.8 - i * 0.15));
+            }
+            else {
+                floors.add(new main.java.com.Nintendont.DK.Source.Floor(0.6, 0.65 - (i - 1) * 0.15));
+            }
+        }
+        
+        
+        //draw the floors
+        for (int i = 0; i &lt; floors.size(); i++) {
+            floors.get(i).draw();
+        }
+       ***********************************************************************/
+
+<span class="nc" id="L115">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

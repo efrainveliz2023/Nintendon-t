@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Level_1.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Level_1.java</span></div><h1>Level_1.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+import java.util.Random;
+
+public class Level_1 extends Levels implements Observer{
+    private int amountFloor;
+
+    public Level_1() {
+<span class="nc" id="L9">        super();</span>
+<span class="nc" id="L10">        dificulty = 30;</span>
+<span class="nc" id="L11">        speedIncrease = 10;</span>
+
+<span class="nc" id="L13">    }</span>
+
+    @Override
+    void SpawnLayout() {
+<span class="nc" id="L17">        int amountFloor=getRandom();</span>
+        //Initialize floors***********************************************
+<span class="nc" id="L19">        floors = new Floor[amountFloor]; //6 floors</span>
+
+        //initialize the floors alternating which edge they touch
+<span class="nc bnc" id="L22" title="All 2 branches missed.">        for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc bnc" id="L23" title="All 2 branches missed.">            if (i % 2 == 0) {</span>
+<span class="nc" id="L24">                floors[i] = new Floor(0.4, 0.8 - i * 0.15);</span>
+            }
+            else {
+<span class="nc" id="L27">                floors[i] = new Floor(0.6, 0.65 - (i - 1) * 0.15);</span>
+            }
+        }
+
+<span class="nc" id="L31">        collisions.setFloors(floors);</span>
+        //floors**********************************************************
+
+        //initialize ladders**********************************************
+<span class="nc" id="L35">        ladders = new Ladder[amountFloor-1];</span>
+<span class="nc" id="L36">        double Y=0.875;</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        for(int i=amountFloor-2; i&gt;=0;i--){</span>
+<span class="nc" id="L38">            Y=Y-0.150;</span>
+<span class="nc" id="L39">            Random random2=new Random();</span>
+<span class="nc" id="L40">            double x=random2.nextDouble() * 0.4+ 0.3;</span>
+<span class="nc" id="L41">            ladders[i] = new Ladder(x, Y);</span>
+        }
+
+
+<span class="nc" id="L45">        collisions.setLadders(ladders);</span>
+        //ladders**********************************************************
+
+        //set mario/peach/donkeykong to their starting points
+        //TODO: El valor del character en Mario tiene que cambiar segun el selector de personajes.
+<span class="nc" id="L50">        double lastFloorY= floors[(amountFloor-1)].getY() + Floor.getHeight() + 0.025;</span>
+<span class="nc" id="L51">        mario = MarioFactory.CreateMario(0.5, lastFloorY);</span>
+<span class="nc" id="L52">        peach = new Peach(0.70, floors[0].getY()</span>
+<span class="nc" id="L53">                + Floor.getHeight() + 0.035);</span>
+<span class="nc" id="L54">        donkey = new DonkeyKong(0.15, floors[0].getY()</span>
+<span class="nc" id="L55">                + Floor.getHeight() + 0.04);</span>
+
+<span class="nc" id="L57">        collisions.setMario(mario);</span>
+
+<span class="nc" id="L59">        star = new Star(floors[(amountFloor-1)].getY());</span>
+<span class="nc" id="L60">    }</span>
+    public int getRandom(){
+<span class="nc" id="L62">        Random random=new Random();</span>
+<span class="nc" id="L63">        amountFloor= random.nextInt(4)+3;</span>
+<span class="nc" id="L64">        return amountFloor;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

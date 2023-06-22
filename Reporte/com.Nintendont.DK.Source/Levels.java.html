@@ -1,0 +1,216 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Levels.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Levels.java</span></div><h1>Levels.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+import java.awt.*;
+import java.util.Random;
+
+public abstract class Levels implements Observer  {
+    protected Floor[] floors;
+    private static Score juego;
+    protected static Star star;
+    private double X;
+    private double Y;
+
+    protected Ladder[] ladders;
+    protected Mario mario;
+    protected Peach peach;
+    protected DonkeyKong donkey;
+    LinkedList&lt;Barrel&gt; barrels;
+<span class="nc" id="L18">    boolean hasWon = false;</span>
+<span class="nc" id="L19">    boolean getBack = false;</span>
+<span class="nc" id="L20">    int velocity = 180;</span>
+<span class="nc" id="L21">    protected int dificulty = 1;</span>
+<span class="nc" id="L22">    protected int speedIncrease = 0;</span>
+    private int tiempo;
+    private int timer;
+<span class="nc" id="L25">    Random random= new Random();</span>
+
+<span class="nc" id="L27">    protected CollisionDetector collisions = new CollisionDetector();</span>
+<span class="nc" id="L28">    public Levels() {</span>
+        //Inicializa la lista de barriles
+<span class="nc" id="L30">        barrels = new LinkedList&lt;Barrel&gt;();</span>
+        //Inicializamos la música
+<span class="nc" id="L32">        StdAudio.loop(&quot;SFX/bacmusic.wav&quot;);</span>
+        //Suscribimos al timer
+<span class="nc" id="L34">        Tiempo.getInstance().registrerObserver(this);</span>
+        //Creamos el layout del nivel actual
+<span class="nc" id="L36">        SpawnLayout();</span>
+<span class="nc" id="L37">        juego=new Score();</span>
+        //tiempo:
+<span class="nc" id="L39">        Tiempo.getInstance().registrerObserver(this); //Registro este objeto como observador.</span>
+<span class="nc" id="L40">        tiempo=0;</span>
+<span class="nc" id="L41">        timer=0;</span>
+<span class="nc" id="L42">    }</span>
+
+    //Se crean los pisos, escaleras, mario, peach, DK, etc. en sus posiciones iniciales
+    abstract void SpawnLayout();
+    /**
+     * metodo usado por el observer.
+     * @param segundos
+     */
+    public void upDate(int segundos){
+<span class="nc" id="L51">        this.tiempo = segundos;</span>
+<span class="nc bnc" id="L52" title="All 4 branches missed.">        if((segundos % dificulty == 0) &amp;&amp; segundos != 0){</span>
+<span class="nc" id="L53">            velocity -= speedIncrease;</span>
+<span class="nc bnc" id="L54" title="All 2 branches missed.">            if(velocity &lt; 45){</span>
+<span class="nc" id="L55">                velocity = 45;</span>
+            }
+        }
+<span class="nc" id="L58">    }</span>
+
+    void RunGameplayLoop() {
+
+        //Begin gameplay loop ********************************************
+<span class="nc bnc" id="L63" title="All 8 branches missed.">        while (mario.isAlive() &amp;&amp; !hasWon &amp;&amp; !mario.getPause() &amp;&amp; !getBack ) {</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">            if (star.isActive()) {</span>
+<span class="nc" id="L65">                PennDraw.picture(0.5, 0.5, &quot;fondoRage.jpg&quot;, 520, 1040);</span>
+            } else {
+<span class="nc" id="L67">                PennDraw.clear(PennDraw.BLACK);</span>
+            }
+            //draw 4 barrels in top corner
+            //-------------------------------Cambiar esto
+<span class="nc" id="L71">            Barrel.draw4(floors);</span>
+
+            //dibujamos todos los pisos y escaleras
+<span class="nc bnc" id="L74" title="All 2 branches missed.">            for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc" id="L75">                floors[i].draw();</span>
+<span class="nc bnc" id="L76" title="All 2 branches missed.">                if (i &lt; ladders.length)</span>
+<span class="nc" id="L77">                    ladders[i].draw();</span>
+            }
+
+            //draw donkey depending on what frame we are on using timer
+            //Hacer una funcion aparte para poder controlar la velocidad
+<span class="nc bnc" id="L82" title="All 4 branches missed.">            if (0 &lt;= timer &amp;&amp; timer &lt; (velocity - 35)) {</span>
+<span class="nc" id="L83">                donkey.drawOriginal();</span>
+<span class="nc bnc" id="L84" title="All 4 branches missed.">            } else if ((velocity - 35) &lt;= timer &amp;&amp; timer &lt; (velocity - 25)) {</span>
+<span class="nc" id="L85">                donkey.drawLeft();</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">            } else if ((velocity - 25) &lt;= timer &amp;&amp; timer &lt; (velocity - 15)) {</span>
+<span class="nc" id="L87">                donkey.drawCenter();</span>
+<span class="nc bnc" id="L88" title="All 2 branches missed.">            } else if ((velocity - 15) &lt;= timer) {</span>
+<span class="nc" id="L89">                donkey.drawRight();</span>
+<span class="nc" id="L90">            } else donkey.drawOriginal();</span>
+
+            //dibujamos a peach
+<span class="nc" id="L93">            peach.draw();</span>
+
+            //Control y animacion de Mario
+<span class="nc" id="L96">            mario.Run();</span>
+
+<span class="nc" id="L98">            juego.Run(mario.getScore2());</span>
+<span class="nc" id="L99">            PennDraw.text(0.5, 0.95, (String.valueOf(mario.getScore2())));</span>
+
+            //dibujamos el tiempo.
+<span class="nc" id="L102">            Tiempo.getInstance().draw();</span>
+
+            //if timer gets to 180 (frames), add a new barrel
+            //----------Hacer una funcion aparte para cambiar velocidad
+
+<span class="nc bnc" id="L107" title="All 2 branches missed.">            if (timer % velocity == 0) {</span>
+<span class="nc" id="L108">                barrels.add(new Barrel(0.2, floors[0].getY()</span>
+<span class="nc" id="L109">                        + Floor.getHeight() + 0.025));</span>
+<span class="nc" id="L110">                collisions.setBarrels(barrels);</span>
+            }
+
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            for (int i = 0; i &lt; barrels.size(); i++) {</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">                if (!barrels.get(i).GetAlive()) {</span>
+<span class="nc" id="L115">                    barrels.remove(i);</span>
+<span class="nc" id="L116">                    collisions.setBarrels(barrels);</span>
+<span class="nc" id="L117">                    i--;</span>
+                }
+            }
+
+
+            //Revisa las colisiones de los barriles y los actualiza
+<span class="nc" id="L123">            int counter1 = 0;</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">            while (counter1 &lt; barrels.size()) {</span>
+<span class="nc" id="L125">                barrels.get(counter1).Run();</span>
+<span class="nc" id="L126">                counter1++;</span>
+            }
+
+<span class="nc" id="L129">            timer++;</span>
+<span class="nc bnc" id="L130" title="All 2 branches missed.">            if (timer &gt;= velocity) {</span>
+<span class="nc" id="L131">                timer = 0;</span>
+            }
+
+<span class="nc" id="L134">            star.Run(mario);</span>
+//---------------------------------------------------------TIEMPO-------------------------------------------------------
+            /*if (mario.getTimerOn()){
+
+                tiempoInicio = tiempo ; //tiempo...
+                segundosTranscurridos = 0;
+                mario.setTimerOn(false);
+            }
+            if(mario.getPowerUp()){
+                if(segundosTranscurridos &lt; duracionTotal) {
+                    segundosTranscurridos = (int) (tiempo - tiempoInicio);
+                    System.out.println(&quot;Segundos transcurridos: &quot; + segundosTranscurridos);
+                }else{
+                    mario.setPowerUp(false);
+                    generarStar=true;
+                    starInMap=false;
+                    segundosTranscurridos = 0;
+                    star.setNoPowerUp();
+                }
+            }*/
+
+<span class="nc" id="L155">            PennDraw.advance();</span>
+<span class="nc" id="L156">            hasWon = CollisionDetector.checkMarioCollision(peach.getX(), peach.getY(), 0.01, 0.015);</span>
+<span class="nc" id="L157">        }//end gameplay loop **********************************************</span>
+
+<span class="nc" id="L159">        PennDraw.disableAnimation();</span>
+
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (mario.getPause()) {</span>
+<span class="nc" id="L162">            Tiempo.getInstance().pausar();</span>
+            while (true) {
+
+<span class="nc" id="L165">                PennDraw.picture(0.5, 0.6, &quot;pause.png&quot;, 300, 150);</span>
+<span class="nc" id="L166">                PennDraw.setFontSize(20);</span>
+<span class="nc" id="L167">                PennDraw.setPenColor(Color.ORANGE);</span>
+<span class="nc" id="L168">                PennDraw.text(0.5, 0.15, &quot;Press 'y' to go back&quot;);</span>
+<span class="nc bnc" id="L169" title="All 2 branches missed.">                if (PennDraw.hasNextKeyTyped()) {</span>
+<span class="nc" id="L170">                    char dir = PennDraw.nextKeyTyped();</span>
+<span class="nc bnc" id="L171" title="All 2 branches missed.">                    if (dir == 'p') {</span>
+<span class="nc" id="L172">                        Tiempo.getInstance().pausar();</span>
+<span class="nc" id="L173">                        mario.setPause(false);</span>
+<span class="nc" id="L174">                        PennDraw.enableAnimation(30);</span>
+<span class="nc" id="L175">                        break;</span>
+                    }
+<span class="nc bnc" id="L177" title="All 2 branches missed.">                    if (dir == 'y') {</span>
+<span class="nc" id="L178">                        Tiempo.getInstance().pausar();</span>
+<span class="nc" id="L179">                        PennDraw.clear(Color.black);</span>
+<span class="nc" id="L180">                        mario.resetScore();</span>
+<span class="nc" id="L181">                        PennDraw.picture(0.5,0.5,&quot;replay.png&quot;,200,100);</span>
+<span class="nc" id="L182">                        mario.setPause(false);</span>
+<span class="nc" id="L183">                        getBack=true;</span>
+<span class="nc" id="L184">                        break;</span>
+                    }
+<span class="nc" id="L186">                }</span>
+<span class="nc" id="L187">            }RunGameplayLoop();</span>
+
+<span class="nc bnc" id="L189" title="All 2 branches missed.">        } if (hasWon) {</span>
+<span class="nc" id="L190">            PennDraw.clear(PennDraw.BLACK);</span>
+<span class="nc" id="L191">            mario.addScore(1000);</span>
+<span class="nc" id="L192">            PennDraw.text(0.5, 0.95, (String.valueOf(mario.getScore2())));</span>
+<span class="nc" id="L193">            StdAudio.play(&quot;SFX/win1.wav&quot;);</span>
+<span class="nc" id="L194">            timer=0;</span>
+<span class="nc" id="L195">            hasWon=false;</span>
+<span class="nc" id="L196">            PennDraw.picture(0.5, 0.6, &quot;youwin.png&quot;, 250, 200);</span>
+<span class="nc" id="L197">            juego.registerScore(&quot;Player1&quot;, mario.getScore2(), tiempo);</span>
+<span class="nc bnc" id="L198" title="All 2 branches missed.">        }if (!mario.isAlive()) {</span>
+<span class="nc" id="L199">            PennDraw.clear(PennDraw.BLACK);</span>
+<span class="nc" id="L200">            StdAudio.play(&quot;SFX/death.wav&quot;);</span>
+<span class="nc" id="L201">            timer=0;</span>
+<span class="nc" id="L202">            PennDraw.setPenColor(PennDraw.RED);</span>
+<span class="nc" id="L203">            PennDraw.setFontSize(80);</span>
+<span class="nc" id="L204">            PennDraw.picture(0.5, 0.6, &quot;gameo.png&quot;, 300, 200);</span>
+<span class="nc" id="L205">            mario.resetScore();</span>
+<span class="nc" id="L206">            mario.setPause(false);</span>
+        }
+<span class="nc" id="L208">    }</span>
+
+    public void setXY(){
+<span class="nc" id="L211">        Random random = new Random();</span>
+<span class="nc" id="L212">        X=random.nextDouble()*0.6+0.2;</span>
+<span class="nc" id="L213">        Y=random.nextDouble()*0.8+0.1;</span>
+<span class="nc" id="L214">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

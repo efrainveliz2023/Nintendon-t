@@ -1,0 +1,70 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Ladder.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Ladder.java</span></div><h1>Ladder.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.Ladder.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.Ladder (runs basic testing)
+ *  Dependencies: image files
+ *
+ *  Creates a main.java.com.Nintendont.DK.Source.Ladder object for Donkey Kong Game. main.java.com.Nintendont.DK.Source.Ladder can
+ *  be drawn. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ ******************************************************************************/
+public class Ladder {
+    private double x;
+    private double y;
+<span class="nc" id="L18">    private static double halfHeight = 0.075;</span>
+<span class="nc" id="L19">    private static double halfWidth = 0.015;</span>
+
+    /* Constructor: ladder at x, y
+     * @param double x, double y
+     * @return n/a
+     */
+<span class="nc" id="L25">    public Ladder(double x, double y) {</span>
+<span class="nc" id="L26">        this.x = x;</span>
+<span class="nc" id="L27">        this.y = y;</span>
+<span class="nc" id="L28">    }</span>
+
+    /* Description: draws ladder
+     * @param n/a
+     * @return n/a
+     */
+    public void draw() {
+<span class="nc" id="L35">        PennDraw.picture(x, y, &quot;ladder1.png&quot;, 0.09 * 256, 70);</span>
+<span class="nc" id="L36">    }</span>
+
+    /* Description: returns y
+     * @param n/a
+     * @return double y
+     */
+    public double getY() {
+<span class="nc" id="L43">        return y;</span>
+    }
+
+    /* Description: returns x
+     * @param n/a
+     * @return double x
+     */
+    public double getX() {
+<span class="nc" id="L51">        return x;</span>
+    }
+
+<span class="nc" id="L54">    public static double getHalfWidth(){ return halfWidth; }</span>
+<span class="nc" id="L55">    public static double getHalfHeight(){ return halfHeight; }</span>
+
+    //testing
+    public static void main(String[] args) {
+<span class="nc" id="L59">        Ladder[] ladders = new Ladder[5];</span>
+<span class="nc" id="L60">        ladders[0] = new Ladder(0.4, 0.125);</span>
+<span class="nc" id="L61">        ladders[1] = new Ladder(0.6, 0.275);</span>
+<span class="nc" id="L62">        ladders[2] = new Ladder(0.6, 0.275);</span>
+<span class="nc" id="L63">        ladders[3] = new Ladder(0.6, 0.275);</span>
+<span class="nc" id="L64">        ladders[4] = new Ladder(0.6, 0.275);</span>
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        for (int i = 0; i &lt; ladders.length; i++) {</span>
+<span class="nc" id="L66">            ladders[i].draw();</span>
+        }
+<span class="nc" id="L68">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

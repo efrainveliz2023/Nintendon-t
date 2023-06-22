@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FireballStrategy.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">FireballStrategy.java</span></div><h1>FireballStrategy.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+<span class="nc" id="L3">public class FireballStrategy implements AttackStrategy{</span>
+
+<span class="nc" id="L5">    List&lt;Fireball&gt; fireballList = new LinkedList&lt;Fireball&gt;();</span>
+
+    @Override
+    public void performAttack(Mario mario) {
+<span class="nc" id="L9">        fireballList.add(new Fireball(mario.getX(), mario.getY(), mario.getDirection()));</span>
+<span class="nc" id="L10">    }</span>
+
+    @Override
+    public void Run() {
+<span class="nc bnc" id="L14" title="All 2 branches missed.">        for(int i = 0; i &lt; fireballList.size(); i++){</span>
+<span class="nc" id="L15">            fireballList.get(i).Run();</span>
+<span class="nc bnc" id="L16" title="All 2 branches missed.">            if(!fireballList.get(i).GetAlive()){</span>
+<span class="nc" id="L17">                fireballList.remove(i);</span>
+<span class="nc" id="L18">                i--;</span>
+            }
+        }
+
+<span class="nc" id="L22">    }</span>
+
+    @Override
+    public void Clear() {
+<span class="nc" id="L26">        fireballList = new LinkedList&lt;Fireball&gt;();</span>
+<span class="nc" id="L27">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

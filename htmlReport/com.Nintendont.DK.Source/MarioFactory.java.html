@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MarioFactory.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">MarioFactory.java</span></div><h1>MarioFactory.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+<span class="nc" id="L3">public class MarioFactory {</span>
+
+<span class="nc" id="L5">    public enum Characters{</span>
+<span class="nc" id="L6">        Mario, Pikachu;</span>
+        public static Characters fromInteger(int x){
+<span class="nc bnc" id="L8" title="All 3 branches missed.">            switch(x){</span>
+                case 0:
+<span class="nc" id="L10">                    return Mario;</span>
+                case 1:
+<span class="nc" id="L12">                    return Pikachu;</span>
+            }
+<span class="nc" id="L14">            return null;</span>
+        }
+    }
+
+<span class="nc" id="L18">    static Characters playerOne = Characters.Mario;</span>
+
+    static void SetCharacterOne(int character){
+<span class="nc" id="L21">        playerOne = Characters.fromInteger(character);</span>
+<span class="nc" id="L22">    }</span>
+
+    public static Mario CreateMario(double x, double y){
+        double vel, jump;
+        String idleSprite;
+        String[] movingSprites;
+        String climbingSprite;
+        String jumpingSprite;
+        AttackStrategy powerUp;
+
+<span class="nc bnc" id="L32" title="All 2 branches missed.">        switch (playerOne){</span>
+            case Pikachu:
+<span class="nc" id="L34">                vel = 0.04;</span>
+<span class="nc" id="L35">                jump = 0.009;</span>
+<span class="nc" id="L36">                idleSprite = &quot;pikachuStand.png&quot;;</span>
+<span class="nc" id="L37">                movingSprites = new String[]{&quot;pikachu1.png&quot;, &quot;pikachu2.png&quot;};</span>
+<span class="nc" id="L38">                climbingSprite = &quot;climbingPikachu.png&quot;;</span>
+<span class="nc" id="L39">                jumpingSprite = &quot;pikachuJump.png&quot;;</span>
+<span class="nc" id="L40">                powerUp = new IpactruenoStrategy();</span>
+<span class="nc" id="L41">                break;</span>
+            default:
+<span class="nc" id="L43">                vel = 0.02;</span>
+<span class="nc" id="L44">                jump = 0.013;</span>
+<span class="nc" id="L45">                idleSprite = &quot;marioStand.png&quot;;</span>
+<span class="nc" id="L46">                movingSprites = new String[]{ &quot;marioStand.png&quot;, &quot;marioRun1.png&quot;, &quot;marioRun2.png&quot; };</span>
+<span class="nc" id="L47">                climbingSprite = &quot;climbingMario.png&quot;;</span>
+<span class="nc" id="L48">                jumpingSprite = &quot;marioRun2.png&quot;;</span>
+<span class="nc" id="L49">                powerUp = new FireballStrategy();</span>
+                break;
+        }
+<span class="nc" id="L52">        return new Mario(x, y, vel, jump, idleSprite, movingSprites, climbingSprite, jumpingSprite, powerUp);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

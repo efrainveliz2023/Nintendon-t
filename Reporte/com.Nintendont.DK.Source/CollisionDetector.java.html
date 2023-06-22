@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CollisionDetector.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">CollisionDetector.java</span></div><h1>CollisionDetector.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+<span class="nc" id="L3">public class CollisionDetector {</span>
+    private static Ladder[] ladders;
+    private static Floor[] floors;
+    private static Mario mario;
+
+<span class="nc" id="L8">    private static List&lt;Barrel&gt; barrels = new LinkedList&lt;Barrel&gt;();</span>
+
+    public void setLadders(Ladder[] ladders) {
+<span class="nc" id="L11">        CollisionDetector.ladders = ladders;</span>
+<span class="nc" id="L12">    }</span>
+    public void setFloors(Floor[] floors) {
+<span class="nc" id="L14">        CollisionDetector.floors = floors;</span>
+<span class="nc" id="L15">    }</span>
+    public void setMario(Mario mario){
+<span class="nc" id="L17">        CollisionDetector.mario = mario;</span>
+<span class="nc" id="L18">    }</span>
+
+    public void setBarrels(List&lt;Barrel&gt; barrels){
+<span class="nc" id="L21">        CollisionDetector.barrels = barrels;</span>
+<span class="nc" id="L22">    }</span>
+
+    public static boolean checkLaddersCollision(double x, double y, double halfWidth){
+<span class="nc bnc" id="L25" title="All 2 branches missed.">        for (int i = 0; i &lt; ladders.length; i++) {</span>
+<span class="nc bnc" id="L26" title="All 4 branches missed.">            if(ladders[i].getX() - Ladder.getHalfWidth() &lt; x + halfWidth &amp;&amp; x - halfWidth &lt; ladders[i].getX() + Ladder.getHalfWidth()) {</span>
+<span class="nc bnc" id="L27" title="All 4 branches missed.">                if (ladders[i].getY() - Ladder.getHalfHeight() &lt; y &amp;&amp; y &lt; ladders[i].getY() + Ladder.getHalfWidth()) {</span>
+<span class="nc" id="L28">                    return true;</span>
+                }
+            }
+        }
+<span class="nc" id="L32">        return false;</span>
+    }
+
+    public static boolean checkFloorsCollision(double x, double y, double halfHeight){
+<span class="nc bnc" id="L36" title="All 2 branches missed.">        for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc bnc" id="L37" title="All 4 branches missed.">            if ((y - halfHeight &lt;= floors[i].getY() + Floor.getHeight()) &amp;&amp; y &gt;= floors[i].getY()) {</span>
+<span class="nc bnc" id="L38" title="All 4 branches missed.">                if(x &lt;= floors[i].getX() + Floor.getWidth() &amp;&amp; x &gt;= floors[i].getX() - Floor.getWidth()) {</span>
+<span class="nc" id="L39">                    return true;</span>
+                }
+            }
+        }
+<span class="nc" id="L43">        return false;</span>
+    }
+
+    public static double getCLosestFloorY(double y){
+<span class="nc" id="L47">        double min = Double.POSITIVE_INFINITY;</span>
+<span class="nc" id="L48">        double closest = 0;</span>
+
+<span class="nc bnc" id="L50" title="All 2 branches missed.">        for (int i = 0; i &lt; floors.length; i++) {</span>
+<span class="nc" id="L51">            double temp = Math.abs(y - floors[i].getY());</span>
+<span class="nc bnc" id="L52" title="All 2 branches missed.">            if (temp &lt; min) {</span>
+<span class="nc" id="L53">                closest = floors[i].getY();</span>
+<span class="nc" id="L54">                min = temp;</span>
+            }
+        }
+
+<span class="nc" id="L58">        return closest;</span>
+    }
+
+    public static boolean checkMarioCollision(double x, double y, double halfWidth, double halfHeight){
+<span class="nc bnc" id="L62" title="All 4 branches missed.">        if (x - halfWidth &lt; mario.getX() + Mario.getHalfWidth() &amp;&amp; mario.getX() - Mario.getHalfWidth() &lt; x + halfWidth) {</span>
+<span class="nc bnc" id="L63" title="All 2 branches missed.">            if (y - halfHeight &lt; mario.getY() + Mario.getHalfHeight() &amp;&amp; mario.getY()</span>
+<span class="nc bnc" id="L64" title="All 2 branches missed.">                    - Mario.getHalfWidth() &lt; y + halfHeight)</span>
+<span class="nc" id="L65">                return true;</span>
+        }
+<span class="nc" id="L67">        return false;</span>
+    }
+    public static boolean checkFireballCollision(double x,double y , LinkedList&lt;Fireball&gt; fireballs, double halfWidth, double halfHeight){
+<span class="nc bnc" id="L70" title="All 2 branches missed.">        for (int i=0; i&lt; fireballs.size(); i++ ){</span>
+<span class="nc bnc" id="L71" title="All 2 branches missed.">            if(fireballs.get(i).getY()==y){</span>
+<span class="nc bnc" id="L72" title="All 4 branches missed.">                if(x - halfWidth &lt; fireballs.get(i).getX()  &amp;&amp; fireballs.get(i).getX()  &lt; x + halfWidth){</span>
+<span class="nc" id="L73">                    mario.addScore(100);</span>
+<span class="nc" id="L74">                    return true;</span>
+
+                }
+            }
+
+
+        }
+<span class="nc" id="L81">        return false;</span>
+    }
+
+    public static void checkBarrelCollisionAndKill(double x, double y, double halfWidth, double halfHeigth){
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        for (int i = 0; i &lt; barrels.size(); i++) {</span>
+<span class="nc bnc" id="L86" title="All 4 branches missed.">            if(x + halfWidth &gt; barrels.get(i).getX() - Barrel.getRadius() &amp;&amp; x - halfWidth &lt; barrels.get(i).getX() + Barrel.getRadius()){</span>
+<span class="nc bnc" id="L87" title="All 4 branches missed.">                if(y + halfHeigth &gt; barrels.get(i).getY() - Barrel.getRadius() &amp;&amp; y - halfHeigth &lt; barrels.get(i).getY() + Barrel.getRadius()){</span>
+<span class="nc" id="L88">                    barrels.get(i).Kill();</span>
+<span class="nc" id="L89">                    mario.addScore(100);</span>
+                }
+            }
+        }
+<span class="nc" id="L93">    }</span>
+
+    public static boolean checkStarCollision(double x, double y, double halfWidth, double halfHeight){
+<span class="nc bnc" id="L96" title="All 4 branches missed.">        if (x - halfWidth &lt; mario.getX() + Mario.getHalfWidth() &amp;&amp; mario.getX() - Mario.getHalfWidth() &lt; x + halfWidth) {</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">            if (y - halfHeight &lt; mario.getY() + Mario.getHalfHeight() &amp;&amp; mario.getY()</span>
+<span class="nc bnc" id="L98" title="All 2 branches missed.">                    - Mario.getHalfWidth() &lt; y + halfHeight){</span>
+<span class="nc" id="L99">                return true;</span>
+            }
+
+        }
+<span class="nc" id="L103">        return false;</span>
+    }
+   /* public static checkBarrelFireballCollision(){
+
+        if (x - halfWidth &lt; mario.getX() + Mario.getHalfWidth() &amp;&amp; mario.getX() - Mario.getHalfWidth() &lt; x + halfWidth) {
+            if (y - halfHeight &lt; mario.getY() + Mario.getHalfHeight() &amp;&amp; mario.getY() - Mario.getHalfWidth() &lt; y + halfHeight)
+                return true;
+        }
+
+    }*/
+    public static void KillMario(){
+<span class="nc" id="L114">        mario.Kill();</span>
+<span class="nc" id="L115">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

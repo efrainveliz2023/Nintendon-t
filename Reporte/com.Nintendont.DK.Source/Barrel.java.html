@@ -1,0 +1,191 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Barrel.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Barrel.java</span></div><h1>Barrel.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.Barrel.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.Barrel (runs basic testing)
+ *  Dependencies: image files
+ *
+ *  Creates a barrel object for Donkey Kong Game. main.java.com.Nintendont.DK.Source.Barrel can
+ * roll, fall, and stop depending on floors inputted. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ *
+ ******************************************************************************/
+public class Barrel {
+    private double x;
+    private double y;
+<span class="nc" id="L19">    private double velX = 0.005;</span>
+    private double velY;
+<span class="nc" id="L21">    private double fallVel = 0.001;</span>
+    private static final double radius = 0.025;
+<span class="nc" id="L23">    private int floorLevel = 0;</span>
+<span class="nc" id="L24">    private int angle = 0;</span>
+
+<span class="nc" id="L26">    private boolean isAlive = true;</span>
+
+    /* Constructor: Creates barrel with x,y coordinates.*/
+<span class="nc" id="L29">    public Barrel(double x, double y) {</span>
+<span class="nc" id="L30">        this.x = x;</span>
+<span class="nc" id="L31">        this.y = y;</span>
+<span class="nc" id="L32">    }</span>
+
+    //Revisa coliciones y actualiza la posicion
+    public void Run(){
+<span class="nc" id="L36">            boolean floors = CollisionDetector.checkFloorsCollision(x, y, radius);</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            if (floors) {</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">                if (getFloorLevel() % 2 == 0) {</span>
+<span class="nc" id="L39">                    rollRight();</span>
+                } else {
+<span class="nc" id="L41">                    rollLeft();</span>
+                }
+            }
+
+<span class="nc" id="L45">            floors = CollisionDetector.checkFloorsCollision(x, y, radius);</span>
+
+<span class="nc bnc" id="L47" title="All 2 branches missed.">            if (!floors) {</span>
+<span class="nc" id="L48">                fall();</span>
+<span class="nc bnc" id="L49" title="All 2 branches missed.">            } else if (getVelY() &lt; 0.0) {</span>
+<span class="nc" id="L50">                int temp = getFloorLevel();</span>
+<span class="nc" id="L51">                setFloorLevel(temp + 1);</span>
+<span class="nc" id="L52">                stop();</span>
+            }
+
+<span class="nc" id="L55">            updateY();</span>
+<span class="nc" id="L56">            draw();</span>
+
+<span class="nc bnc" id="L58" title="All 2 branches missed.">            if (CollisionDetector.checkMarioCollision(x, y, radius, radius)) {</span>
+<span class="nc" id="L59">                CollisionDetector.KillMario();</span>
+            }
+
+            //if (CollisionDetector.checkFireballCollision(x, y,0.025, 0.025)) {
+            //    Kill();
+            //}
+<span class="nc" id="L65">        checkPosition();</span>
+<span class="nc" id="L66">    }</span>
+
+
+    public void checkPosition() {
+<span class="nc bnc" id="L70" title="All 6 branches missed.">        if(x &lt; 0.03 || x &gt; 0.97 || y &lt; -0.05){</span>
+<span class="nc" id="L71">            isAlive = false;</span>
+        }
+<span class="nc" id="L73">    }</span>
+    /**
+     * Descripcion: Cambia la variable isALive a false
+     */
+    public void Kill(){
+<span class="nc" id="L78">        isAlive = false;</span>
+<span class="nc" id="L79">    }</span>
+
+    public boolean GetAlive(){
+<span class="nc" id="L82">        return isAlive;</span>
+    }
+
+    /** Description: Draws a barrel at it's x and y location with a
+     * constantly changing angle.
+     */
+    public void draw() {
+<span class="nc" id="L89">        double neg = Math.pow(-1, floorLevel + 1);</span>
+<span class="nc" id="L90">        PennDraw.picture(x, y, &quot;barrel.png&quot;, 24, 24, angle * neg);</span>
+<span class="nc" id="L91">        angle += 5;</span>
+<span class="nc" id="L92">    }</span>
+
+    /** Description: Draws 4 barrels in the top corner
+     * @param floors for getting height to draw them at
+     */
+    public static void draw4(Floor[] floors) {
+<span class="nc" id="L98">        double yHeight = floors[0].getY() + Floor.getHeight() + radius;</span>
+<span class="nc" id="L99">        PennDraw.picture(0.05, yHeight, &quot;barrel.png&quot;, 24, 24);</span>
+<span class="nc" id="L100">        PennDraw.picture(0.05, yHeight + 2 * radius, &quot;barrel.png&quot;, 24, 24);</span>
+<span class="nc" id="L101">        PennDraw.picture(0.10, yHeight, &quot;barrel.png&quot;, 24, 24);</span>
+<span class="nc" id="L102">        PennDraw.picture(0.10, yHeight + 2 * radius, &quot;barrel.png&quot;, 24, 24);</span>
+<span class="nc" id="L103">    }</span>
+
+    /** Description: changes the x position to the right
+     */
+    public void rollRight() {
+<span class="nc" id="L108">        x += velX;</span>
+<span class="nc" id="L109">    }</span>
+
+    /** Description: changes the x position to the left
+     */
+    public void rollLeft() {
+<span class="nc" id="L114">        x -= velX;</span>
+<span class="nc" id="L115">    }</span>
+
+    /** Description: returns x position
+     */
+    public double getX() {
+<span class="nc" id="L120">        return x;</span>
+    }
+
+    /** Description: returns y position
+     */
+    public double getY() {
+<span class="nc" id="L126">        return y;</span>
+    }
+
+    /** Description: gets floor level of barrel
+     */
+    public int getFloorLevel() {
+<span class="nc" id="L132">        return floorLevel;</span>
+    }
+
+    /** Description: sets floor level of barrel
+     * @param floorLevel - which floorLevel to set at
+     */
+    public void setFloorLevel(int floorLevel) {
+<span class="nc" id="L139">        this.floorLevel = floorLevel;</span>
+<span class="nc" id="L140">    }</span>
+
+    /** Description: returns y velocity
+     * @return velY
+     */
+    public double getVelY() {
+<span class="nc" id="L146">        return velY;</span>
+    }
+
+    /** Description: returns radius of barrels
+     * @return double radius
+     */
+    public static double getRadius() {
+<span class="nc" id="L153">        return radius;</span>
+    }
+
+    /** Updates barrel's y position
+     */
+    public void updateY() {
+<span class="nc" id="L159">        y += velY;</span>
+<span class="nc" id="L160">    }</span>
+    public boolean isAlive(){
+<span class="nc" id="L162">        return isAlive;</span>
+    }
+
+    /** make the barrel fall by lowering y velocity
+     */
+<span class="nc" id="L167">    public void fall() { velY -= fallVel; }</span>
+
+    /** Stop the barrel from falling and put it at its floor level
+     */
+    public void stop() {
+<span class="nc" id="L172">        double closest = CollisionDetector.getCLosestFloorY(y);</span>
+<span class="nc" id="L173">        y = closest + radius + Floor.getHeight();</span>
+<span class="nc" id="L174">        velY = 0.0;</span>
+<span class="nc" id="L175">    }</span>
+
+    //TESTING
+    public static void main(String[] args) {
+<span class="nc" id="L179">        Barrel b = new Barrel(0.5, 0.5);</span>
+<span class="nc" id="L180">        PennDraw.enableAnimation(30);</span>
+
+        while(true) {
+<span class="nc" id="L183">            PennDraw.clear(PennDraw.WHITE);</span>
+<span class="nc" id="L184">            b.draw();</span>
+<span class="nc" id="L185">            b.fall();</span>
+<span class="nc" id="L186">            b.updateY();</span>
+<span class="nc" id="L187">            PennDraw.advance();</span>
+        }
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

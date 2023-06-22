@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Main.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Main.java</span></div><h1>Main.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+import java.awt.*;
+
+<span class="nc" id="L5">public class Main {</span>
+
+    static Thread tiempo;
+
+    public static void main(String[] args) {
+        /*
+        //Set window size to screen max size.
+        GraphicsDevice gd = GraphicsEnvironment.getLocalGraphicsEnvironment().getDefaultScreenDevice();
+        int screenWidth = gd.getDisplayMode().getWidth();
+        int screenHeight = gd.getDisplayMode().getHeight();
+        main.Resources.PennDraw.setCanvasSize(screenWidth, screenHeight);
+        */
+<span class="nc" id="L17">        tiempo = new Thread(Tiempo.getInstance());</span>
+<span class="nc" id="L18">        tiempo.start();</span>
+
+<span class="nc" id="L20">        MainMenu();</span>
+        //***************************************************************
+<span class="nc" id="L22">    }</span>
+
+    static void MainMenu(){
+        //DRAWING THE INSTRUCTIONS **************************************
+<span class="nc" id="L26">        PennDraw.clear(Color.BLACK);</span>
+<span class="nc" id="L27">        PennDraw.picture(0.5, 0.5, &quot;background.png&quot;, 520, 300);</span>
+<span class="nc" id="L28">        Score game = new Score();</span>
+
+<span class="nc" id="L30">        Font font= new Font(&quot;Rockwell Extra Bold&quot;,Font.BOLD,16);</span>
+<span class="nc" id="L31">        PennDraw.setPenColor(PennDraw.WHITE);</span>
+<span class="nc" id="L32">        PennDraw.setFont(font);</span>
+<span class="nc" id="L33">        PennDraw.picture(0.715, 0.06725,&quot;highscore.png&quot;,100,50);</span>
+<span class="nc" id="L34">        PennDraw.text(0.87, 0.07,(String.valueOf(game.getScore(&quot;Player1&quot;))));</span>
+
+        //waits until user presses 'y' to begin the game
+<span class="nc" id="L37">        char c = 0;</span>
+<span class="nc bnc" id="L38" title="All 2 branches missed.">        while (c != 'y') {</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">            if (PennDraw.hasNextKeyTyped())</span>
+<span class="nc" id="L40">                c = PennDraw.nextKeyTyped();</span>
+        }
+        //***************************************************************
+
+        //DRAWING THE CHARACTER SELECTOR **************************************
+<span class="nc" id="L45">        PennDraw.text(0.5, 0.7, &quot;use 'w' to move up, 's' for right,&quot;);</span>
+<span class="nc" id="L46">        PennDraw.text(0.5, 0.6, &quot;'w' to jump, and 's' to move down.&quot;);</span>
+<span class="nc" id="L47">        PennDraw.text(0.5, 0.5, &quot;Climb the ladders to get to Princess Peach to win&quot;);</span>
+<span class="nc" id="L48">        PennDraw.text(0.5, 0.4, &quot;Avoid the barrels - you lose if one hits you&quot;);</span>
+<span class="nc" id="L49">        PennDraw.text(0.5, 0.27, &quot;Press 'f' to activate the special power up&quot;);</span>
+<span class="nc" id="L50">        PennDraw.setFontBold();</span>
+<span class="nc" id="L51">        PennDraw.text(0.5, 0.1, &quot;Press 'y' to start the game&quot;);</span>
+
+        //waits until user presses 'y' to begin the game
+<span class="nc" id="L54">        int selectPos = 0;</span>
+<span class="nc" id="L55">        boolean selected = false;</span>
+<span class="nc bnc" id="L56" title="All 2 branches missed.">        while (!selected) {</span>
+
+<span class="nc" id="L58">            PennDraw.clear(Color.black);</span>
+
+<span class="nc" id="L60">            PennDraw.setPenColor(PennDraw.YELLOW);</span>
+<span class="nc" id="L61">            PennDraw.picture(0.5, 0.9, &quot;characte.png&quot;,200,70);</span>
+<span class="nc" id="L62">            PennDraw.picture(0.42, 0.7, &quot;marioname.png&quot;,100,50);</span>
+<span class="nc" id="L63">            PennDraw.picture(0.62, 0.7, &quot;marioRun1.png&quot;,50,50);</span>
+<span class="nc" id="L64">            PennDraw.picture(0.42, 0.5, &quot;PikaName.png&quot;,100,50);</span>
+<span class="nc" id="L65">            PennDraw.picture(0.62, 0.5, &quot;pikachu2.png&quot;,50,50);</span>
+<span class="nc" id="L66">            PennDraw.picture(0.27, 0.7 - 0.2 * selectPos, &quot;flecha.png&quot;,45,45,-33);</span>
+<span class="nc" id="L67">            PennDraw.text(0.5, 0.1, &quot;Press 'y' to select&quot;);</span>
+            while(true){
+<span class="nc bnc" id="L69" title="All 2 branches missed.">                if (PennDraw.hasNextKeyTyped()) {</span>
+<span class="nc" id="L70">                    c = PennDraw.nextKeyTyped();</span>
+<span class="nc bnc" id="L71" title="All 4 branches missed.">                    switch(c){</span>
+                        case 'w':
+<span class="nc" id="L73">                            selectPos--;</span>
+<span class="nc bnc" id="L74" title="All 2 branches missed.">                            if(selectPos &lt; 0) selectPos = 0;</span>
+                            break;
+                        case 's':
+<span class="nc" id="L77">                            selectPos++;</span>
+<span class="nc bnc" id="L78" title="All 2 branches missed.">                            if(selectPos &gt; 1) selectPos = 1;</span>
+                            break;
+                        case 'y':
+<span class="nc" id="L81">                            selected = true;</span>
+                            break;
+                    }
+<span class="nc" id="L84">                    break;</span>
+                }
+            }
+        }
+<span class="nc" id="L88">        MarioFactory.SetCharacterOne(selectPos);</span>
+<span class="nc" id="L89">        Game();</span>
+<span class="nc" id="L90">    }</span>
+
+    static void Game(){
+        //begin playing background music immediately
+        //StdAudio.loop(&quot;SFX/bacmusic.wav&quot;);
+<span class="nc" id="L95">        Tiempo.getInstance().reset();</span>
+
+<span class="nc" id="L97">        boolean playAgain = true;</span>
+        Levels actualLevel;
+<span class="nc bnc" id="L99" title="All 2 branches missed.">        while (playAgain) {</span>
+            //CHANGE ANIMATION SPEED FPS IF NEEDED
+<span class="nc" id="L101">            PennDraw.enableAnimation(30);</span>
+
+<span class="nc" id="L103">            actualLevel = new Level_1();</span>
+<span class="nc" id="L104">            actualLevel.RunGameplayLoop();</span>
+            //function to see if user wants to play again************
+<span class="nc" id="L106">            PennDraw.setPenColor(PennDraw.WHITE);</span>
+<span class="nc" id="L107">            PennDraw.setFontSize(20);</span>
+<span class="nc" id="L108">            PennDraw.setPenColor(Color.ORANGE);</span>
+<span class="nc" id="L109">            PennDraw.text(0.5, 0.15, &quot;Press 'y' to play again or 'n' exit&quot;);</span>
+<span class="nc" id="L110">            Tiempo.getInstance().pausar();</span>
+<span class="nc" id="L111">            char d = 0;</span>
+<span class="nc bnc" id="L112" title="All 2 branches missed.">            while (d != 'y') {</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">                if (PennDraw.hasNextKeyTyped())</span>
+<span class="nc" id="L114">                    d = PennDraw.nextKeyTyped();</span>
+<span class="nc bnc" id="L115" title="All 2 branches missed.">                if (d == 'n') {</span>
+<span class="nc" id="L116">                    playAgain = false;</span>
+<span class="nc" id="L117">                    StdAudio.endLoop();</span>
+<span class="nc" id="L118">                    Tiempo.getInstance().pausar();</span>
+<span class="nc" id="L119">                    break;</span>
+                }
+<span class="nc bnc" id="L121" title="All 2 branches missed.">                if(d == 'y'){</span>
+<span class="nc" id="L122">                    Tiempo.getInstance().reset();</span>
+<span class="nc" id="L123">                    Tiempo.getInstance().pausar();</span>
+                }
+            }
+<span class="nc" id="L126">        } //close loop for play again</span>
+<span class="nc" id="L127">        MainMenu();</span>
+<span class="nc" id="L128">    }</span>
+
+}
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

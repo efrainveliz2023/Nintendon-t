@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tiempo.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Tiempo.java</span></div><h1>Tiempo.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+import java.util.ArrayList;
+
+/**
+ * con patron de diseño creacional Singleton.
+ */
+public class Tiempo implements Runnable,Subject{
+    private ArrayList&lt;Observer&gt; observers;
+    private static Tiempo instance;
+    private int minutos;
+    private int segundos;
+    private boolean pausa;
+<span class="nc" id="L14">    private Tiempo(){</span>
+<span class="nc" id="L15">        minutos = 0;</span>
+<span class="nc" id="L16">        segundos = 0;</span>
+<span class="nc" id="L17">        pausa = false;</span>
+<span class="nc" id="L18">        observers = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L19">    }</span>
+    public static Tiempo getInstance() {
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (instance == null) {</span>
+<span class="nc" id="L22">            instance = new Tiempo();</span>
+        }
+<span class="nc" id="L24">        return instance;</span>
+    }
+    @Override
+    public void run() {
+        while(true){
+<span class="nc" id="L29">            setSegundos(getSegundos()+1);</span>
+<span class="nc bnc" id="L30" title="All 2 branches missed.">            if(getSegundos()==60){</span>
+<span class="nc" id="L31">                setSegundos(0);</span>
+<span class="nc" id="L32">                setMinutos(getMinutos()+1);</span>
+            }
+<span class="nc" id="L34">            notifyObservers(getSegundosTotales());</span>
+            //System.out.println(&quot;tiempo total: &quot;+getSegundosTotales());
+<span class="nc" id="L36">            try { Thread.sleep(1000); }catch (InterruptedException e){e.printStackTrace();}</span>
+<span class="nc bnc" id="L37" title="All 2 branches missed.">            while(pausa){ try { Thread.sleep(1); }catch (InterruptedException e){e.printStackTrace();} }</span>
+        }
+    }
+<span class="nc" id="L40">    private synchronized void setSegundos(int segundos) { this.segundos = segundos; }</span>
+<span class="nc" id="L41">    private synchronized void setMinutos(int minutos) { this.minutos = minutos; }</span>
+<span class="nc" id="L42">    public int getSegundos() { return segundos; }</span>
+<span class="nc" id="L43">    private int getMinutos() { return minutos; }</span>
+
+    /**
+     * usado por el sujeto para leer la cantidad de segundos
+     * y luego mostrarselos a los observadores.
+     */
+    public int getSegundosTotales(){
+<span class="nc" id="L50">        return (getSegundos()+(getMinutos()*60));</span>
+    }
+<span class="nc" id="L52">    public void reset(){ setSegundos(0); setMinutos(0); }</span>
+    public void pausar(){  //cambia el estado de pausar.
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if(pausa == false){</span>
+<span class="nc" id="L55">            pausa = true;</span>
+        }else{
+<span class="nc" id="L57">            pausa = false;</span>
+        }
+<span class="nc" id="L59">    }</span>
+    public void draw(){
+<span class="nc" id="L61">        PennDraw.setPenColor(PennDraw.WHITE);</span>
+<span class="nc" id="L62">        PennDraw.setFontSize(15);</span>
+<span class="nc" id="L63">        PennDraw.text(0.1, 0.95, String.format(&quot;Time %d:%d&quot;,minutos,segundos));</span>
+<span class="nc" id="L64">    }</span>
+    //implementacion de metodos de la interface Subject
+    @Override
+    public void registrerObserver(Observer o) {
+<span class="nc" id="L68">        observers.add(o);</span>
+<span class="nc" id="L69">    }</span>
+
+
+    @Override
+    public void removeObserver(Observer o) {
+<span class="nc" id="L74">        observers.remove(o);</span>
+<span class="nc" id="L75">    }</span>
+
+    @Override
+    public void notifyObservers(int seg) {
+<span class="nc bnc" id="L79" title="All 2 branches missed.">        for(int i = 0; i &lt; observers.size(); i++){</span>
+<span class="nc" id="L80">            observers.get(i).upDate(seg);</span>
+        }
+<span class="nc" id="L82">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

@@ -1,0 +1,425 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Mario.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Mario.java</span></div><h1>Mario.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.Mario.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.Mario (runs basic testing
+ *  Dependencies: image files
+ *
+ *  Creates a main.java.com.Nintendont.DK.Source.Mario object for Donkey Kong Game. main.java.com.Nintendont.DK.Source.Mario can
+ * move, fall, and stop depending on floors inputted. main.java.com.Nintendont.DK.Source.Mario can be checked
+ * compared to ladders and floors and barrels objects. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ *
+ ******************************************************************************/
+public class Mario {
+
+    //Variables seteadas al instanciar
+    private double x;
+<span class="nc" id="L20">    private boolean timerOn=false;</span>
+<span class="nc" id="L21">    private boolean pause=false;</span>
+<span class="nc" id="L22">    private static int Score=0;</span>
+<span class="nc" id="L23">    private static boolean powerUp=false;</span>
+<span class="nc" id="L24">    private static  char lastKeyPressed = 's';</span>
+    private double y;
+    private double velX;
+<span class="nc" id="L27">    private double velY = 0;</span>
+    private final double jumpVel;
+    private final String idleSprite;
+    private final String[] movingSprites;
+    private final String climbingSprite;
+    private final String jumpingSprite;
+    private AttackStrategy attackStrategy;
+    private AttackStrategy baseAttackStrategy;
+    public boolean fireball;
+
+    private static final double halfHeight = 0.025;
+    private static final double halfWidth = 0.01;
+<span class="nc" id="L39">    private boolean isAlive = true;</span>
+<span class="nc" id="L40">    int direction = 0;</span>
+
+    //direction tracker for animation
+<span class="nc" id="L43">    int movingDir = 0;</span>
+
+    //jumping variable
+<span class="nc" id="L46">    boolean jumping = false;</span>
+
+    //false if not climbing, true if climbing
+<span class="nc" id="L49">    boolean climbing = false;</span>
+    //int climb to keep track of which climbing frame
+<span class="nc" id="L51">    int climb = 0;</span>
+
+    /* Constructor: sets main.java.com.Nintendont.DK.Source.Mario's x and y location */
+<span class="nc" id="L54">    public Mario(double x, double y) {</span>
+<span class="nc" id="L55">        this.x = x;</span>
+<span class="nc" id="L56">        this.y = y;</span>
+<span class="nc" id="L57">        velX = 0.02;</span>
+<span class="nc" id="L58">        jumpVel = 0.012;</span>
+<span class="nc" id="L59">        idleSprite = &quot;marioStand.png&quot;;</span>
+<span class="nc" id="L60">        movingSprites = new String[]{ &quot;marioStand.png&quot;, &quot;marioRun1.png&quot;, &quot;marioRun2.png&quot; };</span>
+<span class="nc" id="L61">        climbingSprite = &quot;climbingMario.png&quot;;</span>
+<span class="nc" id="L62">        jumpingSprite = &quot;marioRun2.png&quot;;</span>
+<span class="nc" id="L63">        direction = 0;</span>
+<span class="nc" id="L64">        Score=0;</span>
+<span class="nc" id="L65">        baseAttackStrategy = new FireballStrategy();</span>
+<span class="nc" id="L66">    }</span>
+
+    public Mario(double x, double y, double velX, double jumpVel,
+                 String idleSprite, String[] movingSprites, String climbingSprite, String jumpingSprite,
+                 AttackStrategy poweUp)
+<span class="nc" id="L71">    {</span>
+<span class="nc" id="L72">        this.x = x;</span>
+<span class="nc" id="L73">        this.y = y;</span>
+<span class="nc" id="L74">        this.velX = velX;</span>
+<span class="nc" id="L75">        this.jumpVel = jumpVel;</span>
+<span class="nc" id="L76">        this.idleSprite = idleSprite;</span>
+<span class="nc" id="L77">        this.movingSprites = movingSprites;</span>
+<span class="nc" id="L78">        this.climbingSprite = climbingSprite;</span>
+<span class="nc" id="L79">        this.jumpingSprite = jumpingSprite;</span>
+<span class="nc" id="L80">        this.baseAttackStrategy = poweUp;</span>
+
+<span class="nc" id="L82">        direction = 0;</span>
+<span class="nc" id="L83">    }</span>
+
+    /**
+     * Descripcion: Revisa los Inputs y colisiones, y actualiza la posicion de mario
+     */
+    void Run(){
+<span class="nc bnc" id="L89" title="All 2 branches missed.">        if(attackStrategy != null){</span>
+<span class="nc" id="L90">            attackStrategy.Run();</span>
+        }
+
+<span class="nc" id="L93">        checkPosition();</span>
+
+<span class="nc" id="L95">        boolean ladders = CollisionDetector.checkLaddersCollision(x, y, halfWidth);</span>
+<span class="nc" id="L96">        boolean floors = CollisionDetector.checkFloorsCollision(x, y, halfHeight);</span>
+
+<span class="nc bnc" id="L98" title="All 4 branches missed.">        if (ladders &amp;&amp; climbing) {</span>
+<span class="nc" id="L99">            drawClimbing(climb);</span>
+        } else {
+<span class="nc bnc" id="L101" title="All 2 branches missed.">            boolean facing = (direction == 1);</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">            if(!floors){</span>
+<span class="nc" id="L103">                drawJump(true);</span>
+<span class="nc bnc" id="L104" title="All 2 branches missed.">            } else if(movingDir == 0){</span>
+<span class="nc" id="L105">                draw(facing);</span>
+            } else {
+<span class="nc" id="L107">                drawMoving(movingDir, facing);</span>
+            }
+        }
+
+<span class="nc bnc" id="L111" title="All 2 branches missed.">        if (PennDraw.hasNextKeyTyped()) {</span>
+<span class="nc" id="L112">            char dir = PennDraw.nextKeyTyped();</span>
+<span class="nc bnc" id="L113" title="All 2 branches missed.">            if (dir == 'a') {</span>
+                //if is not in the ladder and on the floor move
+<span class="nc bnc" id="L115" title="All 4 branches missed.">                if (!(ladders &amp;&amp; !floors)) {</span>
+<span class="nc" id="L116">                    moveLeft();</span>
+<span class="nc" id="L117">                    movingDir++;</span>
+<span class="nc" id="L118">                    climbing = false;</span>
+<span class="nc" id="L119">                    direction = 1;</span>
+<span class="nc" id="L120">                    lastKeyPressed='i';</span>
+                }
+<span class="nc bnc" id="L122" title="All 2 branches missed.">            } else if (dir == 'd') {</span>
+                //if mario is not in the ladder and on the floor
+<span class="nc bnc" id="L124" title="All 4 branches missed.">                if (!(ladders &amp;&amp; !floors)) {</span>
+<span class="nc" id="L125">                    moveRight();</span>
+<span class="nc" id="L126">                    movingDir++;</span>
+<span class="nc" id="L127">                    climbing = false;</span>
+<span class="nc" id="L128">                    direction = 2;</span>
+<span class="nc" id="L129">                    lastKeyPressed='d';</span>
+                }
+            } else {
+<span class="nc" id="L132">                movingDir = 0;</span>
+            }
+<span class="nc bnc" id="L134" title="All 2 branches missed.">            if (dir == 'w') {</span>
+                //if mario is in ladder, move up ladder
+<span class="nc bnc" id="L136" title="All 2 branches missed.">                if (ladders) {</span>
+                    // System.out.println(&quot;we made it here&quot;);
+<span class="nc" id="L138">                    climbing = true;</span>
+<span class="nc" id="L139">                    climb++;</span>
+<span class="nc" id="L140">                    moveUp();</span>
+                }
+                //otherwise if he is on the floor, jump
+<span class="nc bnc" id="L143" title="All 2 branches missed.">                else if (floors) {</span>
+<span class="nc" id="L144">                    StdAudio.play(&quot;SFX/jump.wav&quot;);</span>
+<span class="nc" id="L145">                    climbing = false;</span>
+<span class="nc" id="L146">                    jumping = true;</span>
+<span class="nc" id="L147">                    jump();</span>
+                }
+<span class="nc bnc" id="L149" title="All 2 branches missed.">            } else if (dir == 's') {</span>
+                //if mario is in ladder and not on the floor, move down
+<span class="nc bnc" id="L151" title="All 4 branches missed.">                if (ladders &amp;&amp; !floors) {</span>
+<span class="nc" id="L152">                    climbing = true;</span>
+<span class="nc" id="L153">                    climb--;</span>
+<span class="nc" id="L154">                    moveDown();</span>
+                }
+<span class="nc bnc" id="L156" title="All 2 branches missed.">            } else if(dir == 'f'){</span>
+<span class="nc bnc" id="L157" title="All 2 branches missed.">                if(attackStrategy != null) {</span>
+<span class="nc" id="L158">                    attackStrategy.performAttack(this);</span>
+                }
+<span class="nc bnc" id="L160" title="All 2 branches missed.">            } else if(dir == 'p'){</span>
+<span class="nc" id="L161">                setPause(true);</span>
+            }
+<span class="nc" id="L163">        }</span>
+        else {
+<span class="nc" id="L165">            movingDir = 0;</span>
+        }
+        //update mario's y position for jumping
+<span class="nc" id="L168">        updateY();</span>
+
+        //checks colliding with ladders
+<span class="nc bnc" id="L171" title="All 4 branches missed.">        if(!floors &amp;&amp; !ladders) {</span>
+<span class="nc" id="L172">            fall();</span>
+        }
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        else if (getVelY() &lt; 0.0) {</span>
+<span class="nc" id="L175">            stop();</span>
+        }
+<span class="nc" id="L177">    }</span>
+
+    /**
+     * @return double x
+     */
+    public double getX() {
+<span class="nc" id="L183">        return x;</span>
+    }
+
+    public void setPowerUp(boolean powerUp) {
+<span class="nc bnc" id="L187" title="All 2 branches missed.">        if(powerUp){</span>
+<span class="nc" id="L188">            attackStrategy = baseAttackStrategy;</span>
+        } else {
+<span class="nc" id="L190">            attackStrategy.Clear();</span>
+<span class="nc" id="L191">            attackStrategy = null;</span>
+        }
+<span class="nc" id="L193">    }</span>
+    public void addScore(int Score){
+<span class="nc" id="L195">          this.Score+=Score;</span>
+<span class="nc" id="L196">    }</span>
+    public int getScore2(){
+<span class="nc" id="L198">        return Score;</span>
+    }
+    public void resetScore(){
+<span class="nc" id="L201">        Score=0;</span>
+<span class="nc" id="L202">    }</span>
+
+    /**
+     * @return double y
+     */
+    public double getY() {
+<span class="nc" id="L208">        return y;</span>
+    }
+
+    /**
+     * @return double yVel
+     */
+    public double getVelY() {
+<span class="nc" id="L215">        return velY;</span>
+    }
+
+    /**
+     * @return halfHeight
+     */
+    public static double getHalfHeight() {
+<span class="nc" id="L222">        return halfHeight;</span>
+    }
+
+    /**
+     * @return halfWidth
+     */
+    public static double getHalfWidth(){
+<span class="nc" id="L229">        return halfWidth;</span>
+    }
+
+    /**
+     * @return boolean isAlive
+     */
+    public boolean isAlive() {
+<span class="nc" id="L236">        return isAlive;</span>
+    }
+
+    /**
+     * Descriptios: Setea isAlive en falso
+     */
+    public void Kill(){
+<span class="nc" id="L243">        isAlive = false;</span>
+<span class="nc" id="L244">    }</span>
+
+    /** Description: increases x by factor of velX
+     */
+    public void moveRight() {
+<span class="nc" id="L249">        x += velX;</span>
+<span class="nc" id="L250">    }</span>
+
+    /** Description: decreases mario's x by velX
+     */
+    public void moveLeft() {
+<span class="nc" id="L255">        x -= velX;</span>
+<span class="nc" id="L256">    }</span>
+
+    /** Description: setea la posicion y
+     * @param y nueva posicion y.
+     */
+    public void setY(double y) {
+<span class="nc" id="L262">        this.y = y;</span>
+<span class="nc" id="L263">    }</span>
+
+    /** Description: dibuja a mario en una de las imagenes mirando a la izquierda
+     * @param dir - en que frame de la animacion esta mario
+     * @param facing - direccion en la que está mirando. True = izquierda.
+     */
+    public void drawMoving(int dir, boolean facing){
+<span class="nc" id="L270">        int direction = -1;</span>
+<span class="nc bnc" id="L271" title="All 2 branches missed.">        if(facing) direction = 1;</span>
+
+<span class="nc" id="L273">        PennDraw.picture(x, y + 0.01, movingSprites[dir % movingSprites.length], 35 * direction, 35);</span>
+<span class="nc" id="L274">    }</span>
+
+    /** Description: dibuja a mario quieto
+     * @param facing - direccion: true izquierda, false derecha
+     */
+    public void draw(boolean facing) {
+<span class="nc bnc" id="L280" title="All 2 branches missed.">        if (facing) {</span>
+<span class="nc" id="L281">            PennDraw.picture(x, y, idleSprite, 35, 35);</span>
+        } else {
+<span class="nc" id="L283">            PennDraw.picture(x, y, idleSprite, -35, 35);</span>
+        }
+<span class="nc" id="L285">    }</span>
+
+    /** Description:dibuja a mario escalando
+     * @param dir - frame en el que esta mario
+     */
+    public void drawClimbing(int dir) {
+<span class="nc bnc" id="L291" title="All 2 branches missed.">        if (dir % 2 == 0) {</span>
+<span class="nc" id="L292">            PennDraw.picture(x, y, climbingSprite, 35, 35);</span>
+<span class="nc bnc" id="L293" title="All 2 branches missed.">        } else if (dir % 2 == 1) {</span>
+<span class="nc" id="L294">            PennDraw.picture(x, y, climbingSprite, -35, 35);</span>
+        }
+<span class="nc" id="L296">    }</span>
+
+    /** Description: Dibuja a mario en el aire
+     * @param  facing - direccion en la que esta mirando, true izquierda
+     */
+    public void drawJump(boolean facing) {
+<span class="nc bnc" id="L302" title="All 2 branches missed.">        if (facing) {</span>
+<span class="nc" id="L303">            PennDraw.picture(x, y, jumpingSprite, -35, 35);</span>
+        } else {
+<span class="nc" id="L305">            PennDraw.picture(x, y, jumpingSprite, 35, 35);</span>
+        }
+<span class="nc" id="L307">    }</span>
+
+    /** Description: updates marios y vel for jumping feature
+     */
+    public void updateY() {
+<span class="nc" id="L312">        y += velY;</span>
+<span class="nc" id="L313">    }</span>
+    public void setPause(boolean pause){
+<span class="nc" id="L315">        this.pause=pause;</span>
+<span class="nc" id="L316">    }</span>
+
+     public boolean getPause(){
+<span class="nc" id="L319">        return pause;</span>
+     }
+    /** Description: updates marios y vel for jumping feature
+     */
+    public void jump() {
+<span class="nc" id="L324">        velY = jumpVel;</span>
+<span class="nc" id="L325">    }</span>
+
+    /** Description: updates marios y vel for jumping feature
+     */
+    public void fall() {
+<span class="nc" id="L330">        velY -= 0.001;</span>
+<span class="nc" id="L331">    }</span>
+
+    /** Description: Frena la caida de mario y lo coloca encima del piso más cercano
+     */
+    public void stop() {
+<span class="nc" id="L336">        double closest = CollisionDetector.getCLosestFloorY(y);</span>
+<span class="nc" id="L337">        y = closest + halfHeight + Floor.getHeight();</span>
+<span class="nc" id="L338">        velY = 0.0;</span>
+<span class="nc" id="L339">    }</span>
+
+    /* Description: Moves mario up */
+    public void moveUp() {
+<span class="nc" id="L343">        y += 0.015;</span>
+<span class="nc" id="L344">    }</span>
+
+    /* Description: Moves mario down */
+    public void moveDown() {
+<span class="nc" id="L348">        y -= 0.015;</span>
+<span class="nc" id="L349">    }</span>
+
+    /** Description: Revisa si Mario está en una posicion válida, no le permite escaparse por los laterales
+     * Si Mario cae por debajo de la panmtalla lo mata.
+     */
+    public void checkPosition() {
+<span class="nc bnc" id="L355" title="All 2 branches missed.">        if (x &gt; 0.97) {</span>
+<span class="nc" id="L356">            x = 0.97;</span>
+<span class="nc bnc" id="L357" title="All 2 branches missed.">        } else if (x &lt; 0.03) {</span>
+<span class="nc" id="L358">            x = 0.03;</span>
+        }
+
+<span class="nc bnc" id="L361" title="All 2 branches missed.">        if (y &lt; -0.05) {</span>
+<span class="nc" id="L362">            isAlive = false;</span>
+        }
+<span class="nc" id="L364">    }</span>
+
+    public char getLastKeyPressed(){
+<span class="nc" id="L367">        return lastKeyPressed;</span>
+    }
+
+<span class="nc" id="L370">    public int getDirection(){ return direction; }</span>
+/*
+    //TESTING: Ya no sirve por cambios en las funciones usadas.
+    public static void main(String[] args) {
+        Floor[] floor = new Floor[2];
+        floor[0] = new Floor(0.6, 0.25);
+        floor[1] = new Floor(0.4, 0.1);
+
+        Mario mario = new Mario(0.5, floor[0].getY() + floor[0].getHeight()
+                + 0.024); //start at 0.11 for good position
+
+        PennDraw.enableAnimation(30);
+
+        while(true) { //later make a boolean for if the game is running
+            PennDraw.clear(PennDraw.WHITE);
+
+            for (int i = 0; i &lt; floor.length; i++ ) {
+                floor[i].draw();
+            }
+
+            //checks for left or right movement
+            if (PennDraw.hasNextKeyTyped()) {
+                char dir = PennDraw.nextKeyTyped();
+                if (dir == 'a') {
+                    mario.moveLeft();
+                }
+                if (dir == 'd') {
+                    mario.moveRight();
+                }
+                if (dir == 'w') {
+                    //if (mario.floorCollision(floor))
+                        //mario.jump();
+                }
+            }
+
+            int counter = 0;
+            for (int i = 0; i &lt; floor.length; i++) {
+                if ((floor[i].collision(mario))) {
+                    counter++;
+                    //   System.out.println(&quot;colliding&quot;);
+                }
+            }
+            if(counter &lt;= 0.0) {
+                // System.out.println(&quot;he is not colliding with anything&quot;);
+                mario.fall();
+            } else if (mario.velY &lt; 0.0) {
+                // mario.stop(floors);
+            }
+
+            mario.updateY();
+            PennDraw.advance();
+        }
+    }
+    */
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

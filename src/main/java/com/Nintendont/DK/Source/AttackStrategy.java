@@ -7,3 +7,6 @@ public interface AttackStrategy {
 
     public void Clear();
 }
+
+
+

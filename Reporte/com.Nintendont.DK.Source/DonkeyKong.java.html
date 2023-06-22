@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DonkeyKong.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results, All in Nintendon-t Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">DonkeyKong.java</span></div><h1>DonkeyKong.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.DonkeyKong.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.DonkeyKong
+ *  Dependencies: image files
+ *
+ *  Creates a main.java.com.Nintendont.DK.Source.DonkeyKong object for Donkey Kong Game. Donkey can
+ * be drawn in various positions. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ *
+ ******************************************************************************/
+public class DonkeyKong {
+    private double x;
+    private double y;
+
+    /* Constructor: donkey kong at x, y
+     */
+<span class="nc" id="L22">    public DonkeyKong(double x, double y) {</span>
+<span class="nc" id="L23">        this.x = x;</span>
+<span class="nc" id="L24">        this.y = y;</span>
+<span class="nc" id="L25">    }</span>
+
+    /* Descritpion: get x
+     * @param n/a
+     * @return double x
+     */
+    public double getX() {
+<span class="nc" id="L32">        return x;</span>
+    }
+
+    /* Descritpion: get y
+     * @param n/a
+     * @return double y
+     */
+    public double getY() {
+<span class="nc" id="L40">        return y;</span>
+    }
+
+    /* Descritpion: draws donkeykong facing left
+     * @param n/a
+     * @return n/a
+     */
+    public void drawLeft() {
+<span class="nc" id="L48">        PennDraw.picture(x, y, &quot;donkeyLeft.png&quot;, 60, 47);</span>
+<span class="nc" id="L49">    }</span>
+
+    /* Descritpion: draws donkey kong facing center with a barrel
+     * @param n/a
+     * @return n/a
+     */
+    public void drawCenter() {
+<span class="nc" id="L56">        PennDraw.picture(x, y, &quot;donkey.png&quot;, 60, 47);</span>
+<span class="nc" id="L57">    }</span>
+
+    /* Descritpion: draws donkey kong facing right
+     * @param n/a
+     * @return n/a
+     */
+    public void drawRight() {
+<span class="nc" id="L64">        PennDraw.picture(x, y, &quot;donkeyRight.png&quot;, 60, 47);</span>
+<span class="nc" id="L65">    }</span>
+
+    /* Descritpion: draws donkey kong standing normally
+     * @param n/a
+     * @return n/a
+     */
+    public void drawOriginal() {
+<span class="nc" id="L72">        PennDraw.picture(x, y, &quot;donkeyCenter.png&quot;, 60, 47);</span>
+<span class="nc" id="L73">    }</span>
+
+    public static void main(String[] args) {
+<span class="nc" id="L76">        DonkeyKong d = new DonkeyKong(0.5, 0.5);</span>
+<span class="nc" id="L77">        d.drawLeft();</span>
+<span class="nc" id="L78">        d.drawCenter();</span>
+<span class="nc" id="L79">        d.drawRight();</span>
+<span class="nc" id="L80">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

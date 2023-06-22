@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Peach.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Peach.java</span></div><h1>Peach.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+/******************************************************************************
+ *  Compilation:  javac main.java.com.Nintendont.DK.Source.Peach.java
+ *  Execution:    java main.java.com.Nintendont.DK.Source.Peach (runs basic testing
+ *  Dependencies: image files
+ *
+ *  Creates a main.java.com.Nintendont.DK.Source.Peach object for Donkey Kong Game. main.java.com.Nintendont.DK.Source.Peach can
+ * be drawn. Used in World.java
+ *
+ * Authors: Ethan Terner, eterner, 206
+ *          Max Grove, maxgrove, 205
+ *
+ ******************************************************************************/
+public class Peach {
+
+    //FIELDS
+    private double x;
+    private double y;
+
+    /* Constructor for peach: Set x and y
+     *
+     */
+<span class="nc" id="L24">    public Peach(double x, double y) {</span>
+<span class="nc" id="L25">        this.x = x;</span>
+<span class="nc" id="L26">        this.y = y;</span>
+<span class="nc" id="L27">    }</span>
+
+    /* Description: returns x location
+     * @param n/a
+     * @return double x
+     */
+    public double getX() {
+<span class="nc" id="L34">        return x;</span>
+    }
+
+    /* Description: returns y location
+     * @param n/a
+     * @return double y
+     */
+    public double getY() {
+<span class="nc" id="L42">        return y;</span>
+    }
+
+    /* Description: draw's peach at x, y
+     * @param n/a
+     * @return n/a
+     */
+    public void draw() {
+<span class="nc" id="L50">        PennDraw.picture(x, y, &quot;peach.png&quot;, -42, 38);</span>
+<span class="nc" id="L51">    }</span>
+
+    //testing
+    public static void main(String[] args) {
+<span class="nc" id="L55">        Peach peach = new Peach(0.25, 0.8 + 0.025);</span>
+<span class="nc" id="L56">        StdAudio.loop(&quot;SFX/bacmusic.wav&quot;);</span>
+<span class="nc" id="L57">        peach.draw();</span>
+<span class="nc" id="L58">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

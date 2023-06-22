@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="es"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Score.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">UnitTests Coverage Results</a> &gt; <a href="index.source.html" class="el_package">com.Nintendont.DK.Source</a> &gt; <span class="el_source">Score.java</span></div><h1>Score.java</h1><pre class="source lang-java linenums">package com.Nintendont.DK.Source;
+
+import java.io.*;
+import java.util.Properties;
+
+<span class="nc" id="L6">public class Score {</span>
+    private static final String SCORES_FILE_PATH = &quot;scores.properties&quot;;
+
+
+
+   public void Run(int actualScore){
+<span class="nc" id="L12">       registerScore(&quot;Player1&quot;,actualScore,0);</span>
+<span class="nc" id="L13">   }</span>
+
+
+
+    public void registerScore(String player, int score,int tiempo) {
+<span class="nc" id="L18">        Properties properties = loadProperties();</span>
+<span class="nc" id="L19">        int highestScore = getScore(player);</span>
+<span class="nc" id="L20">        int lowestTime = getTime();</span>
+<span class="nc bnc" id="L21" title="All 2 branches missed.">        if (score &gt;highestScore) {</span>
+<span class="nc" id="L22">            properties.setProperty(&quot;Time&quot;, String.valueOf(tiempo));</span>
+<span class="nc" id="L23">            properties.setProperty(player, String.valueOf(score));</span>
+<span class="nc" id="L24">            saveProperties(properties);</span>
+
+        }
+<span class="nc bnc" id="L27" title="All 2 branches missed.">        if(score==highestScore){</span>
+<span class="nc bnc" id="L28" title="All 2 branches missed.">            if (tiempo &lt; lowestTime) {</span>
+<span class="nc" id="L29">                properties.setProperty(&quot;Time&quot;, String.valueOf(tiempo));</span>
+<span class="nc" id="L30">                saveProperties(properties);</span>
+            }
+        }
+
+<span class="nc" id="L34">    }</span>
+
+    public int getScore(String player) {
+<span class="nc" id="L37">        Properties properties = loadProperties();</span>
+<span class="nc" id="L38">        String score = properties.getProperty(player);</span>
+<span class="nc bnc" id="L39" title="All 2 branches missed.">        if (score != null) {</span>
+<span class="nc" id="L40">            return Integer.parseInt(score);</span>
+        }
+<span class="nc" id="L42">        return 0;</span>
+    }
+    public int getTime() {
+<span class="nc" id="L45">        Properties properties = loadProperties();</span>
+<span class="nc" id="L46">        String time = properties.getProperty(&quot;Time&quot;);</span>
+<span class="nc bnc" id="L47" title="All 2 branches missed.">        if (time != null) {</span>
+<span class="nc" id="L48">            return Integer.parseInt(time);</span>
+        }
+<span class="nc" id="L50">        return 0;</span>
+    }
+
+    private Properties loadProperties() {
+<span class="nc" id="L54">        Properties properties = new Properties();</span>
+<span class="nc" id="L55">        try (InputStream inputStream = new FileInputStream(SCORES_FILE_PATH)) {</span>
+<span class="nc" id="L56">            properties.load(inputStream);</span>
+<span class="nc" id="L57">        } catch (IOException e) {</span>
+            // El archivo de puntuaciones no existe, se crea uno nuevo
+<span class="nc" id="L59">        }</span>
+<span class="nc" id="L60">        return properties;</span>
+    }
+
+    private void saveProperties(Properties properties) {
+<span class="nc" id="L64">        try (OutputStream outputStream = new FileOutputStream(SCORES_FILE_PATH)) {</span>
+<span class="nc" id="L65">            properties.store(outputStream, null);</span>
+<span class="nc" id="L66">        } catch (IOException e) {</span>
+<span class="nc" id="L67">            e.printStackTrace();</span>
+<span class="nc" id="L68">        }</span>
+<span class="nc" id="L69">    }</span>
+
+
+
+}
+
+
+
+
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.8.202204050719</span></div></body></html>

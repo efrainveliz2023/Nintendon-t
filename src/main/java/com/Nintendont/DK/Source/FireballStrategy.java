@@ -26,3 +26,6 @@ public class FireballStrategy implements AttackStrategy{
         fireballList = new LinkedList<Fireball>();
     }
 }
+
+
+
