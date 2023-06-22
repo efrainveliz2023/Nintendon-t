@@ -1,4 +1,8 @@
-on: push
+on: 
+  push: 
+    branches: ["release"]
+  pull_request:
+    branches: ["release"]
 name: deploy
 jobs:
   build-container:
